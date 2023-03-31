@@ -1,0 +1,20 @@
+Database:
+  # [MySQL]
+  # Tipo: MySQL
+  # Url:       <Url do banco de dados>
+  # Database:  <Nome do banco de dados>
+  # Usuario:   <Nome de usuario>
+  # Senha:     <Senha do usuario>
+  #
+  # [MySQL + Connection pool (HikariCP)]
+  # Tipo: MySQL-pooling
+  # Url:       <Url do banco de dados>
+  # Database:  <Nome do banco de dados>
+  # Usuario:   <Nome de usuario>
+  # Senha:     <Senha do usuario>
+  #
+  # [SQLite]
+  # Tipo: SQLite
+  # Path:      <Path do arquivo. Ex.: database.sql>
+  Tipo: SQLite
+  Path: database.sql

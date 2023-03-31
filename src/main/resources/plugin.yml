@@ -1,0 +1,5 @@
+name: WorldRankup
+main: com.worldplugins.rankup.WorldRankup
+version: 1.0
+authors: [PostDev]
+api-version: 1.8
