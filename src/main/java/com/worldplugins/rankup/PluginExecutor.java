@@ -6,6 +6,7 @@ import com.worldplugins.lib.config.cache.impl.SoundsConfig;
 import com.worldplugins.lib.registry.CommandRegistry;
 import com.worldplugins.lib.registry.ViewRegistry;
 import com.worldplugins.rankup.command.Help;
+import com.worldplugins.rankup.database.DatabaseManager;
 import com.worldplugins.rankup.init.ConfigCacheInitializer;
 import com.worldplugins.lib.manager.config.ConfigCacheManager;
 import com.worldplugins.lib.manager.config.ConfigManager;
@@ -30,6 +31,8 @@ public class PluginExecutor {
     private final @NonNull MenuContainerManager menuContainerManager;
     private final @NonNull ViewManager viewManager;
 
+    private final @NonNull DatabaseManager databaseManager;
+
     public PluginExecutor(@NonNull JavaPlugin plugin) {
         this.plugin = plugin;
         scheduler = new SchedulerBuilder(plugin);
@@ -37,20 +40,25 @@ public class PluginExecutor {
         configCacheManager = new ConfigCacheInitializer(configManager).init();
         menuContainerManager = new MenuContainerManagerImpl();
         viewManager = new ViewManagerImpl();
+
+        databaseManager = new DatabaseManager(configManager, plugin, scheduler);
     }
 
     /**
      * @return A runnable executed when disabling
      * */
     public @NonNull Runnable execute() {
-        setGlobalResponseAccess();
+        prepareGlobalAccess();
         registerListeners();
         registerCommands();
+        registerViews();
         scheduleTasks();
-        return () -> {};
+        return () -> {
+            databaseManager.getShardUpdater().update();
+        };
     }
 
-    private void setGlobalResponseAccess() {
+    private void prepareGlobalAccess() {
         GlobalAccess.setMessages(configCacheManager.get(MessagesConfig.class));
         GlobalAccess.setSounds(configCacheManager.get(SoundsConfig.class));
         GlobalAccess.setEffects(configCacheManager.get(EffectsConfig.class));
@@ -84,6 +92,11 @@ public class PluginExecutor {
     }
 
     private void scheduleTasks() {
-
+        final int updateSeconds = 30;
+        scheduler.newTimer(() -> databaseManager.getShardUpdater().update())
+            .async(false)
+            .delay((long) updateSeconds * 20)
+            .period((long) updateSeconds * 20)
+            .run();
     }
 }
