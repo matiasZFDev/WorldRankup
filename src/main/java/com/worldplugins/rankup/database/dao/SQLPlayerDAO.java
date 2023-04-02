@@ -46,7 +46,7 @@ public class SQLPlayerDAO implements PlayerDAO {
                 "player_id BINARY(16) NOT NULL, " +
                 "shard_id TINYINT NOT NULL, " +
                 "amount INT NOT NULL, " +
-                "limit INT NOT NULL" +
+                "capacity INT NOT NULL" +
             ")"
         );
     }
@@ -66,7 +66,7 @@ public class SQLPlayerDAO implements PlayerDAO {
                     return Optional.empty();
 
                 return sqlExecutor.executeQuery(
-                    "SELECT shard_id, amount, limit FROM " + SHARDS_TABLE + " WHERE player_id=?",
+                    "SELECT shard_id, amount, capacity FROM " + SHARDS_TABLE + " WHERE player_id=?",
                     statement -> statement.set(1, playerId.getBytes()),
                     result -> {
 
@@ -76,7 +76,7 @@ public class SQLPlayerDAO implements PlayerDAO {
                             shards.add(new Shard(
                                 result.get("shard_id"),
                                 result.get("amount"),
-                                result.get("limit")
+                                result.get("capacity")
                             ));
                         }
 
@@ -105,7 +105,7 @@ public class SQLPlayerDAO implements PlayerDAO {
                 return;
 
             sqlExecutor.update(
-                "INSERT INTO " + SHARDS_TABLE + "(player_id, shard_id, amount, limit) VALUES (?, ?, ?, ?)",
+                "INSERT INTO " + SHARDS_TABLE + "(player_id, shard_id, amount, capacity) VALUES (?, ?, ?, ?)",
                 statement ->
                     shards.forEach(shard -> {
                         statement.set(1, player.getId().getBytes());
@@ -132,7 +132,7 @@ public class SQLPlayerDAO implements PlayerDAO {
                 }
             );
             sqlExecutor.update(
-                "UPDATE TABLE " + RANK_TABLE + " SET amount=?, limit=? WHERE player_id=? AND shard_id=?",
+                "UPDATE TABLE " + RANK_TABLE + " SET amount=?, capacity=? WHERE player_id=? AND shard_id=?",
                 statement -> {
                     players.forEach(player -> {
                         player.getAllShards().forEach(shard -> {
