@@ -49,7 +49,7 @@ public class BagView extends MenuDataView<ViewContext> {
     @Override
     public @NonNull ItemProcessResult processItems(@NonNull Player player, ViewContext context, @NonNull MenuData menuData) {
         final List<Integer> itemSlots = menuData.getData("Slots");
-        final ItemDisplay shardDisplay = menuData.getData("Iten-fragmento");
+        final ItemDisplay shardDisplay = menuData.getData("Display-fragmento");
         final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
 
         return MenuItemsUtils.newSession(menuData.getItems(), session -> {
