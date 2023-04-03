@@ -5,8 +5,12 @@ import com.worldplugins.lib.config.cache.impl.MessagesConfig;
 import com.worldplugins.lib.config.cache.impl.SoundsConfig;
 import com.worldplugins.lib.registry.CommandRegistry;
 import com.worldplugins.lib.registry.ViewRegistry;
+import com.worldplugins.rankup.command.Bag;
 import com.worldplugins.rankup.command.Help;
+import com.worldplugins.rankup.config.ShardsConfig;
 import com.worldplugins.rankup.database.DatabaseManager;
+import com.worldplugins.rankup.factory.NewRankupPlayerFactory;
+import com.worldplugins.rankup.factory.RankupPlayerFactory;
 import com.worldplugins.rankup.init.ConfigCacheInitializer;
 import com.worldplugins.lib.manager.config.ConfigCacheManager;
 import com.worldplugins.lib.manager.config.ConfigManager;
@@ -16,6 +20,8 @@ import com.worldplugins.lib.manager.view.MenuContainerManagerImpl;
 import com.worldplugins.lib.manager.view.ViewManager;
 import com.worldplugins.lib.manager.view.ViewManagerImpl;
 import com.worldplugins.lib.util.SchedulerBuilder;
+import com.worldplugins.rankup.listener.RegisterOnJoinListener;
+import com.worldplugins.rankup.view.BagView;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.event.Listener;
@@ -73,14 +79,18 @@ public class PluginExecutor {
     }
 
     private void registerListeners() {
-
+        final RankupPlayerFactory playerFactory = new NewRankupPlayerFactory(
+            configCacheManager.get(ShardsConfig.class)
+        );
+        regListeners(new RegisterOnJoinListener(databaseManager.getPlayerService(), playerFactory));
     }
 
     private void registerCommands() {
         final CommandRegistry registry = new CommandRegistry(plugin);
 
         registry.command(
-            new Help()
+            new Help(),
+            new Bag(databaseManager.getPlayerService())
         );
         registry.autoTabCompleter("rankup");
         registry.registerAll();
@@ -88,7 +98,10 @@ public class PluginExecutor {
 
     private void registerViews() {
         final ViewRegistry registry = new ViewRegistry(viewManager, menuContainerManager, configManager);
-        registry.register();
+        final ShardsConfig shardsConfig = configCacheManager.get(ShardsConfig.class);
+        registry.register(
+            new BagView(shardsConfig, databaseManager.getPlayerService())
+        );
     }
 
     private void scheduleTasks() {

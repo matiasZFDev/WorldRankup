@@ -1,0 +1,49 @@
+Gelo-1:
+  Id: 0
+  Nome: 'gelo'
+  Display: '&eGelo'
+  Preco: 15
+  Limite: 5k
+  Limite-padrao: 1k
+  Iten:
+    Id: 409
+
+Chumbo-2:
+  Id: 1
+  Nome: 'chumbo'
+  Display: '&fChumbo'
+  Preco: 100
+  Limite: 2k
+  Limite-padrao: 100
+  Iten:
+    Id: 337
+
+Moeda-ouro-3:
+  Id: 2
+  Nome: 'moeda_ouro'
+  Display: '&6Moeda de ouro'
+  Preco: 500
+  Limite: 800
+  Limite-padrao: 30
+  Iten:
+    Id: 371
+
+Fossil-4:
+  Id: 3
+  Nome: 'fossil'
+  Display: '&8Fóssil'
+  Preco: 6k
+  Limite: 200
+  Limite-padrao: 10
+  Iten:
+    Id: 397
+
+Magma-5:
+  Id: 4
+  Nome: 'magma'
+  Display: '&c&lMagma'
+  Preco: 50k
+  Limite: 50
+  Limite-padrao: 1
+  Iten:
+    Id: 378

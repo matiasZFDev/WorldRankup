@@ -1,0 +1,19 @@
+Nome: 'Mochila'
+Linhas: 6
+Data:
+  Slots: [11,13,15,30,32]
+  Iten-fragmento:
+    Id: 1 # Id e data do fragmento em fragmentos.yml
+    Nome: '@nome'
+    Lore:
+      - '&8Um material interessante...'
+      - '&7Utilize para evoluir, venda'
+      - '&7ou retire para mais!'
+      - ''
+      - ' &fQuantia: &e@quantia'
+      - ' &fLimite: &e@limite (Max. @limite-max)'
+      - ' &fPreço: &2$&a@preco'
+      - ''
+      - '&fB. direito: &7Retirar'
+      - '&fB. esquerdo: &7Vender'
+Conteudo: {}

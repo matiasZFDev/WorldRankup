@@ -9,7 +9,6 @@ import com.worldplugins.lib.manager.config.ConfigManager;
 import com.worldplugins.lib.util.SchedulerBuilder;
 import com.worldplugins.rankup.database.dao.PlayerDAO;
 import com.worldplugins.rankup.database.dao.SQLPlayerDAO;
-import com.worldplugins.rankup.database.service.ShardBulkUpdater;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.configuration.ConfigurationSection;
