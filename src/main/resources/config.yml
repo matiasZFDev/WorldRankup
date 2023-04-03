@@ -18,3 +18,10 @@ Database:
   # Path:      <Path do arquivo. Ex.: database.sql>
   Tipo: SQLite
   Path: database.sql
+
+Display-fragmento-fisico:
+  Nome: '@nome &7(@quantiax)'
+  Lore:
+    - '&8Um fragmento físico!'
+    - '&7Clique para adicionar'
+    - '&7para a sua mochila.'

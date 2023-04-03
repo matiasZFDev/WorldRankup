@@ -6,11 +6,15 @@ import com.worldplugins.lib.config.cache.impl.SoundsConfig;
 import com.worldplugins.lib.registry.CommandRegistry;
 import com.worldplugins.lib.registry.ViewRegistry;
 import com.worldplugins.rankup.command.Bag;
+import com.worldplugins.rankup.command.GiveShards;
 import com.worldplugins.rankup.command.Help;
+import com.worldplugins.rankup.config.MainConfig;
 import com.worldplugins.rankup.config.ShardsConfig;
 import com.worldplugins.rankup.database.DatabaseManager;
 import com.worldplugins.rankup.factory.NewRankupPlayerFactory;
 import com.worldplugins.rankup.factory.RankupPlayerFactory;
+import com.worldplugins.rankup.factory.ShardFactory;
+import com.worldplugins.rankup.factory.ShardFactoryImpl;
 import com.worldplugins.rankup.init.ConfigCacheInitializer;
 import com.worldplugins.lib.manager.config.ConfigCacheManager;
 import com.worldplugins.lib.manager.config.ConfigManager;
@@ -38,6 +42,7 @@ public class PluginExecutor {
     private final @NonNull ViewManager viewManager;
 
     private final @NonNull DatabaseManager databaseManager;
+    private final @NonNull ShardFactory shardFactory;
 
     public PluginExecutor(@NonNull JavaPlugin plugin) {
         this.plugin = plugin;
@@ -48,6 +53,9 @@ public class PluginExecutor {
         viewManager = new ViewManagerImpl();
 
         databaseManager = new DatabaseManager(configManager, plugin, scheduler);
+        shardFactory = new ShardFactoryImpl(
+            configCacheManager.get(MainConfig.class), configCacheManager.get(ShardsConfig.class)
+        );
     }
 
     /**
@@ -90,7 +98,10 @@ public class PluginExecutor {
 
         registry.command(
             new Help(),
-            new Bag(databaseManager.getPlayerService())
+            new Bag(databaseManager.getPlayerService()),
+            new GiveShards(
+                configCacheManager.get(ShardsConfig.class), shardFactory, databaseManager.getPlayerService()
+            )
         );
         registry.autoTabCompleter("rankup");
         registry.registerAll();
