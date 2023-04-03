@@ -78,6 +78,7 @@ public class SetShards implements CommandModule {
         final Integer shardLimit = playerModel.getShardLimit(shardId);
         final Integer currentAmount = playerModel.getShards(shardId);
 
+        playerService.update(playerModel);
         sender.respond("Fragmentos-setados", message -> message.replace(
             "@fragmento".to(configShard.get().getDisplay()),
             "@quantia-setada".to(finalAmount.suffixed()),
