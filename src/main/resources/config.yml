@@ -37,3 +37,9 @@ Compensacao-fragmentos:
   Hitando-mobs: true
   Matando-mobs: true
   Pescando: true
+Compensacao-limite:
+  Comando: true # Apenas /rankup darfragmentos no modo virtual
+  Quebrando-blocos: true
+  Hitando-mobs: true
+  Matando-mobs: true
+  Pescando: true

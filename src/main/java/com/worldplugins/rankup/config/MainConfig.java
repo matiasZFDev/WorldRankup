@@ -34,31 +34,40 @@ public class MainConfig extends StateConfig<MainConfig.Config> {
     public static class Config {
         @Getter
         private final @NonNull ItemDisplay shardDisplay;
-        private final @NonNull EnumSet<ShardCompensation> compensations;
+        private final @NonNull EnumSet<ShardCompensation> shardCompensations;
+        private final @NonNull EnumSet<ShardCompensation> limitCompensations;
 
         public boolean hasShardCompensation(@NonNull ShardCompensation compensation) {
-            return compensations.contains(compensation);
+            return shardCompensations.contains(compensation);
+        }
+
+        public boolean hasLimitCompensation(@NonNull ShardCompensation compensation) {
+            return limitCompensations.contains(compensation);
         }
     }
 
     @Override
     public @NonNull Config fetch(@NonNull FileConfiguration config) {
-        final ConfigurationSection shardCompensation = config.getConfigurationSection("Compensacao-fragmentos");
         return new Config(
             config.itemDisplay("Display-fragmento-fisico"),
-            shardCompensation.getKeys(false).stream()
-                .map(key ->
-                    ShardCompensation.fromConfigName(key).orElseThrow(() ->
-                        new Error("O tipo de compensação de fragmentos '" + key + "não existe.")
-                    )
-                )
-                .filter(compensation -> shardCompensation.getBoolean(compensation.getConfigName()))
-                .collect(Collectors.toSet())
-                .use(compensations ->
-                    compensations.isEmpty()
-                        ? EnumSet.noneOf(ShardCompensation.class)
-                        : EnumSet.copyOf(compensations)
-                )
+            fetchShardCompensations(config.getConfigurationSection("Compensacao-fragmentos")),
+            fetchShardCompensations(config.getConfigurationSection("Compensacao-limite"))
         );
+    }
+
+    private @NonNull EnumSet<ShardCompensation> fetchShardCompensations(@NonNull ConfigurationSection section) {
+        return section.getKeys(false).stream()
+            .map(key ->
+                ShardCompensation.fromConfigName(key).orElseThrow(() ->
+                    new Error("O tipo de compensação de fragmentos '" + key + "não existe.")
+                )
+            )
+            .filter(compensation -> section.getBoolean(compensation.getConfigName()))
+            .collect(Collectors.toSet())
+            .use(compensations ->
+                compensations.isEmpty()
+                    ? EnumSet.noneOf(ShardCompensation.class)
+                    : EnumSet.copyOf(compensations)
+            );
     }
 }
