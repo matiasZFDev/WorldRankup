@@ -8,6 +8,7 @@ import com.worldplugins.lib.registry.ViewRegistry;
 import com.worldplugins.rankup.command.Bag;
 import com.worldplugins.rankup.command.GiveShards;
 import com.worldplugins.rankup.command.Help;
+import com.worldplugins.rankup.command.RemoveShards;
 import com.worldplugins.rankup.config.MainConfig;
 import com.worldplugins.rankup.config.ShardsConfig;
 import com.worldplugins.rankup.database.DatabaseManager;
@@ -95,13 +96,14 @@ public class PluginExecutor {
 
     private void registerCommands() {
         final CommandRegistry registry = new CommandRegistry(plugin);
+        final MainConfig mainConfig = configCacheManager.get(MainConfig.class);
+        final ShardsConfig shardsConfig = configCacheManager.get(ShardsConfig.class);
 
         registry.command(
             new Help(),
             new Bag(databaseManager.getPlayerService()),
-            new GiveShards(
-                configCacheManager.get(ShardsConfig.class), shardFactory, databaseManager.getPlayerService()
-            )
+            new GiveShards(shardsConfig, mainConfig, shardFactory, databaseManager.getPlayerService()),
+            new RemoveShards(shardsConfig, databaseManager.getPlayerService())
         );
         registry.autoTabCompleter("rankup");
         registry.registerAll();
