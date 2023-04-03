@@ -58,7 +58,10 @@ public class SQLPlayerDAO implements PlayerDAO {
                 "SELECT * FROM " + RANK_TABLE + " WHERE player_id=?",
                 statement -> statement.set(1, playerId.getBytes()),
                 result -> result.next()
-                    ? Optional.of(new PlayerData(result.get("rank"), result.get("prestige")))
+                    ? Optional.of(new PlayerData(
+                        result.get("rank", Short.class),
+                        result.get("prestige", Short.class)
+                    ))
                     : Optional.<PlayerData>empty()
             ), EXECUTOR)
             .thenApplyAsync(playerData -> {
@@ -66,7 +69,7 @@ public class SQLPlayerDAO implements PlayerDAO {
                     return Optional.empty();
 
                 return sqlExecutor.executeQuery(
-                    "SELECT shard_id, amount, capacity FROM " + SHARDS_TABLE + " WHERE player_id=?",
+                    "SELECT * FROM " + SHARDS_TABLE + " WHERE player_id=?",
                     statement -> statement.set(1, playerId.getBytes()),
                     result -> {
 
@@ -74,7 +77,7 @@ public class SQLPlayerDAO implements PlayerDAO {
 
                         while (result.next()) {
                             shards.add(new Shard(
-                                result.get("shard_id"),
+                                result.get("shard_id", Byte.class),
                                 result.get("amount"),
                                 result.get("capacity")
                             ));
@@ -92,10 +95,11 @@ public class SQLPlayerDAO implements PlayerDAO {
     public void save(@NonNull RankupPlayer player) {
         CompletableFuture.runAsync(() -> {
             sqlExecutor.update(
-                "INSERT INTO " + RANK_TABLE + "(player_id, rank) VALUES (?, ?)",
+                "INSERT INTO " + RANK_TABLE + "(player_id, rank, prestige) VALUES (?, ?, ?)",
                 statement -> {
                     statement.set(1, player.getId().getBytes());
                     statement.set(2, player.getRank());
+                    statement.set(3, player.getPrestige());
                 }
             );
 
@@ -104,7 +108,7 @@ public class SQLPlayerDAO implements PlayerDAO {
             if (shards.isEmpty())
                 return;
 
-            sqlExecutor.update(
+            sqlExecutor.executeBatch(
                 "INSERT INTO " + SHARDS_TABLE + "(player_id, shard_id, amount, capacity) VALUES (?, ?, ?, ?)",
                 statement ->
                     shards.forEach(shard -> {
