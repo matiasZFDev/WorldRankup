@@ -115,8 +115,8 @@ public class GiveShardLimit implements CommandModule {
                 "@fragmento".to(configShard.get().getDisplay()),
                 "@quantia-adicionada".to(addedAmount.suffixed()),
                 "@jogador".to(player.getName()),
-                "@quantia-atual".to(newLimit.suffixed()),
-                "@limite-atual".to(((Integer) configShard.get().getLimit()).suffixed())
+                "@limite-atual".to(newLimit.suffixed()),
+                "@limite-max".to(((Integer) configShard.get().getLimit()).suffixed())
             ));
             player.respond("Limite-virtual-recebido", message -> message.replace(
                 "@fragmento".to(configShard.get().getDisplay()),
