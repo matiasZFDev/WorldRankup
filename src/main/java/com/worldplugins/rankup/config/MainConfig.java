@@ -34,6 +34,8 @@ public class MainConfig extends StateConfig<MainConfig.Config> {
     public static class Config {
         @Getter
         private final @NonNull ItemDisplay shardDisplay;
+        @Getter
+        private final @NonNull ItemDisplay limitDisplay;
         private final @NonNull EnumSet<ShardCompensation> shardCompensations;
         private final @NonNull EnumSet<ShardCompensation> limitCompensations;
 
@@ -50,6 +52,7 @@ public class MainConfig extends StateConfig<MainConfig.Config> {
     public @NonNull Config fetch(@NonNull FileConfiguration config) {
         return new Config(
             config.itemDisplay("Display-fragmento-fisico"),
+            config.itemDisplay("Display-limite-fisico"),
             fetchShardCompensations(config.getConfigurationSection("Compensacao-fragmentos")),
             fetchShardCompensations(config.getConfigurationSection("Compensacao-limite"))
         );

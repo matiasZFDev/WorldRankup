@@ -7,6 +7,8 @@ Gelo-1:
   Limite-padrao: 1k
   Iten:
     Id: 409
+  Iten-limite:
+    Id: 328
 
 Chumbo-2:
   Id: 1
@@ -17,6 +19,8 @@ Chumbo-2:
   Limite-padrao: 100
   Iten:
     Id: 337
+  Iten-limite:
+    Id: 408
 
 Moeda-ouro-3:
   Id: 2
@@ -27,6 +31,8 @@ Moeda-ouro-3:
   Limite-padrao: 30
   Iten:
     Id: 371
+  Iten-limite:
+    Id: 343
 
 Fossil-4:
   Id: 3
@@ -37,6 +43,8 @@ Fossil-4:
   Limite-padrao: 10
   Iten:
     Id: 397
+  Iten-limite:
+    Id: 342
 
 Magma-5:
   Id: 4
@@ -47,3 +55,5 @@ Magma-5:
   Limite-padrao: 1
   Iten:
     Id: 378
+  Iten-limite:
+    Id: 407

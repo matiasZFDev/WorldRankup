@@ -35,17 +35,17 @@ import java.util.stream.Collectors;
 })
 
 @RequiredArgsConstructor
-public class GiveShards implements CommandModule {
+public class GiveShardLimit implements CommandModule {
     private final @NonNull ShardsConfig shardsConfig;
     private final @NonNull MainConfig mainConfig;
     private final @NonNull ShardFactory shardFactory;
     private final @NonNull PlayerService playerService;
 
     @Command(
-        name = "rankup darfragmentos",
-        permission = "worldrankup.darfragmentos",
+        name = "rankup darlimite",
+        permission = "worldrankup.darlimite",
         argsChecks = {@ArgsChecker(size = 4)},
-        usage = "&cArgumentos invalidos. Digite /rankup darfragmentos <jogador> <fragmento> <quantia> <fisico|virtual>"
+        usage = "&cArgumentos invalidos. Digite /rankup darlimite <jogador> <fragmento> <quantia> <fisico|virtual>"
     )
     @Override
     public void execute(@NonNull CommandSender sender, @NonNull String[] args) {
@@ -78,13 +78,13 @@ public class GiveShards implements CommandModule {
         final Integer amount = Integer.parseInt(args[2].numerify());
 
         if (sendType.equals(GlobalKeys.PHYISIC_SEND)) {
-            player.giveItems(shardFactory.createShard(configShard.get().getId(), amount));
-            sender.respond("Fragmentos-fisicos-enviados", message -> message.replace(
+            player.giveItems(shardFactory.createLimit(configShard.get().getId(), amount));
+            sender.respond("Limite-fisico-enviado", message -> message.replace(
                 "@fragmento".to(configShard.get().getDisplay()),
                 "@quantia".to(amount.suffixed()),
                 "@jogador".to(player.getName())
             ));
-            player.respond("Fragmentos-fisicos-recebidos", message -> message.replace(
+            player.respond("Limite-fisico-recebido", message -> message.replace(
                 "@fragmento".to(configShard.get().getDisplay()),
                 "@quantia".to(amount.suffixed())
             ));
@@ -94,27 +94,31 @@ public class GiveShards implements CommandModule {
         if (sendType.equals(GlobalKeys.VIRTUAL_SEND)) {
             final byte shardId = configShard.get().getId();
             final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-            final Integer addedAmount = playerModel.setShards(shardId, playerModel.getShards(shardId) + amount);
-            final Integer shardLimit = playerModel.getShardLimit(shardId);
-            final Integer currentAmount = playerModel.getShards(shardId);
+            final Integer currentLimit = playerModel.getShardLimit(shardId);
+            final Integer newLimit = Math.min(currentLimit + amount, configShard.get().getLimit());
+            final Integer addedAmount = currentLimit + amount != newLimit
+                ? newLimit - currentLimit
+                : amount;
+
+            playerModel.setShardLimit(shardId, newLimit);
 
             if (addedAmount < amount && mainConfig.get().hasShardCompensation(ShardCompensation.COMMAND)) {
                 final Integer omittedAmount = amount - addedAmount;
-                player.giveItems(shardFactory.createShard(shardId, omittedAmount));
-                player.respond("Fragmentos-compensacao", message -> message.replace(
+                player.giveItems(shardFactory.createLimit(shardId, omittedAmount));
+                player.respond("Limite-compensacao", message -> message.replace(
                     "@fragmento".to(configShard.get().getDisplay()),
                     "@quantia".to(omittedAmount.suffixed())
                 ));
             }
 
-            sender.respond("Fragmentos-virtuais-enviados", message -> message.replace(
+            sender.respond("Limite-virtual-enviado", message -> message.replace(
                 "@fragmento".to(configShard.get().getDisplay()),
                 "@quantia-adicionada".to(addedAmount.suffixed()),
                 "@jogador".to(player.getName()),
-                "@quantia-atual".to(currentAmount.suffixed()),
-                "@limite".to(shardLimit.suffixed())
+                "@quantia-atual".to(newLimit.suffixed()),
+                "@limite-atual".to(((Integer) configShard.get().getLimit()).suffixed())
             ));
-            player.respond("Fragmentos-virtuais-recebidos", message -> message.replace(
+            player.respond("Limite-virtual-recebido", message -> message.replace(
                 "@fragmento".to(configShard.get().getDisplay()),
                 "@quantia".to(addedAmount.suffixed())
             ));

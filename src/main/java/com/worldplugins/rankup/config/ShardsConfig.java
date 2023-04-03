@@ -6,7 +6,6 @@ import com.worldplugins.lib.config.cache.StateConfig;
 import com.worldplugins.lib.config.cache.annotation.Config;
 import com.worldplugins.lib.extension.CollectionExtensions;
 import com.worldplugins.lib.extension.bukkit.ConfigurationExtensions;
-import com.worldplugins.rankup.database.model.Shard;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +41,7 @@ public class ShardsConfig extends StateConfig<ShardsConfig.Config> {
             private final int limit;
             private final int defaultLimit;
             private final @NonNull ItemStack item;
+            private final @NonNull ItemStack limitItem;
         }
 
         private final @NonNull Map<Byte, Shard> shards;
@@ -77,7 +77,8 @@ public class ShardsConfig extends StateConfig<ShardsConfig.Config> {
                 section.numberFormat("Preco"),
                 section.numberFormat("Limite").intValue(),
                 section.numberFormat("Limite-padrao").intValue(),
-                section.getItem("Iten", false)
+                section.getItem("Iten", false),
+                section.getItem("Iten-limite", false)
             ))
         );
     }

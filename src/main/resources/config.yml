@@ -19,7 +19,6 @@ Database:
   Tipo: SQLite
   Path: database.sql
 
-# Display (Nome, Lore, Flags) do fragmento fisico
 Display-fragmento-fisico:
   Nome: '@nome &7(@quantiax)'
   Lore:
@@ -27,10 +26,18 @@ Display-fragmento-fisico:
     - '&7Clique para adicionar'
     - '&7para a sua mochila.'
 
-# Quando um jogado recêbe fragmentos *virtualmente* mas não
-# tem o limite suficiente para armazenar todos, o sistema pode
-# compensar o jogador com um iten que contem os fragmentos que irão
-# se perder. Use true ou false para ativar ou desativar.
+Display-limite-fisico:
+  Nome: '&fLimite de @nome &7(@quantiax)'
+  Lore:
+    - '&8Um limite físico!'
+    - '&7Clique para aumentar'
+    - '&7o limite do fragmento'
+    - '&7na sua mochila.'
+
+# Quando um jogado recêbe fragmentos ou limite *virtualmente* mas não
+# tem a capacidade suficiente para armazenar todos, o sistema pode
+# compensar o jogador com um iten que contem os fragmentos ou limite que
+# que se perder. Use true ou false para ativar ou desativar.
 # Retirar a opção será aceito como um false
 Compensacao-fragmentos:
   Comando: true # Apenas /rankup darfragmentos
@@ -38,6 +45,7 @@ Compensacao-fragmentos:
   Hitando-mobs: true
   Matando-mobs: true
   Pescando: true
+
 Compensacao-limite:
   Comando: true # Apenas /rankup darlimite
   Quebrando-blocos: true

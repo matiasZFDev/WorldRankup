@@ -40,6 +40,14 @@ public class ShardFactoryImpl implements ShardFactory {
 
     @Override
     public @NonNull ItemStack createLimit(byte shardId, int amount) {
-        return null;
+        final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
+        return configShard.getLimitItem()
+            .display(mainConfig.get().getLimitDisplay())
+            .nameFormat(
+                "@nome".to(configShard.getDisplay()),
+                "@quantia".to(Integer.valueOf(amount).suffixed())
+            )
+            .colorMeta()
+            .addReferenceValue(NBTKeys.PHYISIC_SHARD, new NBTTagByte(shardId));
     }
 }
