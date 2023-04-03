@@ -7,7 +7,9 @@ import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.lib.extension.NumberFormatExtensions;
 import com.worldplugins.lib.extension.bukkit.ItemExtensions;
 import com.worldplugins.lib.extension.bukkit.PlayerExtensions;
+import com.worldplugins.rankup.config.MainConfig;
 import com.worldplugins.rankup.config.ShardsConfig;
+import com.worldplugins.rankup.config.data.ShardCompensation;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
@@ -34,6 +36,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GiveShards implements CommandModule {
     private final @NonNull ShardsConfig shardsConfig;
+    private final @NonNull MainConfig mainConfig;
     private final @NonNull ShardFactory shardFactory;
     private final @NonNull PlayerService playerService;
 
@@ -91,10 +94,20 @@ public class GiveShards implements CommandModule {
         }
 
         if (sendType.equals(VIRTUAL_SHARD)) {
+            final byte shardId = configShard.get().getId();
             final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-            final Integer addedAmount = playerModel.setShards(configShard.get().getId(), amount);
-            final Integer shardLimit = playerModel.getShardLimit(configShard.get().getId());
-            final Integer currentAmount = playerModel.getShards(configShard.get().getId());
+            final Integer addedAmount = playerModel.setShards(shardId, amount);
+            final Integer shardLimit = playerModel.getShardLimit(shardId);
+            final Integer currentAmount = playerModel.getShards(shardId);
+
+            if (addedAmount < amount && mainConfig.get().hasShardCompensation(ShardCompensation.COMMAND)) {
+                final Integer omittedAmount = amount - addedAmount;
+                player.giveItems(shardFactory.createShard(shardId, omittedAmount));
+                player.respond("Fragmentos-compensacao", message -> message.replace(
+                    "@fragmento".to(configShard.get().getDisplay()),
+                    "@quantia".to(omittedAmount.suffixed())
+                ));
+            }
 
             sender.respond("Fragmentos-virtuais-enviados", message -> message.replace(
                 "@fragmento".to(configShard.get().getDisplay()),

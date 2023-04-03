@@ -19,9 +19,21 @@ Database:
   Tipo: SQLite
   Path: database.sql
 
+# Display (Nome, Lore, Flags) do fragmento fisico
 Display-fragmento-fisico:
   Nome: '@nome &7(@quantiax)'
   Lore:
     - '&8Um fragmento físico!'
     - '&7Clique para adicionar'
     - '&7para a sua mochila.'
+
+# Quando um jogado recêbe fragmentos mas não tem o limite
+# suficiente para pegar todos, você pode compensar ao
+# jogador com um iten que contem os fragmentos que irão
+# se perderão, deixando true ou false para ativar ou desativar
+Compensacao-fragmentos:
+  Comando: true
+  Quebrando-blocos: true
+  Hitando-mobs: true
+  Matando-mobs: true
+  Pescando: true
