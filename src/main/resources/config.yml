@@ -27,18 +27,19 @@ Display-fragmento-fisico:
     - '&7Clique para adicionar'
     - '&7para a sua mochila.'
 
-# Quando um jogado recêbe fragmentos mas não tem o limite
-# suficiente para pegar todos, você pode compensar o
-# jogador com um iten que contem os fragmentos que irão
-# se perder. Use true ou false para ativar ou desativar
+# Quando um jogado recêbe fragmentos *virtualmente* mas não
+# tem o limite suficiente para armazenar todos, o sistema pode
+# compensar o jogador com um iten que contem os fragmentos que irão
+# se perder. Use true ou false para ativar ou desativar.
+# Retirar a opção será aceito como um false
 Compensacao-fragmentos:
-  Comando: true # Apenas /rankup darfragmentos no modo virtual
+  Comando: true # Apenas /rankup darfragmentos
   Quebrando-blocos: true
   Hitando-mobs: true
   Matando-mobs: true
   Pescando: true
 Compensacao-limite:
-  Comando: true # Apenas /rankup darfragmentos no modo virtual
+  Comando: true # Apenas /rankup darlimite
   Quebrando-blocos: true
   Hitando-mobs: true
   Matando-mobs: true
