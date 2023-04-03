@@ -129,4 +129,4 @@ Limite-fisico-recebido: '&bVocê recêbeu &f@quantiax &blimite fisico de @fragme
 Limite-virtual-enviado: '&bForam adicionados &f@quantia-adicionadax &blimite de @fragmento&b pro jogador &f@jogador &7(@limite-atual/@limite-max)'
 Limite-virtual-recebido: '&bVocê recêbeu &f@quantiax &blimite de @fragmento&b!'
 Limite-removido: '&bForam removidos &f@quantia-removidax &blimite de @fragmento&b do jogador &f@jogador &7(@limite-atual/@limite-max)'
-Limite-setado: '&bForam setados para &f@quantia-setada &bo limite de @fragmento&b do jogador &f@jogador &7(@limite-atual/@limite-max)'
+Limite-setado: '&bForam setados para &f@quantia-setada &bo limite de @fragmento&b do jogador &f@jogador &7(Max. @limite-max)'
