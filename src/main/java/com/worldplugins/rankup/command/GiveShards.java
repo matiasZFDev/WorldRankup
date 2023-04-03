@@ -96,7 +96,7 @@ public class GiveShards implements CommandModule {
         if (sendType.equals(VIRTUAL_SHARD)) {
             final byte shardId = configShard.get().getId();
             final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-            final Integer addedAmount = playerModel.setShards(shardId, amount);
+            final Integer addedAmount = playerModel.setShards(shardId, playerModel.getShards(shardId) + amount);
             final Integer shardLimit = playerModel.getShardLimit(shardId);
             final Integer currentAmount = playerModel.getShards(shardId);
 
