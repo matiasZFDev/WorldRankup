@@ -29,7 +29,7 @@ public class BagMenuContainer extends StateMenuContainer {
             .modifyData(dataSection -> {
                 return new HashMap<String, Object>(){{
                     put("Slots", dataSection.getIntegerList("Slots"));
-                    put("Iten-fragmento", dataSection.getItem("Iten-fragmento"));
+                    put("Iten-fragmento", dataSection.itemDisplay("Iten-fragmento"));
                 }};
             })
             .build();

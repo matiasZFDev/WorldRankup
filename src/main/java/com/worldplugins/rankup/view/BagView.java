@@ -3,6 +3,7 @@ package com.worldplugins.rankup.view;
 import com.worldplugins.lib.config.cache.menu.ItemProcessResult;
 import com.worldplugins.lib.config.cache.menu.MenuData;
 import com.worldplugins.lib.config.cache.menu.MenuItem;
+import com.worldplugins.lib.config.data.ItemDisplay;
 import com.worldplugins.lib.extension.CollectionExtensions;
 import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.lib.extension.NumberFormatExtensions;
@@ -48,7 +49,7 @@ public class BagView extends MenuDataView<ViewContext> {
     @Override
     public @NonNull ItemProcessResult processItems(@NonNull Player player, ViewContext context, @NonNull MenuData menuData) {
         final List<Integer> itemSlots = menuData.getData("Slots");
-        final ItemStack shardItemModel = menuData.getData("Iten-fragmento");
+        final ItemDisplay shardDisplay = menuData.getData("Iten-fragmento");
         final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
 
         return MenuItemsUtils.newSession(menuData.getItems(), session -> {
@@ -57,7 +58,7 @@ public class BagView extends MenuDataView<ViewContext> {
                     .map(pair -> {
                         final ShardsConfig.Config.Shard shard = pair.first();
                         final ItemStack shardItem = shard.getItem()
-                            .display(shardItemModel)
+                            .display(shardDisplay)
                             .nameFormat("@nome".to(shard.getDisplay()))
                             .loreFormat(
                                 "@quantia".to(((Integer) playerModel.getShards(shard.getId())).suffixed()),
