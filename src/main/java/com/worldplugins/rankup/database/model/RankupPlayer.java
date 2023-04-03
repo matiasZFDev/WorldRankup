@@ -20,7 +20,10 @@ public interface RankupPlayer {
 
     int getShards(byte shardId);
 
-    void setShards(byte shardId, int amount);
+    /**
+     * @return the real amount that was added computing its limit
+     * */
+    int setShards(byte shardId, int amount);
 
     int getShardLimit(byte shardId);
 
