@@ -102,7 +102,8 @@ public class PluginExecutor {
             new GiveShards(shardsConfig, mainConfig, shardFactory, databaseManager.getPlayerService()),
             new RemoveShards(shardsConfig, databaseManager.getPlayerService()),
             new SetShards(shardsConfig, databaseManager.getPlayerService()),
-            new GiveShardLimit(shardsConfig, mainConfig, shardFactory, databaseManager.getPlayerService())
+            new GiveShardLimit(shardsConfig, mainConfig, shardFactory, databaseManager.getPlayerService()),
+            new RemoveShardLimit(shardsConfig, databaseManager.getPlayerService())
         );
         registry.autoTabCompleter("rankup");
         registry.registerAll();
