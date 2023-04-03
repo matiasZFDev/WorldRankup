@@ -121,3 +121,4 @@ Fragmentos-fisicos-recebidos: '&bVocê recêbeu &f@quantiax &bfragmentos fisicos
 Fragmentos-virtuais-enviados: '&bForam adicionados &f@quantia-adicionadax @fragmento&b pro jogador &f@jogador &7(@quantia-atual/@limite)'
 Fragmentos-virtuais-recebidos: '&bVocê recêbeu &f@quantiax &bfragmentos de @fragmento&b!'
 Fragmentos-removidos: '&bForam removidos &f@quantia-removidax &bfragmentos de @fragmento&b do jogador &f@jogador &7(@quantia-atual/@limite)'
+Fragmentos-setados: '&bForam setados para &f@quantia-setada &bos fragmentos @fragmento&b do jogador &f@jogador &7(@quantia-atual/@limite)'

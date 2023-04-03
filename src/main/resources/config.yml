@@ -28,11 +28,11 @@ Display-fragmento-fisico:
     - '&7para a sua mochila.'
 
 # Quando um jogado recêbe fragmentos mas não tem o limite
-# suficiente para pegar todos, você pode compensar ao
+# suficiente para pegar todos, você pode compensar o
 # jogador com um iten que contem os fragmentos que irão
-# se perderão, deixando true ou false para ativar ou desativar
+# se perder. Use true ou false para ativar ou desativar
 Compensacao-fragmentos:
-  Comando: true
+  Comando: true # Apenas /rankup darfragmentos no modo virtual
   Quebrando-blocos: true
   Hitando-mobs: true
   Matando-mobs: true

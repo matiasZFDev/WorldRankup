@@ -5,10 +5,7 @@ import com.worldplugins.lib.config.cache.impl.MessagesConfig;
 import com.worldplugins.lib.config.cache.impl.SoundsConfig;
 import com.worldplugins.lib.registry.CommandRegistry;
 import com.worldplugins.lib.registry.ViewRegistry;
-import com.worldplugins.rankup.command.Bag;
-import com.worldplugins.rankup.command.GiveShards;
-import com.worldplugins.rankup.command.Help;
-import com.worldplugins.rankup.command.RemoveShards;
+import com.worldplugins.rankup.command.*;
 import com.worldplugins.rankup.config.MainConfig;
 import com.worldplugins.rankup.config.ShardsConfig;
 import com.worldplugins.rankup.database.DatabaseManager;
@@ -103,7 +100,8 @@ public class PluginExecutor {
             new Help(),
             new Bag(databaseManager.getPlayerService()),
             new GiveShards(shardsConfig, mainConfig, shardFactory, databaseManager.getPlayerService()),
-            new RemoveShards(shardsConfig, databaseManager.getPlayerService())
+            new RemoveShards(shardsConfig, databaseManager.getPlayerService()),
+            new SetShards(shardsConfig, databaseManager.getPlayerService())
         );
         registry.autoTabCompleter("rankup");
         registry.registerAll();
