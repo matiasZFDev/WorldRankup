@@ -33,6 +33,7 @@ public class RemoveShards implements CommandModule {
 
     @Command(
         name = "rankup removerfragmentos",
+        permission = "worldrankup.removerfragmentos",
         argsChecks = {@ArgsChecker(size = 3)},
         usage = "&cArgumentos invalidos. Digite /rankup removerfragmentos <jogador> <fragmento> <quantia>"
     )
