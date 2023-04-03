@@ -1,5 +1,7 @@
 package com.worldplugins.rankup.factory;
 
+import com.worldplugins.lib.extension.GenericExtensions;
+import com.worldplugins.lib.extension.NumberFormatExtensions;
 import com.worldplugins.lib.extension.bukkit.ItemExtensions;
 import com.worldplugins.lib.extension.bukkit.NBTExtensions;
 import com.worldplugins.rankup.NBTKeys;
@@ -13,7 +15,9 @@ import org.bukkit.inventory.ItemStack;
 
 @ExtensionMethod({
     ItemExtensions.class,
-    NBTExtensions.class
+    NBTExtensions.class,
+    GenericExtensions.class,
+    NumberFormatExtensions.class
 })
 
 @RequiredArgsConstructor
@@ -23,8 +27,13 @@ public class ShardFactoryImpl implements ShardFactory {
 
     @Override
     public @NonNull ItemStack createShard(byte shardId, int amount) {
-        return shardsConfig.get().getById(shardId).getItem()
+        final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
+        return configShard.getItem()
             .display(mainConfig.get().getShardDisplay())
+            .nameFormat(
+                "@nome".to(configShard.getDisplay()),
+                "@quantia".to(Integer.valueOf(amount).suffixed())
+            )
             .colorMeta()
             .addReferenceValue(NBTKeys.PHYISIC_SHARD, new NBTTagByte(shardId));
     }

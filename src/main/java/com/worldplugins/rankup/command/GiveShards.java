@@ -99,6 +99,7 @@ public class GiveShards implements CommandModule {
             sender.respond("Fragmentos-virtuais-enviados", message -> message.replace(
                 "@fragmento".to(configShard.get().getDisplay()),
                 "@quantia-adicionada".to(addedAmount.suffixed()),
+                "@jogador".to(player.getName()),
                 "@quantia-atual".to(currentAmount.suffixed()),
                 "@limite".to(shardLimit.suffixed())
             ));
