@@ -25,6 +25,7 @@ public class ShardFactoryImpl implements ShardFactory {
     public @NonNull ItemStack createShard(byte shardId, int amount) {
         return shardsConfig.get().getById(shardId).getItem()
             .display(mainConfig.get().getShardDisplay())
+            .colorMeta()
             .addReferenceValue(NBTKeys.PHYISIC_SHARD, new NBTTagByte(shardId));
     }
 
