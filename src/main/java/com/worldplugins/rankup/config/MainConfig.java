@@ -38,6 +38,8 @@ public class MainConfig extends StateConfig<MainConfig.Config> {
         private final @NonNull ItemDisplay limitDisplay;
         private final @NonNull EnumSet<ShardCompensation> shardCompensations;
         private final @NonNull EnumSet<ShardCompensation> limitCompensations;
+        @Getter
+        private final Integer maxMerged;
 
         public boolean hasShardCompensation(@NonNull ShardCompensation compensation) {
             return shardCompensations.contains(compensation);
@@ -54,7 +56,8 @@ public class MainConfig extends StateConfig<MainConfig.Config> {
             config.itemDisplay("Display-fragmento-fisico"),
             config.itemDisplay("Display-limite-fisico"),
             fetchShardCompensations(config.getConfigurationSection("Compensacao-fragmentos")),
-            fetchShardCompensations(config.getConfigurationSection("Compensacao-limite"))
+            fetchShardCompensations(config.getConfigurationSection("Compensacao-limite")),
+            1000000000
         );
     }
 

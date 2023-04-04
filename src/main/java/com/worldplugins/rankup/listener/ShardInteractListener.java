@@ -7,6 +7,7 @@ import com.worldplugins.lib.extension.bukkit.InventoryExtensions;
 import com.worldplugins.lib.extension.bukkit.NBTExtensions;
 import com.worldplugins.lib.extension.bukkit.PlayerExtensions;
 import com.worldplugins.rankup.NBTKeys;
+import com.worldplugins.rankup.config.MainConfig;
 import com.worldplugins.rankup.config.ShardsConfig;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
@@ -36,6 +37,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ShardInteractListener implements Listener {
     private final @NonNull ShardsConfig shardsConfig;
+    private final @NonNull MainConfig mainConfig;
     private final @NonNull PlayerService playerService;
     private final @NonNull ShardFactory shardFactory;
 
@@ -78,6 +80,13 @@ public class ShardInteractListener implements Listener {
                     ) * item.item().getAmount()
                 )
                 .sum();
+
+            if (mergedAmount >= mainConfig.get().getMaxMerged()) {
+                player.respond("Fragmentos-juntar-max", message -> message.replace(
+                    "@quantia-max".to(mainConfig.get().getMaxMerged().suffixed())
+                ));
+                return;
+            }
 
             player.getInventory().removeWithReference(NBTKeys.PHYISIC_SHARD_ID, true);
             player.giveItems(shardFactory.createShard(shardId, mergedAmount));
