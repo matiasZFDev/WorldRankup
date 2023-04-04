@@ -52,6 +52,8 @@ public class ShardLimitInteractListener implements Listener {
         if (!event.getItem().hasReference(NBTKeys.PHYISIC_LIMIT_ID))
             return;
 
+        event.setCancelled(true);
+
         final byte shardId = event.getItem().getReferenceValue(
             NBTKeys.PHYISIC_LIMIT_ID,
             NBTTagCompound::getByte

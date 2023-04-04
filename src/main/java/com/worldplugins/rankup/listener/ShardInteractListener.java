@@ -52,6 +52,8 @@ public class ShardInteractListener implements Listener {
         if (!event.getItem().hasReference(NBTKeys.PHYISIC_SHARD_ID))
             return;
 
+        event.setCancelled(true);
+
         final byte shardId = event.getItem().getReferenceValue(
             NBTKeys.PHYISIC_SHARD_ID,
             NBTTagCompound::getByte
