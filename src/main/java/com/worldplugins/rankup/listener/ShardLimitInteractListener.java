@@ -108,7 +108,7 @@ public class ShardLimitInteractListener implements Listener {
             : amount;
 
         if (limitSum > configShard.getLimit()) {
-            player.giveItems(shardFactory.createShard(shardId, limitSum - configShard.getLimit()));
+            player.giveItems(shardFactory.createLimit(shardId, limitSum - configShard.getLimit()));
         }
 
         playerModel.setShardLimit(shardId, setAmount);
