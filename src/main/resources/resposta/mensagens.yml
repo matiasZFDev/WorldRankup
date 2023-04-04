@@ -130,3 +130,7 @@ Limite-virtual-enviado: '&bForam adicionados &f@quantia-adicionadax &blimite de 
 Limite-virtual-recebido: '&bVocê recêbeu &f@quantiax &blimite de @fragmento&b!'
 Limite-removido: '&bForam removidos &f@quantia-removidax &blimite de @fragmento&b do jogador &f@jogador &7(@limite-atual/@limite-max)'
 Limite-setado: '&bForam setados para &f@quantia-setada &bo limite de @fragmento&b do jogador &f@jogador &7(Max. @limite-max)'
+
+Fragmento-invalido: '&cEsse fragmento não é válido. Contate com algum staff.'
+Ativar-fragmento-limite: '&cVocê atingiu o limite máximo desse fragmento.'
+Fragmento-ativado: '&bVocê ativou &f@quantiax &bfragmentos de @fragmento&f!'

@@ -25,6 +25,9 @@ Display-fragmento-fisico:
     - '&8Um fragmento físico!'
     - '&7Clique para adicionar'
     - '&7para a sua mochila.'
+    - ''
+    - '&fB. direito: &7Adicionar'
+    - '&fB. direito + SHIFT: &7Juntar'
 
 Display-limite-fisico:
   Nome: '&fLimite de @nome &7(@quantiax)'
@@ -33,6 +36,9 @@ Display-limite-fisico:
     - '&7Clique para aumentar'
     - '&7o limite do fragmento'
     - '&7na sua mochila.'
+    - ''
+    - '&fB. direito: &7Adicionar'
+    - '&fB. direito + SHIFT: &7Juntar'
 
 # Quando um jogado recêbe fragmentos ou limite *virtualmente* mas não
 # tem a capacidade suficiente para armazenar todos, o sistema pode

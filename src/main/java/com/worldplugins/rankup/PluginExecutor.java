@@ -23,6 +23,7 @@ import com.worldplugins.lib.manager.view.ViewManager;
 import com.worldplugins.lib.manager.view.ViewManagerImpl;
 import com.worldplugins.lib.util.SchedulerBuilder;
 import com.worldplugins.rankup.listener.RegisterOnJoinListener;
+import com.worldplugins.rankup.listener.ShardConsumeListener;
 import com.worldplugins.rankup.view.BagView;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -88,7 +89,12 @@ public class PluginExecutor {
         final RankupPlayerFactory playerFactory = new NewRankupPlayerFactory(
             configCacheManager.get(ShardsConfig.class)
         );
-        regListeners(new RegisterOnJoinListener(databaseManager.getPlayerService(), playerFactory));
+        final ShardsConfig shardsConfig = configCacheManager.get(ShardsConfig.class);
+
+        regListeners(
+            new RegisterOnJoinListener(databaseManager.getPlayerService(), playerFactory),
+            new ShardConsumeListener(shardsConfig, databaseManager.getPlayerService(), shardFactory)
+        );
     }
 
     private void registerCommands() {

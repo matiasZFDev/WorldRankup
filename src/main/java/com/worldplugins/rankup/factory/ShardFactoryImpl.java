@@ -11,6 +11,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.ExtensionMethod;
 import net.minecraft.server.v1_8_R3.NBTTagByte;
+import net.minecraft.server.v1_8_R3.NBTTagInt;
 import org.bukkit.inventory.ItemStack;
 
 @ExtensionMethod({
@@ -35,7 +36,8 @@ public class ShardFactoryImpl implements ShardFactory {
                 "@quantia".to(Integer.valueOf(amount).suffixed())
             )
             .colorMeta()
-            .addReferenceValue(NBTKeys.PHYISIC_SHARD, new NBTTagByte(shardId));
+            .addReferenceValue(NBTKeys.PHYISIC_SHARD_ID, new NBTTagByte(shardId))
+            .addReferenceValue(NBTKeys.PHYISIC_SHARD_AMOUNT, new NBTTagInt(amount));
     }
 
     @Override
@@ -48,6 +50,7 @@ public class ShardFactoryImpl implements ShardFactory {
                 "@quantia".to(Integer.valueOf(amount).suffixed())
             )
             .colorMeta()
-            .addReferenceValue(NBTKeys.PHYISIC_SHARD, new NBTTagByte(shardId));
+            .addReferenceValue(NBTKeys.PHYISIC_LIMIT_ID, new NBTTagByte(shardId))
+            .addReferenceValue(NBTKeys.PHYISIC_LIMIT_AMOUNT, new NBTTagInt(amount));
     }
 }
