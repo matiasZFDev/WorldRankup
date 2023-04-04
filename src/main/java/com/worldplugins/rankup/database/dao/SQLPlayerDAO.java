@@ -136,7 +136,7 @@ public class SQLPlayerDAO implements PlayerDAO {
                 }
             );
             sqlExecutor.update(
-                "UPDATE " + RANK_TABLE + " SET amount=?, capacity=? WHERE player_id=? AND shard_id=?",
+                "UPDATE " + SHARDS_TABLE + " SET amount=?, capacity=? WHERE player_id=? AND shard_id=?",
                 statement -> {
                     players.forEach(player -> {
                         player.getAllShards().forEach(shard -> {
