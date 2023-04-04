@@ -55,7 +55,7 @@ public class SQLPlayerDAO implements PlayerDAO {
     public @NonNull CompletableFuture<Optional<RankupPlayer>> get(@NonNull UUID playerId) {
         return CompletableFuture
             .supplyAsync(() -> sqlExecutor.executeQuery(
-                "SELECT * FROM " + RANK_TABLE + " WHERE player_id=?",
+                "SELECT rank, prestige FROM " + RANK_TABLE + " WHERE player_id=?",
                 statement -> statement.set(1, playerId.getBytes()),
                 result -> result.next()
                     ? Optional.of(new PlayerData(
@@ -69,7 +69,7 @@ public class SQLPlayerDAO implements PlayerDAO {
                     return Optional.empty();
 
                 return sqlExecutor.executeQuery(
-                    "SELECT * FROM " + SHARDS_TABLE + " WHERE player_id=?",
+                    "SELECT shard_id, amount, capacity FROM " + SHARDS_TABLE + " WHERE player_id=?",
                     statement -> statement.set(1, playerId.getBytes()),
                     result -> {
 
