@@ -21,11 +21,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 @ExtensionMethod({
     NBTExtensions.class,
@@ -97,17 +94,22 @@ public class ShardInteractListener implements Listener {
         );
         final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
         final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
-        final Integer addedAmount = playerModel.setShards(shardId, playerModel.getShards(shardId) + amount);
+        final int playerShards = playerModel.getShards(shardId);
 
-        if (addedAmount == 0) {
+        if (playerShards == configShard.getLimit()) {
             player.respond("Ativar-fragmento-limite");
             return;
         }
+
+        final Integer addedAmount = playerShards + amount > configShard.getLimit()
+            ? configShard.getLimit() - playerShards
+            : amount;
 
         if (!addedAmount.equals(amount)) {
             player.giveItems(shardFactory.createShard(shardId, amount - addedAmount));
         }
 
+        playerModel.setShards(shardId, playerShards + amount);
         playerService.update(playerModel);
         player.reduceHandItem();
         player.respond("Fragmento-ativado", message -> message.replace(
