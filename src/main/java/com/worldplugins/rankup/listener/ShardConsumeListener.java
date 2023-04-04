@@ -75,6 +75,8 @@ public class ShardConsumeListener implements Listener {
             player.giveItems(shardFactory.createShard(shardId, amount - addedAmount));
         }
 
+        playerService.update(playerModel);
+        player.reduceHandItem();
         player.respond("Fragmento-ativado", message -> message.replace(
             "@fragmento".to(configShard.getDisplay()),
             "@quantia".to(addedAmount.suffixed())
