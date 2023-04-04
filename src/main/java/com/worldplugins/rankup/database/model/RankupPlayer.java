@@ -21,7 +21,7 @@ public interface RankupPlayer {
     int getShards(byte shardId);
 
     /**
-     * @return the real amount that was added computing its limit
+     * @return the real amount that was set computing its limit
      * */
     int setShards(byte shardId, int amount);
 

@@ -94,9 +94,12 @@ public class GiveShards implements CommandModule {
         if (sendType.equals(GlobalKeys.VIRTUAL_SEND)) {
             final byte shardId = configShard.get().getId();
             final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-            final Integer addedAmount = playerModel.setShards(shardId, playerModel.getShards(shardId) + amount);
+            final int currentAmount = playerModel.getShards(shardId);
+            final Integer setAmount = playerModel.setShards(shardId, playerModel.getShards(shardId) + amount);
             final Integer shardLimit = playerModel.getShardLimit(shardId);
-            final Integer currentAmount = playerModel.getShards(shardId);
+            final Integer addedAmount = currentAmount + amount > setAmount
+                ? setAmount - currentAmount
+                : amount;
 
             playerService.update(playerModel);
 
@@ -113,7 +116,7 @@ public class GiveShards implements CommandModule {
                 "@fragmento".to(configShard.get().getDisplay()),
                 "@quantia-adicionada".to(addedAmount.suffixed()),
                 "@jogador".to(player.getName()),
-                "@quantia-atual".to(currentAmount.suffixed()),
+                "@quantia-atual".to(setAmount.suffixed()),
                 "@limite".to(shardLimit.suffixed())
             ));
             player.respond("Fragmentos-virtuais-recebidos", message -> message.replace(

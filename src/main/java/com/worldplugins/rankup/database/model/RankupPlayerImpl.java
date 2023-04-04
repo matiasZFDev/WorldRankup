@@ -39,10 +39,9 @@ public class RankupPlayerImpl implements RankupPlayer {
     public int setShards(byte shardId, int amount) {
         final Shard shard = shards.find(current -> current.getId() == shardId);
 
-        if (shard.getAmount() + amount > shard.getLimit()) {
-            final int finalAmount = shard.getLimit() - shard.getAmount();
+        if (amount > shard.getLimit()) {
             shard.setAmount(shard.getLimit());
-            return finalAmount;
+            return shard.getLimit();
         }
 
         shard.setAmount(amount);
