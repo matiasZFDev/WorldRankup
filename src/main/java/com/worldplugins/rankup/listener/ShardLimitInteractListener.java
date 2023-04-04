@@ -1,7 +1,9 @@
 package com.worldplugins.rankup.listener;
 
+import com.worldplugins.lib.common.SlotItem;
 import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.lib.extension.NumberFormatExtensions;
+import com.worldplugins.lib.extension.bukkit.InventoryExtensions;
 import com.worldplugins.lib.extension.bukkit.NBTExtensions;
 import com.worldplugins.lib.extension.bukkit.PlayerExtensions;
 import com.worldplugins.rankup.NBTKeys;
@@ -20,16 +22,19 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import java.util.List;
+
 @ExtensionMethod({
     NBTExtensions.class,
     ResponseExtensions.class,
     GenericExtensions.class,
     NumberFormatExtensions.class,
-    PlayerExtensions.class
+    PlayerExtensions.class,
+    InventoryExtensions.class
 })
 
 @RequiredArgsConstructor
-public class ShardLimitConsumeListener implements Listener {
+public class ShardLimitInteractListener implements Listener {
     private final @NonNull ShardsConfig shardsConfig;
     private final @NonNull PlayerService playerService;
     private final @NonNull ShardFactory shardFactory;
@@ -58,6 +63,33 @@ public class ShardLimitConsumeListener implements Listener {
 
         if (!shardsConfig.get().hasShard(shardId)) {
             player.respond("Limite-invalido");
+            return;
+        }
+
+        if (player.isSneaking()) {
+            final List<SlotItem> inventoryLimit = player.getInventory().allWithReference(NBTKeys.PHYISIC_LIMIT_ID);
+
+            if (inventoryLimit.size() == 1 && inventoryLimit.get(0).item().getAmount() == 1) {
+                player.respond("Limite-juntar-nada");
+                return;
+            }
+
+            final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
+            final Integer mergedAmount = inventoryLimit
+                .stream()
+                .mapToInt(item ->
+                    item.item().getReferenceValue(
+                        NBTKeys.PHYISIC_LIMIT_AMOUNT, NBTTagCompound::getInt
+                    ) * item.item().getAmount()
+                )
+                .sum();
+
+            player.getInventory().removeWithReference(NBTKeys.PHYISIC_LIMIT_ID, true);
+            player.giveItems(shardFactory.createLimit(shardId, mergedAmount));
+            player.respond("Limite-junto", message -> message.replace(
+                "@fragmento".to(configShard.getDisplay()),
+                "@quantia".to(mergedAmount.suffixed())
+            ));
             return;
         }
 

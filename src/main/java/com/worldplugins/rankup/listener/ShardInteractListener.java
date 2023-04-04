@@ -1,7 +1,9 @@
 package com.worldplugins.rankup.listener;
 
+import com.worldplugins.lib.common.SlotItem;
 import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.lib.extension.NumberFormatExtensions;
+import com.worldplugins.lib.extension.bukkit.InventoryExtensions;
 import com.worldplugins.lib.extension.bukkit.NBTExtensions;
 import com.worldplugins.lib.extension.bukkit.PlayerExtensions;
 import com.worldplugins.rankup.NBTKeys;
@@ -21,16 +23,21 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
 @ExtensionMethod({
     NBTExtensions.class,
     ResponseExtensions.class,
     GenericExtensions.class,
     NumberFormatExtensions.class,
-    PlayerExtensions.class
+    PlayerExtensions.class,
+    InventoryExtensions.class
 })
 
 @RequiredArgsConstructor
-public class ShardConsumeListener implements Listener {
+public class ShardInteractListener implements Listener {
     private final @NonNull ShardsConfig shardsConfig;
     private final @NonNull PlayerService playerService;
     private final @NonNull ShardFactory shardFactory;
@@ -50,11 +57,6 @@ public class ShardConsumeListener implements Listener {
             NBTKeys.PHYISIC_SHARD_ID,
             NBTTagCompound::getByte
         );
-        final Integer amount = event.getItem().getReferenceValue(
-            NBTKeys.PHYISIC_SHARD_AMOUNT,
-            NBTTagCompound::getInt
-        );
-
         final Player player = event.getPlayer();
 
         if (!shardsConfig.get().hasShard(shardId)) {
@@ -62,6 +64,37 @@ public class ShardConsumeListener implements Listener {
             return;
         }
 
+        if (player.isSneaking()) {
+            final List<SlotItem> inventoryShards = player.getInventory().allWithReference(NBTKeys.PHYISIC_SHARD_ID);
+
+            if (inventoryShards.size() == 1 && inventoryShards.get(0).item().getAmount() == 1) {
+                player.respond("Fragmentos-juntar-nada");
+                return;
+            }
+
+            final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
+            final Integer mergedAmount = inventoryShards
+                .stream()
+                .mapToInt(item ->
+                    item.item().getReferenceValue(
+                        NBTKeys.PHYISIC_SHARD_AMOUNT, NBTTagCompound::getInt
+                    ) * item.item().getAmount()
+                )
+                .sum();
+
+            player.getInventory().removeWithReference(NBTKeys.PHYISIC_SHARD_ID, true);
+            player.giveItems(shardFactory.createShard(shardId, mergedAmount));
+            player.respond("Fragmentos-juntados", message -> message.replace(
+                "@fragmento".to(configShard.getDisplay()),
+                "@quantia".to(mergedAmount.suffixed())
+            ));
+            return;
+        }
+
+        final Integer amount = event.getItem().getReferenceValue(
+            NBTKeys.PHYISIC_SHARD_AMOUNT,
+            NBTTagCompound::getInt
+        );
         final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
         final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
         final Integer addedAmount = playerModel.setShards(shardId, playerModel.getShards(shardId) + amount);

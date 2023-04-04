@@ -132,9 +132,13 @@ Limite-removido: '&bForam removidos &f@quantia-removidax &blimite de @fragmento&
 Limite-setado: '&bForam setados para &f@quantia-setada &bo limite de @fragmento&b do jogador &f@jogador &7(Max. @limite-max)'
 
 Fragmento-invalido: '&cEsse fragmento não é válido. Contate com algum staff.'
+Fragmentos-juntar-nada: '&cNão há fragmentos para juntar.'
+Fragmentos-juntados: '&bForam juntos &f@quantiax &bfragmentos de @fragmento&b.'
 Ativar-fragmento-limite: '&cVocê atingiu o limite máximo desse fragmento.'
 Fragmento-ativado: '&bVocê ativou &f@quantiax &bfragmentos de @fragmento&f!'
 
 Limite-invalido: '&cEsse limite não pertence a nenhum fragmento. Contate com algum staff.'
+Limite-juntar-nada: '&cNão há limite para juntar.'
+Limite-junto: '&bForam juntos &f@quantiax &blimite de @fragmento&b.'
 Ativar-limite-maximo: '&cVocê atingiu a capacidade máxima de limite desse fragmento.'
 Limite-ativado: '&bVocê ativou &f@quantiax &blimite de @fragmento&f!'
