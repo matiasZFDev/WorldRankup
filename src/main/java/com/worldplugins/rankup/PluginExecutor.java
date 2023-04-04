@@ -24,6 +24,7 @@ import com.worldplugins.lib.manager.view.ViewManagerImpl;
 import com.worldplugins.lib.util.SchedulerBuilder;
 import com.worldplugins.rankup.listener.RegisterOnJoinListener;
 import com.worldplugins.rankup.listener.ShardConsumeListener;
+import com.worldplugins.rankup.listener.ShardLimitConsumeListener;
 import com.worldplugins.rankup.view.BagView;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -93,7 +94,8 @@ public class PluginExecutor {
 
         regListeners(
             new RegisterOnJoinListener(databaseManager.getPlayerService(), playerFactory),
-            new ShardConsumeListener(shardsConfig, databaseManager.getPlayerService(), shardFactory)
+            new ShardConsumeListener(shardsConfig, databaseManager.getPlayerService(), shardFactory),
+            new ShardLimitConsumeListener(shardsConfig, databaseManager.getPlayerService(), shardFactory)
         );
     }
 

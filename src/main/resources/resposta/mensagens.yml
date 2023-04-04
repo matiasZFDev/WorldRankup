@@ -134,3 +134,7 @@ Limite-setado: '&bForam setados para &f@quantia-setada &bo limite de @fragmento&
 Fragmento-invalido: '&cEsse fragmento não é válido. Contate com algum staff.'
 Ativar-fragmento-limite: '&cVocê atingiu o limite máximo desse fragmento.'
 Fragmento-ativado: '&bVocê ativou &f@quantiax &bfragmentos de @fragmento&f!'
+
+Limite-invalido: '&cEsse limite não pertence a nenhum fragmento. Contate com algum staff.'
+Ativar-limite-maximo: '&cVocê atingiu a capacidade máxima de limite desse fragmento.'
+Limite-ativado: '&bVocê ativou &f@quantiax &blimite de @fragmento&f!'
