@@ -103,7 +103,7 @@ public class GiveShardLimit implements CommandModule {
             playerModel.setShardLimit(shardId, newLimit);
             playerService.update(playerModel);
 
-            if (addedAmount < amount && mainConfig.get().hasShardCompensation(ShardCompensation.COMMAND)) {
+            if (addedAmount < amount && mainConfig.get().hasLimitCompensation(ShardCompensation.COMMAND)) {
                 final Integer omittedAmount = amount - addedAmount;
                 player.giveItems(shardFactory.createLimit(shardId, omittedAmount));
                 player.respond("Limite-compensacao", message -> message.replace(
