@@ -126,7 +126,7 @@ public class SQLPlayerDAO implements PlayerDAO {
     public void updateAll(@NonNull Collection<RankupPlayer> players) {
         CompletableFuture.runAsync(() -> {
             sqlExecutor.update(
-                "UPDATE TABLE " + RANK_TABLE + " SET rank=?, prestige=? WHERE player_id=?",
+                "UPDATE " + RANK_TABLE + " SET rank=?, prestige=? WHERE player_id=?",
                 statement -> {
                     players.forEach(player -> {
                         statement.set(1, player.getRank());
@@ -136,7 +136,7 @@ public class SQLPlayerDAO implements PlayerDAO {
                 }
             );
             sqlExecutor.update(
-                "UPDATE TABLE " + RANK_TABLE + " SET amount=?, capacity=? WHERE player_id=? AND shard_id=?",
+                "UPDATE " + RANK_TABLE + " SET amount=?, capacity=? WHERE player_id=? AND shard_id=?",
                 statement -> {
                     players.forEach(player -> {
                         player.getAllShards().forEach(shard -> {
