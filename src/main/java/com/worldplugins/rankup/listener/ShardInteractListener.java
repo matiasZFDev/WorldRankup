@@ -59,8 +59,9 @@ public class ShardInteractListener implements Listener {
             NBTTagCompound::getByte
         );
         final Player player = event.getPlayer();
+        final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
 
-        if (!shardsConfig.get().hasShard(shardId)) {
+        if (configShard == null) {
             player.respond("Fragmento-invalido");
             return;
         }
@@ -73,7 +74,6 @@ public class ShardInteractListener implements Listener {
                 return;
             }
 
-            final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
             final Integer mergedAmount = inventoryShards
                 .stream()
                 .mapToInt(item ->
@@ -104,7 +104,6 @@ public class ShardInteractListener implements Listener {
             NBTTagCompound::getInt
         );
         final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-        final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
         final int playerShards = playerModel.getShards(shardId);
 
         if (playerShards == configShard.getLimit()) {

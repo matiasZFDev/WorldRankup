@@ -50,11 +50,7 @@ public class ShardsConfig extends StateConfig<ShardsConfig.Config> {
             this.shards = shards.stream().collect(Collectors.toMap(Shard::getId, Function.identity()));
         }
 
-        public boolean hasShard(byte id) {
-            return shards.containsKey(id);
-        }
-
-        public @NonNull Shard getById(byte id) {
+        public Shard getById(byte id) {
             return shards.get(id);
         }
 

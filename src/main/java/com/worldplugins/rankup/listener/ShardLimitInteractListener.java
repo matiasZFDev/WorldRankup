@@ -64,8 +64,9 @@ public class ShardLimitInteractListener implements Listener {
         );
 
         final Player player = event.getPlayer();
+        final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
 
-        if (!shardsConfig.get().hasShard(shardId)) {
+        if (configShard == null) {
             player.respond("Limite-invalido");
             return;
         }
@@ -78,7 +79,6 @@ public class ShardLimitInteractListener implements Listener {
                 return;
             }
 
-            final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
             final Integer mergedAmount = inventoryLimit
                 .stream()
                 .mapToInt(item ->
@@ -105,7 +105,6 @@ public class ShardLimitInteractListener implements Listener {
         }
 
         final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-        final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
 
         if (playerModel.getShardLimit(shardId) == configShard.getLimit()) {
             player.respond("Ativar-limite-maximo");

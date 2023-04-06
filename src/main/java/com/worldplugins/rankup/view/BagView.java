@@ -9,19 +9,25 @@ import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.lib.extension.NumberFormatExtensions;
 import com.worldplugins.lib.extension.bukkit.ItemExtensions;
 import com.worldplugins.lib.extension.bukkit.NBTExtensions;
+import com.worldplugins.lib.util.ConversationProvider;
 import com.worldplugins.lib.util.MenuItemsUtils;
 import com.worldplugins.lib.view.MenuDataView;
 import com.worldplugins.lib.view.ViewContext;
 import com.worldplugins.lib.view.annotation.ViewOf;
 import com.worldplugins.rankup.NBTKeys;
+import com.worldplugins.rankup.config.MainConfig;
 import com.worldplugins.rankup.config.ShardsConfig;
 import com.worldplugins.rankup.config.menu.BagMenuContainer;
+import com.worldplugins.rankup.conversation.ShardSellConversation;
+import com.worldplugins.rankup.conversation.ShardWithdrawConversation;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
+import com.worldplugins.rankup.factory.ShardFactory;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.ExtensionMethod;
+import net.milkbowl.vault.economy.Economy;
 import net.minecraft.server.v1_8_R3.NBTTagByte;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.entity.Player;
@@ -45,6 +51,10 @@ import java.util.stream.Collectors;
 public class BagView extends MenuDataView<ViewContext> {
     private final @NonNull ShardsConfig shardsConfig;
     private final @NonNull PlayerService playerService;
+    private final @NonNull MainConfig mainConfig;
+    private final @NonNull ConversationProvider conversationProvider;
+    private final Economy economy;
+    private final @NonNull ShardFactory shardFactory;
 
     @Override
     public @NonNull ItemProcessResult processItems(@NonNull Player player, ViewContext context, @NonNull MenuData menuData) {
@@ -80,9 +90,34 @@ public class BagView extends MenuDataView<ViewContext> {
         if (menuItem.getId().equals("Fragmento")) {
             final byte shardId = menuItem.getItem().getReferenceValue(NBTKeys.BAG_SHARD, NBTTagCompound::getByte);
 
-            if (!shardsConfig.get().hasShard(shardId)) {
+            if (shardsConfig.get().getById(shardId) == null) {
                 player.respond("Fragmento-inexistente");
                 return;
+            }
+
+            if (event.isRightClick() && mainConfig.get().isShardWithdrawEnabled()) {
+                player.closeInventory();
+                conversationProvider.create()
+                    .withFirstPrompt(new ShardSellConversation(
+                        shardId, playerService, mainConfig, shardsConfig, economy
+                    ))
+                    .withLocalEcho(false)
+                    .withTimeout(20)
+                    .buildConversation(player)
+                    .begin();
+                return;
+            }
+
+            if (event.isLeftClick() && mainConfig.get().getShardSellOptions() != null) {
+                player.closeInventory();
+                conversationProvider.create()
+                    .withFirstPrompt(new ShardWithdrawConversation(
+                        shardId, playerService, mainConfig, shardsConfig, shardFactory
+                    ))
+                    .withLocalEcho(false)
+                    .withTimeout(20)
+                    .buildConversation(player)
+                    .begin();
             }
         }
     }

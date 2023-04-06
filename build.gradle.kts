@@ -10,6 +10,7 @@ version = "1.0.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://jitpack.io") }
 }
 
 val projectFullName = "${project.name}-${project.version}.jar";
@@ -22,6 +23,9 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.20")
     compileOnly(files("/home/post/dev/bukkit-libs/spigot.jar"))
     compileOnly(files("/home/post/dev/bukkit-libs/worldplugins/WorldLib/WorldLib-LATEST.jar"))
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
+        exclude(group = "org.bukkit", module = "bukkit")
+    }
 }
 
 tasks.getByName<Test>("test") {

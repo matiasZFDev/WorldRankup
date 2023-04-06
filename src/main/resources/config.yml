@@ -58,3 +58,37 @@ Compensacao-limite:
   Hitando-mobs: true
   Matando-mobs: true
   Pescando: true
+
+# Use true ou false para ativar ou desativar opção
+# de retiro na /mochila
+Retirar-fragmentos: true
+
+# Use false para desativar opção ou a seguinte configuração
+# para definir bonus e placeholders
+Venda-fragmentos:
+  # Usar uma tag proveida pelo grupo de bonus (true) ou não (false)
+  Usar-tag: true
+
+  # Tag proveida quando o jogador não pertence a nenhum grupo.
+  # Apenas ativa quando a opção 'Usar-tag' estiver ativa
+  Sem-bonus: '&cSem grupo'
+
+  # Crie uma lista com grupos que contem permissões que irão receber
+  # uma porcentagem de dinheiro adicional na venda de fragmentos.
+  # Precisa ter a opção 'Venda-fragmentos' habilitada
+  Bonus:
+    Rank-1:
+      Permissao: 'worldrankup.rank.rank_1' # A permissão que o jogador precisa ter
+      Prioridade: 1 # O ordem de leitura dos bonus. Maior o numero, um dos primeiros a ser escolhido
+      Bonus: 0.5 # O bonus aplicado *em porcentagem* (+0.5%)
+      Tag: '&b&lA&bprendiz'
+    Rank-2:
+      Permissao: 'worldrankup.rank.rank_2'
+      Prioridade: 2
+      Bonus: 1.25
+      Tag: '&5&lM&5ago'
+    Rank-3:
+      Permissao: 'worldrankup.rank.rank_3'
+      Prioridade: 3
+      Bonus: 2
+      Tag: '&6&lM&6estre'

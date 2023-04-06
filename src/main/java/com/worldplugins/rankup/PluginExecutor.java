@@ -1,10 +1,13 @@
 package com.worldplugins.rankup;
 
+import com.worldplugins.lib.common.ConfigCache;
+import com.worldplugins.lib.config.bukkit.ConfigContainer;
 import com.worldplugins.lib.config.cache.impl.EffectsConfig;
 import com.worldplugins.lib.config.cache.impl.MessagesConfig;
 import com.worldplugins.lib.config.cache.impl.SoundsConfig;
 import com.worldplugins.lib.registry.CommandRegistry;
 import com.worldplugins.lib.registry.ViewRegistry;
+import com.worldplugins.lib.util.ConversationProvider;
 import com.worldplugins.rankup.command.*;
 import com.worldplugins.rankup.config.MainConfig;
 import com.worldplugins.rankup.config.ShardsConfig;
@@ -22,12 +25,14 @@ import com.worldplugins.lib.manager.view.MenuContainerManagerImpl;
 import com.worldplugins.lib.manager.view.ViewManager;
 import com.worldplugins.lib.manager.view.ViewManagerImpl;
 import com.worldplugins.lib.util.SchedulerBuilder;
+import com.worldplugins.rankup.init.EconomyInitializer;
 import com.worldplugins.rankup.listener.RegisterOnJoinListener;
 import com.worldplugins.rankup.listener.ShardInteractListener;
 import com.worldplugins.rankup.listener.ShardLimitInteractListener;
 import com.worldplugins.rankup.view.BagView;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -43,6 +48,7 @@ public class PluginExecutor {
 
     private final @NonNull DatabaseManager databaseManager;
     private final @NonNull ShardFactory shardFactory;
+    private final Economy economy;
 
     public PluginExecutor(@NonNull JavaPlugin plugin) {
         this.plugin = plugin;
@@ -56,6 +62,7 @@ public class PluginExecutor {
         shardFactory = new ShardFactoryImpl(
             configCacheManager.get(MainConfig.class), configCacheManager.get(ShardsConfig.class)
         );
+        economy = new EconomyInitializer(plugin).init();
     }
 
     /**
@@ -86,16 +93,25 @@ public class PluginExecutor {
         }
     }
 
+    private @NonNull <T> T config(Class<? extends ConfigCache<?>> clazz) {
+        return configCacheManager.get(clazz);
+    }
+
     private void registerListeners() {
         final RankupPlayerFactory playerFactory = new NewRankupPlayerFactory(
             configCacheManager.get(ShardsConfig.class)
         );
-        final ShardsConfig shardsConfig = configCacheManager.get(ShardsConfig.class);
 
         regListeners(
             new RegisterOnJoinListener(databaseManager.getPlayerService(), playerFactory),
-            new ShardInteractListener(shardsConfig, databaseManager.getPlayerService(), shardFactory),
-            new ShardLimitInteractListener(shardsConfig, databaseManager.getPlayerService(), shardFactory)
+            new ShardInteractListener(
+                config(ShardsConfig.class), config(MainConfig.class),
+                databaseManager.getPlayerService(), shardFactory
+            ),
+            new ShardLimitInteractListener(
+                config(ShardsConfig.class), config(MainConfig.class),
+                databaseManager.getPlayerService(), shardFactory
+            )
         );
     }
 
@@ -120,9 +136,13 @@ public class PluginExecutor {
 
     private void registerViews() {
         final ViewRegistry registry = new ViewRegistry(viewManager, menuContainerManager, configManager);
-        final ShardsConfig shardsConfig = configCacheManager.get(ShardsConfig.class);
+        final ConversationProvider conversationProvider = new ConversationProvider(plugin);
+
         registry.register(
-            new BagView(shardsConfig, databaseManager.getPlayerService())
+            new BagView(
+                config(ShardsConfig.class), databaseManager.getPlayerService(), config(ShardsConfig.class),
+                conversationProvider, economy, shardFactory
+            )
         );
     }
 
