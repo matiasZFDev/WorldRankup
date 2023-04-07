@@ -71,7 +71,6 @@ public class RemoveShardLimit implements CommandModule {
         final Integer removedAmount = Math.min(playerLimit, amount);
 
         playerModel.setShardLimit(shardId, playerLimit - removedAmount);
-        playerService.update(playerModel);
         sender.respond("Limite-removido", message -> message.replace(
             "@jogador".to(player.getName()),
             "@quantia-removida".to(removedAmount.suffixed()),

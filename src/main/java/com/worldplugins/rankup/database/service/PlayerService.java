@@ -31,6 +31,4 @@ public interface PlayerService {
      * @return a non-null player from the cache. A load check must be executed before
      * */
     @NonNull RankupPlayer getById(@NonNull UUID playerId);
-
-    void update(@NonNull RankupPlayer player);
 }

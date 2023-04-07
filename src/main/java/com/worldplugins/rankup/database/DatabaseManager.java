@@ -32,6 +32,6 @@ public class DatabaseManager {
         final Cache<UUID, RankupPlayer> cache = new SimpleCache<>(new HashMap<>());
         final PlayerDAO playerDao = new DatabaseInitializer(configManager, plugin).init();
         this.shardUpdater = new ShardUpdateQueue(cache, playerDao);
-        this.playerService = new AutoSavingPlayerService(scheduler, playerDao, cache, shardUpdater);
+        this.playerService = new AutoSavingPlayerService(scheduler, playerDao, cache);
     }
 }

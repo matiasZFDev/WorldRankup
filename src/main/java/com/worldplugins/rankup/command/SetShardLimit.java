@@ -74,7 +74,6 @@ public class SetShardLimit implements CommandModule {
         final Integer finalAmount = Math.min(amount, configShard.get().getLimit());
 
         playerModel.setShardLimit(shardId, finalAmount);
-        playerService.update(playerModel);
         sender.respond("Limite-setado", message -> message.replace(
             "@fragmento".to(configShard.get().getDisplay()),
             "@quantia-setada".to(finalAmount.suffixed()),

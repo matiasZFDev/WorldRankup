@@ -1,7 +1,6 @@
 package com.worldplugins.rankup;
 
 import com.worldplugins.lib.common.ConfigCache;
-import com.worldplugins.lib.config.bukkit.ConfigContainer;
 import com.worldplugins.lib.config.cache.impl.EffectsConfig;
 import com.worldplugins.lib.config.cache.impl.MessagesConfig;
 import com.worldplugins.lib.config.cache.impl.SoundsConfig;

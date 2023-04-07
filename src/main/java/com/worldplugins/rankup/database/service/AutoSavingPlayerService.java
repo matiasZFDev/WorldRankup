@@ -21,7 +21,6 @@ public class AutoSavingPlayerService implements PlayerService {
     private final @NonNull SchedulerBuilder scheduler;
     private final @NonNull PlayerDAO playerDao;
     private final @NonNull Cache<UUID, RankupPlayer> loadedPlayers;
-    private final @NonNull ShardBulkUpdater shardUpdater;
 
     @Override
     public @NonNull CompletableFuture<Boolean> isRegistered(@NonNull UUID playerId) {
@@ -52,10 +51,5 @@ public class AutoSavingPlayerService implements PlayerService {
     @Override
     public @NonNull RankupPlayer getById(@NonNull UUID playerId) {
         return loadedPlayers.get(playerId);
-    }
-
-    @Override
-    public void update(@NonNull RankupPlayer player) {
-        shardUpdater.mark(player.getId());
     }
 }

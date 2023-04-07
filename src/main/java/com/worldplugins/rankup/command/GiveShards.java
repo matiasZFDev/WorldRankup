@@ -101,8 +101,6 @@ public class GiveShards implements CommandModule {
                 ? setAmount - currentAmount
                 : amount;
 
-            playerService.update(playerModel);
-
             if (addedAmount < amount && mainConfig.get().hasShardCompensation(ShardCompensation.COMMAND)) {
                 final Integer omittedAmount = amount - addedAmount;
                 player.giveItems(shardFactory.createShard(shardId, omittedAmount));

@@ -84,7 +84,6 @@ public class ShardWithdrawConversation extends StringPrompt {
         }
 
         playerModel.setShards(shardId, playerModel.getShards(shardId) - amount);
-        playerService.update(playerModel);
         player.giveItems(shardFactory.createShard(shardId, amount));
         player.respond("Fragmentos-retirados", message -> message.replace(
             "@quantia".to(amount.suffixed()),

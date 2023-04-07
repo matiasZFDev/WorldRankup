@@ -122,7 +122,6 @@ public class ShardLimitInteractListener implements Listener {
         }
 
         playerModel.setShardLimit(shardId, setAmount);
-        playerService.update(playerModel);
         player.reduceHandItem();
         player.respond("Limite-ativado", message -> message.replace(
             "@fragmento".to(configShard.getDisplay()),

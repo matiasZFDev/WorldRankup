@@ -28,4 +28,6 @@ public interface RankupPlayer {
     int getShardLimit(byte shardId);
 
     void setShardLimit(byte shardId, int amount);
+
+    boolean checkUpdateAndReset();
 }

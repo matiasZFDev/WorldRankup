@@ -120,7 +120,6 @@ public class ShardInteractListener implements Listener {
         }
 
         playerModel.setShards(shardId, playerShards + amount);
-        playerService.update(playerModel);
         player.reduceHandItem();
         player.respond("Fragmento-ativado", message -> message.replace(
             "@fragmento".to(configShard.getDisplay()),

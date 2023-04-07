@@ -1,10 +1,9 @@
 package com.worldplugins.rankup.database.service;
 
+import com.worldplugins.lib.common.Updatable;
 import lombok.NonNull;
 
 import java.util.UUID;
 
-public interface ShardBulkUpdater {
-    void mark(@NonNull UUID playerId);
-    void update();
+public interface ShardBulkUpdater extends Updatable {
 }

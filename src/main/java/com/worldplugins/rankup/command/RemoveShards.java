@@ -71,7 +71,6 @@ public class RemoveShards implements CommandModule {
         final Integer removedAmount = Math.min(playerShards, amount);
 
         playerModel.setShards(shardId, playerShards - removedAmount);
-        playerService.update(playerModel);
         sender.respond("Fragmentos-removidos", message -> message.replace(
             "@jogador".to(player.getName()),
             "@quantia-removida".to(removedAmount.suffixed()),

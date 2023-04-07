@@ -84,7 +84,6 @@ public class ShardSellConversation extends StringPrompt {
         final Double shardsValue = amount * configShard.getPrice();
 
         playerModel.setShards(shardId, playerModel.getShards(shardId) - amount);
-        playerService.update(playerModel);
         economy.depositPlayer(player, shardsValue);
         player.respond("Fragmentos-vendidos", message -> message.replace(
             "@quantia".to(amount.suffixed()),
