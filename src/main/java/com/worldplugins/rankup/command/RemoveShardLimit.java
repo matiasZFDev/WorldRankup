@@ -17,7 +17,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ExtensionMethod({
@@ -46,9 +45,9 @@ public class RemoveShardLimit implements CommandModule {
             return;
         }
 
-        final Optional<ShardsConfig.Config.Shard> configShard = shardsConfig.get().getByName(args[1]);
+        final ShardsConfig.Config.Shard configShard = shardsConfig.get().getByName(args[1]);
 
-        if (!configShard.isPresent()) {
+        if (configShard == null) {
             final List<String> existingShards = shardsConfig.get().getAll()
                 .stream().map(ShardsConfig.Config.Shard::getName)
                 .collect(Collectors.toList());
@@ -64,7 +63,7 @@ public class RemoveShardLimit implements CommandModule {
             return;
         }
 
-        final byte shardId = configShard.get().getId();
+        final byte shardId = configShard.getId();
         final int amount = Integer.parseInt(args[2].numerify());
         final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
         final int playerLimit = playerModel.getShardLimit(shardId);
@@ -74,9 +73,9 @@ public class RemoveShardLimit implements CommandModule {
         sender.respond("Limite-removido", message -> message.replace(
             "@jogador".to(player.getName()),
             "@quantia-removida".to(removedAmount.suffixed()),
-            "@fragmento".to(configShard.get().getDisplay()),
+            "@fragmento".to(configShard.getDisplay()),
             "@limite-atual".to(((Integer) playerModel.getShardLimit(shardId)).suffixed()),
-            "@limite-max".to(((Integer) configShard.get().getLimit()).suffixed())
+            "@limite-max".to(((Integer) configShard.getLimit()).suffixed())
         ));
     }
 }

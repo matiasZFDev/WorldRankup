@@ -116,6 +116,8 @@ Jogador-offline: '&cO jogador &n@jogador&c se encontra offline.'
 Quantia-invalida: '&cInsira uma quantia válida.'
 Fragmento-inexistente: '&cO fragmento &n@fragmento&c não existe. Lista de fragmentos: @existentes'
 Tipo-envio-invalido: '&cO tipo de envio &n@tipo&c não existe. Escolha entre &nfisico&c ou &nvirtual&c.'
+Fragmentos-compensacao: '&bVocê recêbeu &f@quantiax &bfragmentos fisicos de @fragmento&b!'
+Limite-compensacao: '&bVocê recêbeu &f@quantiax &blimite fisico de @fragmento&b!'
 
 Fragmentos-fisicos-enviados: '&bForam enviados &f@quantiax &bfragmentos de @fragmento&b pro jogador &f@jogador&b!'
 Fragmentos-fisicos-recebidos: '&bVocê recêbeu &f@quantiax &bfragmentos fisicos de @fragmento&b!'
@@ -144,3 +146,9 @@ Limite-juntar-max: '&cVocê não pode juntar mais de @quantia-max de limite. Ten
 Limite-junto: '&bForam juntos &f@quantiax &blimite de @fragmento&b.'
 Ativar-limite-maximo: '&cVocê atingiu a capacidade máxima de limite desse fragmento.'
 Limite-ativado: '&bVocê ativou &f@quantiax &blimite de @fragmento&f!'
+
+Fragmento-consultado-invalido: '&cO fragmento que está sendo consultado não existe. Contate com algum staff'
+Fragmento-fisico-ganho: '&bVocê achou &f@quantiax &bfragmentos fisicos de @fragmento&b!'
+Fragmento-virtual-ganho: '&bVocê achou &f@quantiax &bfragmentos de @fragmento&b!'
+Limite-fisico-ganho: '&bVocê achou &f@quantiax &blimite fisico de @fragmento&b!'
+Limite-virtual-ganho: '&bVocê achou &f@quantiax &blimite de @fragmento&b!'

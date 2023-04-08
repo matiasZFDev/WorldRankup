@@ -15,7 +15,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -44,22 +43,24 @@ public class ShardsConfig extends StateConfig<ShardsConfig.Config> {
             private final @NonNull ItemStack limitItem;
         }
 
-        private final @NonNull Map<Byte, Shard> shards;
+        private final @NonNull Map<Byte, Shard> shardsById;
+        private final @NonNull Map<String, Shard> shardsByName;
 
         private Config(@NonNull Collection<Shard> shards) {
-            this.shards = shards.stream().collect(Collectors.toMap(Shard::getId, Function.identity()));
+            this.shardsById = shards.stream().collect(Collectors.toMap(Shard::getId, Function.identity()));
+            this.shardsByName = shards.stream().collect(Collectors.toMap(Shard::getName, Function.identity()));
         }
 
         public Shard getById(byte id) {
-            return shards.get(id);
+            return shardsById.get(id);
         }
 
-        public @NonNull Optional<Shard> getByName(@NonNull String name) {
-            return shards.values().stream().filter(shard -> shard.getName().equals(name)).findFirst();
+        public Shard getByName(@NonNull String name) {
+            return shardsByName.get(name);
         }
 
         public @NonNull Collection<Shard> getAll() {
-            return shards.values().immutable();
+            return shardsById.values().immutable();
         }
     }
 

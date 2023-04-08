@@ -8,6 +8,7 @@ import com.worldplugins.lib.registry.CommandRegistry;
 import com.worldplugins.lib.registry.ViewRegistry;
 import com.worldplugins.lib.util.ConversationProvider;
 import com.worldplugins.rankup.command.*;
+import com.worldplugins.rankup.config.EarnConfig;
 import com.worldplugins.rankup.config.MainConfig;
 import com.worldplugins.rankup.config.ShardsConfig;
 import com.worldplugins.rankup.database.DatabaseManager;
@@ -26,8 +27,10 @@ import com.worldplugins.lib.manager.view.ViewManagerImpl;
 import com.worldplugins.lib.util.SchedulerBuilder;
 import com.worldplugins.rankup.init.EconomyInitializer;
 import com.worldplugins.rankup.listener.RegisterOnJoinListener;
+import com.worldplugins.rankup.listener.ShardEarnListener;
 import com.worldplugins.rankup.listener.ShardInteractListener;
 import com.worldplugins.rankup.listener.ShardLimitInteractListener;
+import com.worldplugins.rankup.listener.earn.EarnExecutor;
 import com.worldplugins.rankup.view.BagView;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -100,6 +103,10 @@ public class PluginExecutor {
         final RankupPlayerFactory playerFactory = new NewRankupPlayerFactory(
             configCacheManager.get(ShardsConfig.class)
         );
+        final EarnExecutor earnExecutor = new EarnExecutor(
+            config(EarnConfig.class), shardFactory, config(ShardsConfig.class),
+            databaseManager.getPlayerService(), config(MainConfig.class)
+        );
 
         regListeners(
             new RegisterOnJoinListener(databaseManager.getPlayerService(), playerFactory),
@@ -110,7 +117,8 @@ public class PluginExecutor {
             new ShardLimitInteractListener(
                 config(ShardsConfig.class), config(MainConfig.class),
                 databaseManager.getPlayerService(), shardFactory
-            )
+            ),
+            new ShardEarnListener(earnExecutor)
         );
     }
 
@@ -147,7 +155,7 @@ public class PluginExecutor {
 
     private void scheduleTasks() {
         final int updateSeconds = 30;
-        scheduler.newTimer(() -> databaseManager.getShardUpdater().update())
+        scheduler.newTimer(databaseManager.getShardUpdater()::update)
             .async(false)
             .delay((long) updateSeconds * 20)
             .period((long) updateSeconds * 20)

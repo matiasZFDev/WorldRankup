@@ -17,7 +17,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ExtensionMethod({
@@ -46,9 +45,9 @@ public class RemoveShards implements CommandModule {
             return;
         }
 
-        final Optional<ShardsConfig.Config.Shard> configShard = shardsConfig.get().getByName(args[1]);
+        final ShardsConfig.Config.Shard configShard = shardsConfig.get().getByName(args[1]);
 
-        if (!configShard.isPresent()) {
+        if (configShard == null) {
             final List<String> existingShards = shardsConfig.get().getAll()
                 .stream().map(ShardsConfig.Config.Shard::getName)
                 .collect(Collectors.toList());
@@ -64,7 +63,7 @@ public class RemoveShards implements CommandModule {
             return;
         }
 
-        final byte shardId = configShard.get().getId();
+        final byte shardId = configShard.getId();
         final int amount = Integer.parseInt(args[2].numerify());
         final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
         final int playerShards = playerModel.getShards(shardId);
@@ -76,7 +75,7 @@ public class RemoveShards implements CommandModule {
             "@quantia-removida".to(removedAmount.suffixed()),
             "@quantia-atual".to(((Integer) playerModel.getShards(shardId)).suffixed()),
             "@limite".to(((Integer) playerModel.getShardLimit(shardId)).suffixed()),
-            "@fragmento".to(configShard.get().getDisplay())
+            "@fragmento".to(configShard.getDisplay())
         ));
     }
 }

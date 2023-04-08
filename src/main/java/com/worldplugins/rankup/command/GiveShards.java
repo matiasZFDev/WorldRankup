@@ -23,7 +23,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ExtensionMethod({
@@ -56,9 +55,9 @@ public class GiveShards implements CommandModule {
             return;
         }
 
-        final Optional<ShardsConfig.Config.Shard> configShard = shardsConfig.get().getByName(args[1]);
+        final ShardsConfig.Config.Shard configShard = shardsConfig.get().getByName(args[1]);
 
-        if (!configShard.isPresent()) {
+        if (configShard == null) {
             final List<String> existingShards = shardsConfig.get().getAll()
                     .stream().map(ShardsConfig.Config.Shard::getName)
                     .collect(Collectors.toList());
@@ -78,21 +77,21 @@ public class GiveShards implements CommandModule {
         final Integer amount = Integer.parseInt(args[2].numerify());
 
         if (sendType.equals(GlobalKeys.PHYISIC_SEND)) {
-            player.giveItems(shardFactory.createShard(configShard.get().getId(), amount));
+            player.giveItems(shardFactory.createShard(configShard.getId(), amount));
             sender.respond("Fragmentos-fisicos-enviados", message -> message.replace(
-                "@fragmento".to(configShard.get().getDisplay()),
+                "@fragmento".to(configShard.getDisplay()),
                 "@quantia".to(amount.suffixed()),
                 "@jogador".to(player.getName())
             ));
             player.respond("Fragmentos-fisicos-recebidos", message -> message.replace(
-                "@fragmento".to(configShard.get().getDisplay()),
+                "@fragmento".to(configShard.getDisplay()),
                 "@quantia".to(amount.suffixed())
             ));
             return;
         }
 
         if (sendType.equals(GlobalKeys.VIRTUAL_SEND)) {
-            final byte shardId = configShard.get().getId();
+            final byte shardId = configShard.getId();
             final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
             final int currentAmount = playerModel.getShards(shardId);
             final Integer setAmount = playerModel.setShards(shardId, playerModel.getShards(shardId) + amount);
@@ -105,20 +104,20 @@ public class GiveShards implements CommandModule {
                 final Integer omittedAmount = amount - addedAmount;
                 player.giveItems(shardFactory.createShard(shardId, omittedAmount));
                 player.respond("Fragmentos-compensacao", message -> message.replace(
-                    "@fragmento".to(configShard.get().getDisplay()),
+                    "@fragmento".to(configShard.getDisplay()),
                     "@quantia".to(omittedAmount.suffixed())
                 ));
             }
 
             sender.respond("Fragmentos-virtuais-enviados", message -> message.replace(
-                "@fragmento".to(configShard.get().getDisplay()),
+                "@fragmento".to(configShard.getDisplay()),
                 "@quantia-adicionada".to(addedAmount.suffixed()),
                 "@jogador".to(player.getName()),
                 "@quantia-atual".to(setAmount.suffixed()),
                 "@limite".to(shardLimit.suffixed())
             ));
             player.respond("Fragmentos-virtuais-recebidos", message -> message.replace(
-                "@fragmento".to(configShard.get().getDisplay()),
+                "@fragmento".to(configShard.getDisplay()),
                 "@quantia".to(addedAmount.suffixed())
             ));
             return;

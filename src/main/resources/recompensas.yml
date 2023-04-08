@@ -1,0 +1,90 @@
+# Definha formas de ganhar fragmentos
+# [Estrutura base]
+#   Tipo: <QUEBRAR_BLOCO | HITAR_MOB | MATAR_MOB | PESCA>
+#   Mundos: ['mundo1', 'mundo2'] * Os mundos permitidos *
+#   Fragmentos: ['nome_fragmento:chance', 'nome_fragmento:chance:quantia'] * Os fragmentos, suas chances e quantia *
+#   Entrega: <fisico | virtual> * O tipo de entrega do fragmento, fisico como o iten, e virtual direto para a mochila *
+#
+# OBS: A quantia padrão do fragmento é 1, caso não for indicada
+# O que muda por cada tipo?
+#
+# [Quebrar bloco] - Indicar os blocos que poderão quebrar e ganhar fragmentos
+# > Os mundos indicam os mundo onde o jogador poderá quebrar os blocos indicados e ganhar fragmentos
+#
+#   Tipo: QUEBRAR_BLOCO
+#   Blocos: ['id:data', 'id:data']
+#
+# [Hitar mob] - Indicar os mobs que poderão hitar e ganhar fragmentos
+# > Os mundos indicam os mundo onde o jogador poderá hitar os mobs indicados e ganhar fragmentos
+#
+#   Tipo: HITAR_MOB
+#   Blocos: ['ZOMBIE', 'CREEPER']
+#
+# [Matar mob] - Indicar os mobs que poderão matar e ganhar fragmentos
+# > Os mundos indicam os mundo onde o jogador poderá matar mobs indicados e ganhar fragmentos
+#
+#   Tipo: MATAR_MOB
+#   Blocos: ['ZOMBIE', 'CREEPER']
+#
+# [Pesca] - Nada
+# > Os mundos indicam os mundo onde o jogador poderá pescar e ganhar fragmentos
+#
+#   Tipo: PESCA
+
+Fragmentos:
+  Bloco-1:
+    Tipo: QUEBRAR_BLOCO
+    Ranks: ['aprendiz', 'mago', 'mestre']
+    Mundos: ['world']
+    Blocos: ['16:0']
+    Fragmentos: ['chumbo:5', 'gelo:1.5', 'fossil:0.1']
+    Entrega: fisico
+  Bloco-2:
+    Tipo: QUEBRAR_BLOCO
+    Ranks: ['aprendiz', 'mago', 'mestre']
+    Mundos: ['world']
+    Blocos: ['14:0']
+    Fragmentos: ['fossil:0.5', 'moeda_ouro:3', 'magma:0.1']
+    Entrega: fisico
+  Hit-mob-1:
+    Tipo: HITAR_MOB
+    Ranks: ['aprendiz', 'mago', 'mestre']
+    Mundos: ['world', 'plotworld']
+    Mobs: ['ZOMBIE', 'SKELETON']
+    Fragmentos: ['chumbo:12.5', 'fossil:3.75']
+    Entrega: fisico
+  Hit-mob-2:
+    Tipo: HITAR_MOB
+    Ranks: ['aprendiz', 'mago', 'mestre']
+    Mundos: ['world', 'plotworld']
+    Mobs: ['PIG_ZOMBIE', 'MAGMA_CUBE']
+    Fragmentos: ['moeda_ouro:10', 'magma:1.5']
+    Entrega: fisico
+  Matar-mob-1:
+    Tipo: MATAR_MOB
+    Ranks: ['aprendiz', 'mago', 'mestre']
+    Mundos: ['world', 'plotworld']
+    Mobs: ['ZOMBIE', 'SKELETON']
+    Fragmentos: ['chumbo:60:5', 'fossil:35:3']
+    Entrega: fisico
+  Matar-mob-2:
+    Tipo: MATAR_MOB
+    Ranks: ['aprendiz', 'mago', 'mestre']
+    Mundos: ['world', 'plotworld']
+    Mobs: ['PIG_ZOMBIE', 'MAGMA_CUBE']
+    Fragmentos: ['moeda_ouro:50:3', 'magma:10:2']
+    Entrega: fisico
+  Pesca-1:
+    Tipo: PESCA
+    Ranks: ['aprendiz', 'mago', 'mestre']
+    Mundos: ['world', 'plotworld', 'pesca']
+    Fragmentos: ['chumbo:3.5', 'gelo:1', 'fossil:0.08', 'moeda_ouro:1', 'magma:0.05']
+    Entrega: virtual
+
+Limite:
+  Pesca-1:
+    Tipo: PESCA
+    Ranks: ['aprendiz', 'mago', 'mestre']
+    Mundos: ['world', 'plotworld', 'pesca']
+    Fragmentos: ['chumbo:5', 'gelo:2.5', 'fossil:0.5', 'moeda_ouro:2', 'magma:0.75']
+    Entrega: fisico

@@ -6,7 +6,6 @@ import com.worldplugins.lib.database.sql.SQLDatabase;
 import com.worldplugins.lib.database.sql.SQLExecutor;
 import com.worldplugins.lib.factory.SQLDatabaseFactoryProducer;
 import com.worldplugins.lib.manager.config.ConfigManager;
-import com.worldplugins.lib.util.SchedulerBuilder;
 import com.worldplugins.rankup.database.dao.PlayerDAO;
 import com.worldplugins.rankup.database.dao.SQLPlayerDAO;
 import lombok.NonNull;
