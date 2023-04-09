@@ -8,8 +8,12 @@ import com.worldplugins.lib.registry.CommandRegistry;
 import com.worldplugins.lib.registry.ViewRegistry;
 import com.worldplugins.lib.util.ConversationProvider;
 import com.worldplugins.rankup.command.*;
+import com.worldplugins.rankup.command.rank.EvolveRank;
+import com.worldplugins.rankup.command.rank.RegressRank;
+import com.worldplugins.rankup.command.rank.SetRank;
 import com.worldplugins.rankup.config.EarnConfig;
 import com.worldplugins.rankup.config.MainConfig;
+import com.worldplugins.rankup.config.RanksConfig;
 import com.worldplugins.rankup.config.ShardsConfig;
 import com.worldplugins.rankup.database.DatabaseManager;
 import com.worldplugins.rankup.factory.NewRankupPlayerFactory;
@@ -26,11 +30,13 @@ import com.worldplugins.lib.manager.view.ViewManager;
 import com.worldplugins.lib.manager.view.ViewManagerImpl;
 import com.worldplugins.lib.util.SchedulerBuilder;
 import com.worldplugins.rankup.init.EconomyInitializer;
+import com.worldplugins.rankup.init.PermissionManagerInitializer;
 import com.worldplugins.rankup.listener.RegisterOnJoinListener;
 import com.worldplugins.rankup.listener.ShardEarnListener;
 import com.worldplugins.rankup.listener.ShardInteractListener;
 import com.worldplugins.rankup.listener.ShardLimitInteractListener;
 import com.worldplugins.rankup.listener.earn.EarnExecutor;
+import com.worldplugins.rankup.manager.EvolutionManager;
 import com.worldplugins.rankup.view.BagView;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +57,7 @@ public class PluginExecutor {
     private final @NonNull DatabaseManager databaseManager;
     private final @NonNull ShardFactory shardFactory;
     private final Economy economy;
+    private final @NonNull EvolutionManager evolutionManager;
 
     public PluginExecutor(@NonNull JavaPlugin plugin) {
         this.plugin = plugin;
@@ -65,6 +72,9 @@ public class PluginExecutor {
             configCacheManager.get(MainConfig.class), configCacheManager.get(ShardsConfig.class)
         );
         economy = new EconomyInitializer(plugin).init();
+        evolutionManager = new EvolutionManager(
+            databaseManager.getPlayerService(), config(RanksConfig.class), new PermissionManagerInitializer().init()
+        );
     }
 
     /**
@@ -135,7 +145,10 @@ public class PluginExecutor {
             new SetShards(shardsConfig, databaseManager.getPlayerService()),
             new GiveShardLimit(shardsConfig, mainConfig, shardFactory, databaseManager.getPlayerService()),
             new RemoveShardLimit(shardsConfig, databaseManager.getPlayerService()),
-            new SetShardLimit(shardsConfig, databaseManager.getPlayerService())
+            new SetShardLimit(shardsConfig, databaseManager.getPlayerService()),
+            new SetRank(evolutionManager, config(RanksConfig.class)),
+            new EvolveRank(databaseManager.getPlayerService(), evolutionManager, config(RanksConfig.class)),
+            new RegressRank(databaseManager.getPlayerService(), evolutionManager, config(RanksConfig.class))
         );
         registry.autoTabCompleter("rankup");
         registry.registerAll();

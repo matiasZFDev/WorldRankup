@@ -152,3 +152,10 @@ Fragmento-fisico-ganho: '&bVocê achou &f@quantiax &bfragmentos fisicos de @frag
 Fragmento-virtual-ganho: '&bVocê achou &f@quantiax &bfragmentos de @fragmento&b!'
 Limite-fisico-ganho: '&bVocê achou &f@quantiax &blimite fisico de @fragmento&b!'
 Limite-virtual-ganho: '&bVocê achou &f@quantiax &blimite de @fragmento&b!'
+
+Setar-rank-invalido: "&cO rank '@rank' não existe."
+Rank-setado: '&bO rank do jogador &f@jogador &bfoi setado para @rank&b.'
+Evoluir-rank-ultimo: '&eO jogador &f@jogador &ese encontra no último rank!'
+Rank-evoluido: '&bO jogador &f@jogador &bevoluiu pro rank @rank&b!'
+Regredir-rank-primeiro: '&eO jogador &f@jogador &ese encontra no primeiro rank'
+Rank-regredido: '&bO jogador &f@jogador &bregrediu pro rank @rank&b.'

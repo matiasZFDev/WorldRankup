@@ -10,6 +10,7 @@ import com.worldplugins.lib.manager.config.ConfigManager;
 import com.worldplugins.lib.registry.ConfigCacheRegistry;
 import com.worldplugins.rankup.config.EarnConfig;
 import com.worldplugins.rankup.config.MainConfig;
+import com.worldplugins.rankup.config.RanksConfig;
 import com.worldplugins.rankup.config.ShardsConfig;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,8 @@ public class ConfigCacheInitializer implements Initializer<ConfigCacheManager> {
             EffectsConfig.class,
             MainConfig.class,
             ShardsConfig.class,
-            EarnConfig.class
+            EarnConfig.class,
+            RanksConfig.class
         );
         cacheManager.update();
         return cacheManager;
