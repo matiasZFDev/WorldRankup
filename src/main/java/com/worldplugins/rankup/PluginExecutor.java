@@ -160,7 +160,7 @@ public class PluginExecutor {
 
         registry.register(
             new BagView(
-                config(ShardsConfig.class), databaseManager.getPlayerService(), config(ShardsConfig.class),
+                config(ShardsConfig.class), databaseManager.getPlayerService(), config(MainConfig.class),
                 conversationProvider, economy, shardFactory
             )
         );
