@@ -27,6 +27,7 @@ public class PlayerCacheUnloadImpl implements CacheUnloadTimer<UUID> {
     public void unloadAll() {
         final Collection<RankupPlayer> updatablePlayers = unloadCountdown.stream()
                 .map(cache::get)
+                .filter(RankupPlayer::checkUpdateAndReset)
                 .collect(Collectors.toList());
         unloadCountdown.forEach(cache::remove);
         unloadCountdown.clear();
