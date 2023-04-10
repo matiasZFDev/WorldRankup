@@ -9,4 +9,5 @@ public interface Cache<K, V> {
     V get(K key);
     boolean containsKey(K key);
     @NonNull Collection<V> getValues();
+    void remove(K key);
 }

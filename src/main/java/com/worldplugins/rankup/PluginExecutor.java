@@ -32,10 +32,7 @@ import com.worldplugins.lib.manager.view.ViewManagerImpl;
 import com.worldplugins.lib.util.SchedulerBuilder;
 import com.worldplugins.rankup.init.EconomyInitializer;
 import com.worldplugins.rankup.init.PermissionManagerInitializer;
-import com.worldplugins.rankup.listener.RegisterOnJoinListener;
-import com.worldplugins.rankup.listener.ShardEarnListener;
-import com.worldplugins.rankup.listener.ShardInteractListener;
-import com.worldplugins.rankup.listener.ShardLimitInteractListener;
+import com.worldplugins.rankup.listener.*;
 import com.worldplugins.rankup.listener.earn.EarnExecutor;
 import com.worldplugins.rankup.manager.EvolutionManager;
 import com.worldplugins.rankup.view.BagView;
@@ -121,7 +118,9 @@ public class PluginExecutor {
         );
 
         regListeners(
-            new RegisterOnJoinListener(databaseManager.getPlayerService(), playerFactory),
+            new LoadOnJoinListener(
+                databaseManager.getPlayerService(), playerFactory, databaseManager.getCacheUnloader()
+            ),
             new ShardInteractListener(
                 config(ShardsConfig.class), config(MainConfig.class),
                 databaseManager.getPlayerService(), shardFactory
@@ -130,7 +129,8 @@ public class PluginExecutor {
                 config(ShardsConfig.class), config(MainConfig.class),
                 databaseManager.getPlayerService(), shardFactory
             ),
-            new ShardEarnListener(earnExecutor)
+            new ShardEarnListener(earnExecutor),
+            new UnloadOnQuitListener(databaseManager.getCacheUnloader())
         );
     }
 
@@ -173,10 +173,16 @@ public class PluginExecutor {
 
     private void scheduleTasks() {
         final int updateSeconds = 30;
+        final int unloadSeconds = 30;
         scheduler.newTimer(databaseManager.getShardUpdater()::update)
             .async(false)
             .delay((long) updateSeconds * 20)
             .period((long) updateSeconds * 20)
+            .run();
+        scheduler.newTimer(databaseManager.getCacheUnloader()::unloadAll)
+            .async(false)
+            .delay(unloadSeconds * 20L)
+            .period(unloadSeconds * 20L)
             .run();
     }
 }

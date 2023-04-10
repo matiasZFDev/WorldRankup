@@ -29,4 +29,9 @@ public class SimpleCache<K, V> implements Cache<K, V> {
     public @NonNull Collection<V> getValues() {
         return data.values();
     }
+
+    @Override
+    public void remove(K key) {
+        data.remove(key);
+    }
 }
