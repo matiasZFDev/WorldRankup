@@ -148,6 +148,6 @@ public class SQLPlayerDAO implements PlayerDAO {
                     });
                 }
             );
-        });
+        }, EXECUTOR);
     }
 }
