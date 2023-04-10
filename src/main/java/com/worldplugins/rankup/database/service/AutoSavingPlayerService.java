@@ -11,6 +11,7 @@ import lombok.experimental.ExtensionMethod;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 @ExtensionMethod({
     UUIDExtensions.class
@@ -21,6 +22,7 @@ public class AutoSavingPlayerService implements PlayerService {
     private final @NonNull SchedulerBuilder scheduler;
     private final @NonNull PlayerDAO playerDao;
     private final @NonNull Cache<UUID, RankupPlayer> loadedPlayers;
+    private final @NonNull Map<UUID, Queue<Consumer<RankupPlayer>>> playerConsumingQueue = new HashMap<>();
 
     @Override
     public @NonNull CompletableFuture<Boolean> isRegistered(@NonNull UUID playerId) {
@@ -34,22 +36,37 @@ public class AutoSavingPlayerService implements PlayerService {
     }
 
     @Override
-    public boolean isLoaded(@NonNull UUID playerId) {
-        return loadedPlayers.containsKey(playerId);
-    }
-
-    @Override
     public void load(@NonNull UUID playerId) {
-        playerDao.get(playerId).thenAccept(player -> scheduler.newTask(() -> {
-            if (!player.isPresent())
-                return;
+        playerDao.get(playerId)
+            .thenAccept(player -> scheduler.newTask(() -> {
+                if (!player.isPresent())
+                    return;
 
-            loadedPlayers.set(playerId, player.get());
-        }).run());
+                final Queue<Consumer<RankupPlayer>> pendingTask = playerConsumingQueue.get(playerId);
+
+                loadedPlayers.set(playerId, player.get());
+
+                if (pendingTask != null) {
+                    pendingTask.forEach(task -> task.accept(player.get()));
+                    playerConsumingQueue.remove(playerId);
+                }
+            }).run());
     }
 
     @Override
-    public @NonNull RankupPlayer getById(@NonNull UUID playerId) {
+    public RankupPlayer getById(@NonNull UUID playerId) {
         return loadedPlayers.get(playerId);
+    }
+
+    @Override
+    public void consumePlayer(@NonNull UUID playerId, @NonNull Consumer<RankupPlayer> consumer) {
+        final RankupPlayer player = getById(playerId);
+
+        if (player != null) {
+            consumer.accept(player);
+            return;
+        }
+
+        playerConsumingQueue.computeIfAbsent(playerId, (x) -> new ArrayDeque<>()).add(consumer);
     }
 }

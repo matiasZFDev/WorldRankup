@@ -5,7 +5,6 @@ import com.worldplugins.lib.command.annotation.ArgsChecker;
 import com.worldplugins.lib.command.annotation.Command;
 import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.rankup.config.RanksConfig;
-import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
 import com.worldplugins.rankup.manager.EvolutionManager;
@@ -44,19 +43,20 @@ public class RegressRank implements CommandModule {
             return;
         }
 
-        final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-        final RanksConfig.Config.Rank configRank = ranksConfig.get().getById(playerModel.getRank());
-        final RanksConfig.Config.Rank previousRank = ranksConfig.get().getPrevious(configRank.getId());
+        playerService.consumePlayer(player.getUniqueId(), playerModel -> {
+            final RanksConfig.Config.Rank configRank = ranksConfig.get().getById(playerModel.getRank());
+            final RanksConfig.Config.Rank previousRank = ranksConfig.get().getPrevious(configRank.getId());
 
-        if (previousRank == null) {
-            sender.respond("Regredir-rank-primeiro");
-            return;
-        }
+            if (previousRank == null) {
+                sender.respond("Regredir-rank-primeiro");
+                return;
+            }
 
-        evolutionManager.setRank(player, previousRank.getId());
-        sender.respond("Rank-regredido", message -> message.replace(
-            "@jogador".to(player.getName()),
-            "@rank".to(previousRank.getDisplay())
-        ));
+            evolutionManager.setRank(player, previousRank.getId());
+            sender.respond("Rank-regredido", message -> message.replace(
+                "@jogador".to(player.getName()),
+                "@rank".to(previousRank.getDisplay())
+            ));
+        });
     }
 }

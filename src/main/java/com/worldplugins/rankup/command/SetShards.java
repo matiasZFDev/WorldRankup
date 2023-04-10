@@ -8,7 +8,6 @@ import com.worldplugins.lib.extension.NumberFormatExtensions;
 import com.worldplugins.lib.extension.bukkit.ItemExtensions;
 import com.worldplugins.lib.extension.bukkit.PlayerExtensions;
 import com.worldplugins.rankup.config.ShardsConfig;
-import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
 import lombok.NonNull;
@@ -67,19 +66,20 @@ public class SetShards implements CommandModule {
             return;
         }
 
-        final int amount = Integer.parseInt(args[2].numerify());
-        final byte shardId = configShard.getId();
-        final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-        final Integer finalAmount = playerModel.setShards(shardId, amount);
-        final Integer shardLimit = playerModel.getShardLimit(shardId);
-        final Integer currentAmount = playerModel.getShards(shardId);
+        playerService.consumePlayer(player.getUniqueId(), playerModel -> {
+            final int amount = Integer.parseInt(args[2].numerify());
+            final byte shardId = configShard.getId();
+            final Integer finalAmount = playerModel.setShards(shardId, amount);
+            final Integer shardLimit = playerModel.getShardLimit(shardId);
+            final Integer currentAmount = playerModel.getShards(shardId);
 
-        sender.respond("Fragmentos-setados", message -> message.replace(
-            "@fragmento".to(configShard.getDisplay()),
-            "@quantia-setada".to(finalAmount.suffixed()),
-            "@jogador".to(player.getName()),
-            "@quantia-atual".to(currentAmount.suffixed()),
-            "@limite".to(shardLimit.suffixed())
-        ));
+            sender.respond("Fragmentos-setados", message -> message.replace(
+                "@fragmento".to(configShard.getDisplay()),
+                "@quantia-setada".to(finalAmount.suffixed()),
+                "@jogador".to(player.getName()),
+                "@quantia-atual".to(currentAmount.suffixed()),
+                "@limite".to(shardLimit.suffixed())
+            ));
+        });
     }
 }

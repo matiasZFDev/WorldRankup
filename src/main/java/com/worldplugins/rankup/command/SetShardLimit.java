@@ -8,7 +8,6 @@ import com.worldplugins.lib.extension.NumberFormatExtensions;
 import com.worldplugins.lib.extension.bukkit.ItemExtensions;
 import com.worldplugins.lib.extension.bukkit.PlayerExtensions;
 import com.worldplugins.rankup.config.ShardsConfig;
-import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
 import lombok.NonNull;
@@ -67,17 +66,18 @@ public class SetShardLimit implements CommandModule {
             return;
         }
 
-        final int amount = Integer.parseInt(args[2].numerify());
-        final byte shardId = configShard.getId();
-        final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-        final Integer finalAmount = Math.min(amount, configShard.getLimit());
+        playerService.consumePlayer(player.getUniqueId(), playerModel -> {
+            final int amount = Integer.parseInt(args[2].numerify());
+            final byte shardId = configShard.getId();
+            final Integer finalAmount = Math.min(amount, configShard.getLimit());
 
-        playerModel.setShardLimit(shardId, finalAmount);
-        sender.respond("Limite-setado", message -> message.replace(
-            "@fragmento".to(configShard.getDisplay()),
-            "@quantia-setada".to(finalAmount.suffixed()),
-            "@jogador".to(player.getName()),
-            "@limite-max".to(((Integer) configShard.getLimit()).suffixed())
-        ));
+            playerModel.setShardLimit(shardId, finalAmount);
+            sender.respond("Limite-setado", message -> message.replace(
+                "@fragmento".to(configShard.getDisplay()),
+                "@quantia-setada".to(finalAmount.suffixed()),
+                "@jogador".to(player.getName()),
+                "@limite-max".to(((Integer) configShard.getLimit()).suffixed())
+            ));
+        });
     }
 }

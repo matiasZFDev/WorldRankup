@@ -99,11 +99,15 @@ public class ShardInteractListener implements Listener {
             return;
         }
 
+        final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
+
+        if (playerModel == null)
+            return;
+
         final Integer amount = event.getItem().getReferenceValue(
             NBTKeys.PHYISIC_SHARD_AMOUNT,
             NBTTagCompound::getInt
         );
-        final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
         final int playerShards = playerModel.getShards(shardId);
 
         if (playerShards == configShard.getLimit()) {

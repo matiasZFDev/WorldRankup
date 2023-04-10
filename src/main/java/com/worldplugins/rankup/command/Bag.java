@@ -31,12 +31,6 @@ public class Bag implements CommandModule {
     @Override
     public void execute(@NonNull CommandSender sender, @NonNull String[] args) {
         final Player player = (Player) sender;
-
-        if (!playerService.isLoaded(player.getUniqueId())) {
-            player.respond("Carregando-jogador");
-            return;
-        }
-
-        player.openView(BagView.class);
+        playerService.consumePlayer(player.getUniqueId(), playerModel -> player.openView(BagView.class));
     }
 }

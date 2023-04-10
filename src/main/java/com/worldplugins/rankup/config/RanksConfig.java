@@ -13,10 +13,11 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-@ExtensionMethod({
+@ExtensionMethod(value = {
     ConfigurationExtensions.class
-})
+}, suppressBaseMethods = false)
 
 @Config(path = "ranks")
 public class RanksConfig extends StateConfig<RanksConfig.Config> {
@@ -95,7 +96,7 @@ public class RanksConfig extends StateConfig<RanksConfig.Config> {
                     ? null
                     : new Config.Rank.Evolution(
                         section.numberFormat("Dinheiro"),
-                        section.getStringList("Fragmentos").stream()
+                    ((Stream<String>) section.getStringList("Fragmentos").stream())
                             .map(shardEntry -> {
                                 final String[] shardData = shardEntry.split(":");
                                 final String name = shardData[0];

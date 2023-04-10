@@ -39,6 +39,10 @@ public final class EarnExecutor {
     ) {
         type.getHandler().getEarns(earnConfig, earnType).ifNotNull(earns -> earns.forEach(earn -> {
             final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
+
+            if (playerModel == null)
+                return;
+
             final String rankName = String.valueOf(playerModel.getRank());
 
             if (!earn.getRanks().contains(rankName))

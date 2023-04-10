@@ -5,6 +5,7 @@ import lombok.NonNull;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public interface PlayerService {
     /**
@@ -18,17 +19,17 @@ public interface PlayerService {
     void register(@NonNull RankupPlayer player);
 
     /**
-     * @return true if the player is loaded in cache, false if not
-     * */
-    boolean isLoaded(@NonNull UUID playerId);
-
-    /**
      * Loads the player from the cache to the database
      * */
     void load(@NonNull UUID playerId);
 
     /**
-     * @return a non-null player from the cache. A load check must be executed before
+     * @return A nullable player from the cache.
      * */
-    @NonNull RankupPlayer getById(@NonNull UUID playerId);
+    RankupPlayer getById(@NonNull UUID playerId);
+
+    /**
+     * Consumes a player. It can be instantly or delayed, dependings on its load
+     * */
+    void consumePlayer(@NonNull UUID playerId, @NonNull Consumer<RankupPlayer> player);
 }

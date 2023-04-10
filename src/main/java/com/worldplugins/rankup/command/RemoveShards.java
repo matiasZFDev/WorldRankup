@@ -6,7 +6,6 @@ import com.worldplugins.lib.command.annotation.Command;
 import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.lib.extension.NumberFormatExtensions;
 import com.worldplugins.rankup.config.ShardsConfig;
-import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
 import lombok.NonNull;
@@ -63,19 +62,20 @@ public class RemoveShards implements CommandModule {
             return;
         }
 
-        final byte shardId = configShard.getId();
-        final int amount = Integer.parseInt(args[2].numerify());
-        final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-        final int playerShards = playerModel.getShards(shardId);
-        final Integer removedAmount = Math.min(playerShards, amount);
+        playerService.consumePlayer(player.getUniqueId(), playerModel -> {
+            final byte shardId = configShard.getId();
+            final int amount = Integer.parseInt(args[2].numerify());
+            final int playerShards = playerModel.getShards(shardId);
+            final Integer removedAmount = Math.min(playerShards, amount);
 
-        playerModel.setShards(shardId, playerShards - removedAmount);
-        sender.respond("Fragmentos-removidos", message -> message.replace(
-            "@jogador".to(player.getName()),
-            "@quantia-removida".to(removedAmount.suffixed()),
-            "@quantia-atual".to(((Integer) playerModel.getShards(shardId)).suffixed()),
-            "@limite".to(((Integer) playerModel.getShardLimit(shardId)).suffixed()),
-            "@fragmento".to(configShard.getDisplay())
-        ));
+            playerModel.setShards(shardId, playerShards - removedAmount);
+            sender.respond("Fragmentos-removidos", message -> message.replace(
+                "@jogador".to(player.getName()),
+                "@quantia-removida".to(removedAmount.suffixed()),
+                "@quantia-atual".to(((Integer) playerModel.getShards(shardId)).suffixed()),
+                "@limite".to(((Integer) playerModel.getShardLimit(shardId)).suffixed()),
+                "@fragmento".to(configShard.getDisplay())
+            ));
+        });
     }
 }

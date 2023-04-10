@@ -106,6 +106,9 @@ public class ShardLimitInteractListener implements Listener {
 
         final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
 
+        if (playerModel == null)
+            return;
+
         if (playerModel.getShardLimit(shardId) == configShard.getLimit()) {
             player.respond("Ativar-limite-maximo");
             return;

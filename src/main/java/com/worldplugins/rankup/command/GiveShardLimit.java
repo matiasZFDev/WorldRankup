@@ -11,7 +11,6 @@ import com.worldplugins.rankup.GlobalKeys;
 import com.worldplugins.rankup.config.MainConfig;
 import com.worldplugins.rankup.config.ShardsConfig;
 import com.worldplugins.rankup.config.data.ShardCompensation;
-import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
 import com.worldplugins.rankup.factory.ShardFactory;
@@ -91,36 +90,37 @@ public class GiveShardLimit implements CommandModule {
         }
 
         if (sendType.equals(GlobalKeys.VIRTUAL_SEND)) {
-            final byte shardId = configShard.getId();
-            final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-            final Integer currentLimit = playerModel.getShardLimit(shardId);
-            final Integer newLimit = Math.min(currentLimit + amount, configShard.getLimit());
-            final Integer addedAmount = currentLimit + amount != newLimit
-                ? newLimit - currentLimit
-                : amount;
+            playerService.consumePlayer(player.getUniqueId(), playerModel -> {
+                final byte shardId = configShard.getId();
+                final Integer currentLimit = playerModel.getShardLimit(shardId);
+                final Integer newLimit = Math.min(currentLimit + amount, configShard.getLimit());
+                final Integer addedAmount = currentLimit + amount != newLimit
+                    ? newLimit - currentLimit
+                    : amount;
 
-            playerModel.setShardLimit(shardId, newLimit);
+                playerModel.setShardLimit(shardId, newLimit);
 
-            if (addedAmount < amount && mainConfig.get().hasLimitCompensation(ShardCompensation.COMMAND)) {
-                final Integer omittedAmount = amount - addedAmount;
-                player.giveItems(shardFactory.createLimit(shardId, omittedAmount));
-                player.respond("Limite-compensacao", message -> message.replace(
+                if (addedAmount < amount && mainConfig.get().hasLimitCompensation(ShardCompensation.COMMAND)) {
+                    final Integer omittedAmount = amount - addedAmount;
+                    player.giveItems(shardFactory.createLimit(shardId, omittedAmount));
+                    player.respond("Limite-compensacao", message -> message.replace(
+                        "@fragmento".to(configShard.getDisplay()),
+                        "@quantia".to(omittedAmount.suffixed())
+                    ));
+                }
+
+                sender.respond("Limite-virtual-enviado", message -> message.replace(
                     "@fragmento".to(configShard.getDisplay()),
-                    "@quantia".to(omittedAmount.suffixed())
+                    "@quantia-adicionada".to(addedAmount.suffixed()),
+                    "@jogador".to(player.getName()),
+                    "@limite-atual".to(newLimit.suffixed()),
+                    "@limite-max".to(((Integer) configShard.getLimit()).suffixed())
                 ));
-            }
-
-            sender.respond("Limite-virtual-enviado", message -> message.replace(
-                "@fragmento".to(configShard.getDisplay()),
-                "@quantia-adicionada".to(addedAmount.suffixed()),
-                "@jogador".to(player.getName()),
-                "@limite-atual".to(newLimit.suffixed()),
-                "@limite-max".to(((Integer) configShard.getLimit()).suffixed())
-            ));
-            player.respond("Limite-virtual-recebido", message -> message.replace(
-                "@fragmento".to(configShard.getDisplay()),
-                "@quantia".to(addedAmount.suffixed())
-            ));
+                player.respond("Limite-virtual-recebido", message -> message.replace(
+                    "@fragmento".to(configShard.getDisplay()),
+                    "@quantia".to(addedAmount.suffixed())
+                ));
+            });
             return;
         }
 

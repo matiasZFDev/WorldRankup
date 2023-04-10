@@ -5,7 +5,6 @@ import com.worldplugins.lib.command.annotation.ArgsChecker;
 import com.worldplugins.lib.command.annotation.Command;
 import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.rankup.config.RanksConfig;
-import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
 import com.worldplugins.rankup.manager.EvolutionManager;
@@ -44,21 +43,22 @@ public class EvolveRank implements CommandModule {
             return;
         }
 
-        final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-        final RanksConfig.Config.Rank configRank = ranksConfig.get().getById(playerModel.getRank());
+        playerService.consumePlayer(player.getUniqueId(), playerModel -> {
+            final RanksConfig.Config.Rank configRank = ranksConfig.get().getById(playerModel.getRank());
 
-        if (configRank.getEvolution() == null) {
-            sender.respond("Evoluir-rank-ultimo");
-            return;
-        }
+            if (configRank.getEvolution() == null) {
+                sender.respond("Evoluir-rank-ultimo");
+                return;
+            }
 
-        final RanksConfig.Config.Rank nextRank = ranksConfig.get().getByName(
-            configRank.getEvolution().getNextRankName()
-        );
-        evolutionManager.setRank(player, nextRank.getId());
-        sender.respond("Rank-evoluido", message -> message.replace(
-            "@jogador".to(player.getName()),
-            "@rank".to(nextRank.getDisplay())
-        ));
+            final RanksConfig.Config.Rank nextRank = ranksConfig.get().getByName(
+                configRank.getEvolution().getNextRankName()
+            );
+            evolutionManager.setRank(player, nextRank.getId());
+            sender.respond("Rank-evoluido", message -> message.replace(
+                "@jogador".to(player.getName()),
+                "@rank".to(nextRank.getDisplay())
+            ));
+        });
     }
 }

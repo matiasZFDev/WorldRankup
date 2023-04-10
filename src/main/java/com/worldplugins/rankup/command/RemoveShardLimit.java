@@ -6,7 +6,6 @@ import com.worldplugins.lib.command.annotation.Command;
 import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.lib.extension.NumberFormatExtensions;
 import com.worldplugins.rankup.config.ShardsConfig;
-import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
 import lombok.NonNull;
@@ -62,20 +61,20 @@ public class RemoveShardLimit implements CommandModule {
             sender.respond("Quantia-invalida");
             return;
         }
+        playerService.consumePlayer(player.getUniqueId(), playerModel -> {
+            final byte shardId = configShard.getId();
+            final int amount = Integer.parseInt(args[2].numerify());
+            final int playerLimit = playerModel.getShardLimit(shardId);
+            final Integer removedAmount = Math.min(playerLimit, amount);
 
-        final byte shardId = configShard.getId();
-        final int amount = Integer.parseInt(args[2].numerify());
-        final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-        final int playerLimit = playerModel.getShardLimit(shardId);
-        final Integer removedAmount = Math.min(playerLimit, amount);
-
-        playerModel.setShardLimit(shardId, playerLimit - removedAmount);
-        sender.respond("Limite-removido", message -> message.replace(
-            "@jogador".to(player.getName()),
-            "@quantia-removida".to(removedAmount.suffixed()),
-            "@fragmento".to(configShard.getDisplay()),
-            "@limite-atual".to(((Integer) playerModel.getShardLimit(shardId)).suffixed()),
-            "@limite-max".to(((Integer) configShard.getLimit()).suffixed())
-        ));
+            playerModel.setShardLimit(shardId, playerLimit - removedAmount);
+            sender.respond("Limite-removido", message -> message.replace(
+                "@jogador".to(player.getName()),
+                "@quantia-removida".to(removedAmount.suffixed()),
+                "@fragmento".to(configShard.getDisplay()),
+                "@limite-atual".to(((Integer) playerModel.getShardLimit(shardId)).suffixed()),
+                "@limite-max".to(((Integer) configShard.getLimit()).suffixed())
+            ));
+        });
     }
 }
