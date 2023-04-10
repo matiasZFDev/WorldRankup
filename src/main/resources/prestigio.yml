@@ -1,0 +1,17 @@
+Tipo: INDIVIDUAL
+Prestigios:
+  Prestigio-0:
+    Prestigio: 0
+    Display: '&6&l0'
+    Grupo: 'prestigio0'
+    Proximo: 1
+  Prestigio-1:
+    Prestigio: 1
+    Display: '&6&l1'
+    Grupo: 'prestigio1'
+    Proximo: 2
+  Prestigio-2:
+    Prestigio: 2
+    Display: '&6&l2'
+    Grupo: 'prestigio2'
+    Proximo: false

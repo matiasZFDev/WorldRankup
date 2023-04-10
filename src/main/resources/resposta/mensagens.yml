@@ -159,3 +159,10 @@ Evoluir-rank-ultimo: '&eO jogador &f@jogador &ese encontra no último rank!'
 Rank-evoluido: '&bO jogador &f@jogador &bevoluiu pro rank @rank&b!'
 Regredir-rank-primeiro: '&eO jogador &f@jogador &ese encontra no primeiro rank'
 Rank-regredido: '&bO jogador &f@jogador &bregrediu pro rank @rank&b.'
+
+Setar-prestigio-invalido: "&cO rank '@rank' não existe."
+Prestigio-setado: '&bO rank do jogador &f@jogador &bfoi setado para @rank&b.'
+Evoluir-prestigio-ultimo: '&eO jogador &f@jogador &ese encontra no último rank!'
+Prestigio-evoluido: '&bO jogador &f@jogador &bevoluiu pro rank @rank&b!'
+Regredir-prestigio-primeiro: '&eO jogador &f@jogador &ese encontra no primeiro rank'
+Prestigio-regredido: '&bO jogador &f@jogador &bregrediu pro rank @rank&b.'

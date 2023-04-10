@@ -1,4 +1,4 @@
-package com.worldplugins.rankup.command;
+package com.worldplugins.rankup.command.shard;
 
 import com.worldplugins.lib.command.CommandModule;
 import com.worldplugins.lib.command.annotation.ArgsChecker;

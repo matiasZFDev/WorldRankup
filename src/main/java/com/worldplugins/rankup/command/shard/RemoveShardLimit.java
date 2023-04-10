@@ -1,12 +1,10 @@
-package com.worldplugins.rankup.command;
+package com.worldplugins.rankup.command.shard;
 
 import com.worldplugins.lib.command.CommandModule;
 import com.worldplugins.lib.command.annotation.ArgsChecker;
 import com.worldplugins.lib.command.annotation.Command;
 import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.lib.extension.NumberFormatExtensions;
-import com.worldplugins.lib.extension.bukkit.ItemExtensions;
-import com.worldplugins.lib.extension.bukkit.PlayerExtensions;
 import com.worldplugins.rankup.config.ShardsConfig;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
@@ -23,28 +21,26 @@ import java.util.stream.Collectors;
 @ExtensionMethod({
     ResponseExtensions.class,
     GenericExtensions.class,
-    NumberFormatExtensions.class,
-    ItemExtensions.class,
-    PlayerExtensions.class
+    NumberFormatExtensions.class
 })
 
 @RequiredArgsConstructor
-public class SetShardLimit implements CommandModule {
+public class RemoveShardLimit implements CommandModule {
     private final @NonNull ShardsConfig shardsConfig;
     private final @NonNull PlayerService playerService;
 
     @Command(
-        name = "rankup setarlimite",
-        permission = "worldrankup.setarlimite",
+        name = "rankup removerlimite",
+        permission = "worldrankup.removerlimite",
         argsChecks = {@ArgsChecker(size = 3)},
-        usage = "&cArgumentos invalidos. Digite /rankup setarlimite <jogador> <fragmento> <quantia>"
+        usage = "&cArgumentos invalidos. Digite /rankup removerlimite <jogador> <fragmento> <quantia>"
     )
     @Override
     public void execute(@NonNull CommandSender sender, @NonNull String[] args) {
         final Player player = Bukkit.getPlayer(args[0]);
 
         if (player == null) {
-            sender.respond("Jogador-offline", message -> message.replace("@jogador".to(args[0])));
+            sender.respond("Jogador-offline");
             return;
         }
 
@@ -52,8 +48,8 @@ public class SetShardLimit implements CommandModule {
 
         if (configShard == null) {
             final List<String> existingShards = shardsConfig.get().getAll()
-                    .stream().map(ShardsConfig.Config.Shard::getName)
-                    .collect(Collectors.toList());
+                .stream().map(ShardsConfig.Config.Shard::getName)
+                .collect(Collectors.toList());
             sender.respond("Fragmento-inexistente", message -> message.replace(
                 "@fragmento".to(args[1]),
                 "@existentes".to(existingShards.toString())
@@ -65,17 +61,18 @@ public class SetShardLimit implements CommandModule {
             sender.respond("Quantia-invalida");
             return;
         }
-
         playerService.consumePlayer(player.getUniqueId(), playerModel -> {
-            final int amount = Integer.parseInt(args[2].numerify());
             final byte shardId = configShard.getId();
-            final Integer finalAmount = Math.min(amount, configShard.getLimit());
+            final int amount = Integer.parseInt(args[2].numerify());
+            final int playerLimit = playerModel.getShardLimit(shardId);
+            final Integer removedAmount = Math.min(playerLimit, amount);
 
-            playerModel.setShardLimit(shardId, finalAmount);
-            sender.respond("Limite-setado", message -> message.replace(
-                "@fragmento".to(configShard.getDisplay()),
-                "@quantia-setada".to(finalAmount.suffixed()),
+            playerModel.setShardLimit(shardId, playerLimit - removedAmount);
+            sender.respond("Limite-removido", message -> message.replace(
                 "@jogador".to(player.getName()),
+                "@quantia-removida".to(removedAmount.suffixed()),
+                "@fragmento".to(configShard.getDisplay()),
+                "@limite-atual".to(((Integer) playerModel.getShardLimit(shardId)).suffixed()),
                 "@limite-max".to(((Integer) configShard.getLimit()).suffixed())
             ));
         });

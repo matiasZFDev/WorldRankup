@@ -8,13 +8,14 @@ import com.worldplugins.lib.registry.CommandRegistry;
 import com.worldplugins.lib.registry.ViewRegistry;
 import com.worldplugins.lib.util.ConversationProvider;
 import com.worldplugins.rankup.command.*;
+import com.worldplugins.rankup.command.prestige.EvolvePrestige;
+import com.worldplugins.rankup.command.prestige.RegressPrestige;
+import com.worldplugins.rankup.command.prestige.SetPrestige;
 import com.worldplugins.rankup.command.rank.EvolveRank;
 import com.worldplugins.rankup.command.rank.RegressRank;
 import com.worldplugins.rankup.command.rank.SetRank;
-import com.worldplugins.rankup.config.EarnConfig;
-import com.worldplugins.rankup.config.MainConfig;
-import com.worldplugins.rankup.config.RanksConfig;
-import com.worldplugins.rankup.config.ShardsConfig;
+import com.worldplugins.rankup.command.shard.*;
+import com.worldplugins.rankup.config.*;
 import com.worldplugins.rankup.database.DatabaseManager;
 import com.worldplugins.rankup.factory.NewRankupPlayerFactory;
 import com.worldplugins.rankup.factory.RankupPlayerFactory;
@@ -73,7 +74,8 @@ public class PluginExecutor {
         );
         economy = new EconomyInitializer(plugin).init();
         evolutionManager = new EvolutionManager(
-            databaseManager.getPlayerService(), config(RanksConfig.class), new PermissionManagerInitializer().init()
+            databaseManager.getPlayerService(), config(RanksConfig.class), config(PrestigeConfig.class),
+            new PermissionManagerInitializer().init()
         );
     }
 
@@ -148,7 +150,10 @@ public class PluginExecutor {
             new SetShardLimit(shardsConfig, databaseManager.getPlayerService()),
             new SetRank(evolutionManager, config(RanksConfig.class)),
             new EvolveRank(databaseManager.getPlayerService(), evolutionManager, config(RanksConfig.class)),
-            new RegressRank(databaseManager.getPlayerService(), evolutionManager, config(RanksConfig.class))
+            new RegressRank(databaseManager.getPlayerService(), evolutionManager, config(RanksConfig.class)),
+            new SetPrestige(evolutionManager, config(RanksConfig.class)),
+            new EvolvePrestige(databaseManager.getPlayerService(), evolutionManager, config(RanksConfig.class)),
+            new RegressPrestige(databaseManager.getPlayerService(), evolutionManager, config(RanksConfig.class))
         );
         registry.autoTabCompleter("rankup");
         registry.registerAll();
