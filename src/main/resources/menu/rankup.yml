@@ -1,0 +1,33 @@
+Nome: 'Evoluir de rank'
+Linhas: 5
+Data:
+  Status-suficiente: '&a✔'
+  Status-insuficiente: '&c✖'
+  Formato-fragmento: '&8* @fragmento &7(@quantia)'
+Conteudo:
+  Info:
+    Slot: 13
+    Id: 1 # Iten do rank
+    Nome: '@rank'
+    Lore:
+      - '&8Seu próximo rank.'
+      - '&7Veja os requisitos'
+      - '&7em baixo.'
+      - ''
+      - ' &8* &fCoins: &2$&a@coins-totais&7/&2$&a@coins-precisas @coins-status'
+      - ' @@fragmentos'
+      - ''
+  Confirmar:
+    Slot: 30
+    Id: 351
+    Data: 10
+    Nome: '&a&lConfirmar'
+    Lore:
+      - '&aClique para confirmar.'
+  Cancelar:
+    Slot: 32
+    Id: 351
+    Data: 1
+    Nome: '&c&lCancelar'
+    Lore:
+      - '&cClique para cancelar.'

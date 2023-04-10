@@ -36,6 +36,7 @@ import com.worldplugins.rankup.listener.*;
 import com.worldplugins.rankup.listener.earn.EarnExecutor;
 import com.worldplugins.rankup.manager.EvolutionManager;
 import com.worldplugins.rankup.view.BagView;
+import com.worldplugins.rankup.view.RankupView;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.milkbowl.vault.economy.Economy;
@@ -153,7 +154,8 @@ public class PluginExecutor {
             new RegressRank(databaseManager.getPlayerService(), evolutionManager, config(RanksConfig.class)),
             new SetPrestige(evolutionManager, config(RanksConfig.class)),
             new EvolvePrestige(databaseManager.getPlayerService(), evolutionManager, config(RanksConfig.class)),
-            new RegressPrestige(databaseManager.getPlayerService(), evolutionManager, config(RanksConfig.class))
+            new RegressPrestige(databaseManager.getPlayerService(), evolutionManager, config(RanksConfig.class)),
+            new Rankup(databaseManager.getPlayerService())
         );
         registry.autoTabCompleter("rankup");
         registry.registerAll();
@@ -167,6 +169,10 @@ public class PluginExecutor {
             new BagView(
                 config(ShardsConfig.class), databaseManager.getPlayerService(), config(MainConfig.class),
                 conversationProvider, economy, shardFactory
+            ),
+            new RankupView(
+                databaseManager.getPlayerService(), config(RanksConfig.class), config(ShardsConfig.class),
+                economy, evolutionManager
             )
         );
     }

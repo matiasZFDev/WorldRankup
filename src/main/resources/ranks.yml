@@ -16,6 +16,8 @@ Rank-1:
   Nome: 'aprendiz'
   Display: '&b&lA&bprendiz'
   Grupo: 'worldrankup.rank.rank_1'
+  Iten:
+    Id: 270
   Evolucao:
     Dinheiro: 15k
     Fragmentos: ['chumbo:100', 'gelo:75', 'moeda_ouro:35']
@@ -27,6 +29,9 @@ Rank-2:
   Nome: 'aprendiz'
   Display: '&5&lM&5ago'
   Grupo: 'worldrankup.rank.rank_2'
+  Iten:
+    Id: 373
+    Data: 8201
   Evolucao:
     Dinheiro: 1M
     Fragmentos: ['moeda_ouro:350', 'fossil:50', 'magma:10']
@@ -38,4 +43,6 @@ Rank-3:
   Nome: 'mestre'
   Display: '&6&lM&6estre'
   Grupo: 'worldrankup.rank.rank_3'
+  Iten:
+    Id: 377
   Evolucao: false

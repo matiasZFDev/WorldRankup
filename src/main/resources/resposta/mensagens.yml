@@ -118,6 +118,7 @@ Fragmento-inexistente: '&cO fragmento &n@fragmento&c não existe. Lista de fragm
 Tipo-envio-invalido: '&cO tipo de envio &n@tipo&c não existe. Escolha entre &nfisico&c ou &nvirtual&c.'
 Fragmentos-compensacao: '&bVocê recêbeu &f@quantiax &bfragmentos fisicos de @fragmento&b!'
 Limite-compensacao: '&bVocê recêbeu &f@quantiax &blimite fisico de @fragmento&b!'
+Operacao-cancelada: '&cVocê cancelou essa operação.'
 
 Fragmentos-fisicos-enviados: '&bForam enviados &f@quantiax &bfragmentos de @fragmento&b pro jogador &f@jogador&b!'
 Fragmentos-fisicos-recebidos: '&bVocê recêbeu &f@quantiax &bfragmentos fisicos de @fragmento&b!'
@@ -166,3 +167,23 @@ Evoluir-prestigio-ultimo: '&eO jogador &f@jogador &ese encontra no último rank!
 Prestigio-evoluido: '&bO jogador &f@jogador &bevoluiu pro rank @rank&b!'
 Regredir-prestigio-primeiro: '&eO jogador &f@jogador &ese encontra no primeiro rank'
 Prestigio-regredido: '&bO jogador &f@jogador &bregrediu pro rank @rank&b.'
+
+Rank-evoluir-ultimo: '&eVocê ja se encontra no último rank. Digite /prestigio para mais informações'
+Rank-ultimo-error: '&cOcorreu um erro durante o processo. Tente novamente.'
+Rank-ultimo-dinheiro-insuficiente: '&cVocê não tem o dinheiro suficiente.'
+Rank-ultimo-fragmentos-insuficientes: '&cVocê não possui os fragmentos necessários.'
+Rank-evoluido:
+  _@Lista:
+    m1: '&bParabêns! Você evoluiu pro rank @rank&b com sucesso.'
+    m2:
+      Server-actionbar: '&bO jogador &f@jogador &bevoluiu pro rank @rank&b.'
+Rank-evoluido-ultimo:
+  _@Lista:
+    m1:
+      - '&bParabêns! Você evoluiu pro rank @rank&b com sucesso.'
+      - '&aChegou ao último rank! Digite /prestigio para mais informações.'
+    m2:
+      Server-actionbar: '&bO jogador &f@jogador &bevoluiu pro rank @rank&b.'
+      Server-title:
+        Titulo: '&6&lNOVO MESTRE'
+        Subtitulo: '&eO jogador &f@jogador &echegou pro rank @rank&e!'

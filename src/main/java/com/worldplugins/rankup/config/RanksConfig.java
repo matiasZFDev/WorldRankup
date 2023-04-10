@@ -9,6 +9,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.ExtensionMethod;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.function.Function;
@@ -51,6 +52,7 @@ public class RanksConfig extends StateConfig<RanksConfig.Config> {
             private final @NonNull String name;
             private final @NonNull String display;
             private final @NonNull String group;
+            private final @NonNull ItemStack item;
             private final Evolution evolution;
         }
 
@@ -92,6 +94,7 @@ public class RanksConfig extends StateConfig<RanksConfig.Config> {
                 section.getString("Nome"),
                 section.getString("Display"),
                 section.getString("Grupo"),
+                section.getItem("Iten", false),
                 !section.getBoolean("Evolucao")
                     ? null
                     : new Config.Rank.Evolution(
