@@ -37,6 +37,6 @@ public class DatabaseManager {
         final PlayerDAO playerDao = new DatabaseInitializer(configManager, plugin).init();
         this.shardUpdater = new ShardUpdateQueue(cache, playerDao);
         this.playerService = new PlayerServiceImpl(scheduler, playerDao, cache);
-        this.cacheUnloader = new PlayerCacheUnloadImpl(cache);
+        this.cacheUnloader = new PlayerCacheUnloadImpl(cache, playerDao);
     }
 }
