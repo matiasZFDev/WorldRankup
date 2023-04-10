@@ -6,7 +6,7 @@ import com.worldplugins.rankup.database.cache.Cache;
 import com.worldplugins.rankup.database.cache.SimpleCache;
 import com.worldplugins.rankup.database.dao.PlayerDAO;
 import com.worldplugins.rankup.database.model.RankupPlayer;
-import com.worldplugins.rankup.database.service.AutoSavingPlayerService;
+import com.worldplugins.rankup.database.service.PlayerServiceImpl;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.database.service.ShardBulkUpdater;
 import com.worldplugins.rankup.database.service.ShardUpdateQueue;
@@ -32,6 +32,6 @@ public class DatabaseManager {
         final Cache<UUID, RankupPlayer> cache = new SimpleCache<>(new HashMap<>());
         final PlayerDAO playerDao = new DatabaseInitializer(configManager, plugin).init();
         this.shardUpdater = new ShardUpdateQueue(cache, playerDao);
-        this.playerService = new AutoSavingPlayerService(scheduler, playerDao, cache);
+        this.playerService = new PlayerServiceImpl(scheduler, playerDao, cache);
     }
 }

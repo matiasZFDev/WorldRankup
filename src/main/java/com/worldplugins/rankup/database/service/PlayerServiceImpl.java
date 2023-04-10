@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 })
 
 @RequiredArgsConstructor
-public class AutoSavingPlayerService implements PlayerService {
+public class PlayerServiceImpl implements PlayerService {
     private final @NonNull SchedulerBuilder scheduler;
     private final @NonNull PlayerDAO playerDao;
     private final @NonNull Cache<UUID, RankupPlayer> loadedPlayers;
