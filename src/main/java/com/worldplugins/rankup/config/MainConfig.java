@@ -39,7 +39,7 @@ public class MainConfig extends StateConfig<MainConfig.Config> {
         public static class ShardSellOptions {
             @RequiredArgsConstructor
             @Getter
-            private static class SellBonus {
+            public static class SellBonus {
                 private final @NonNull String permission;
                 private final byte priority;
                 private final double bonus;
@@ -70,12 +70,11 @@ public class MainConfig extends StateConfig<MainConfig.Config> {
             /**
              * @return a positive value if present, -1 if not
              * */
-            public @NonNull Double getBonus(@NonNull Player player) {
+            public SellBonus getBonus(@NonNull Player player) {
                 return sellBonusList.stream()
                     .filter(bonus -> player.hasPermission(bonus.getPermission()))
                     .findFirst()
-                    .map(SellBonus::getBonus)
-                    .orElse(-1d);
+                    .orElse(null);
             }
         }
 

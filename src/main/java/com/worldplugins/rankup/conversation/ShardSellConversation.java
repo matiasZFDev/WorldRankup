@@ -1,6 +1,7 @@
 package com.worldplugins.rankup.conversation;
 
 import com.worldplugins.lib.extension.GenericExtensions;
+import com.worldplugins.lib.extension.NumberExtensions;
 import com.worldplugins.lib.extension.NumberFormatExtensions;
 import com.worldplugins.rankup.config.MainConfig;
 import com.worldplugins.rankup.config.ShardsConfig;
@@ -23,7 +24,8 @@ import org.bukkit.entity.Player;
     ResponseExtensions.class,
     NumberFormatExtensions.class,
     GenericExtensions.class,
-    ViewExtensions.class
+    ViewExtensions.class,
+    NumberExtensions.class
 })
 
 @RequiredArgsConstructor
@@ -81,13 +83,19 @@ public class ShardSellConversation extends StringPrompt {
             return null;
         }
 
+        final MainConfig.Config.ShardSellOptions.SellBonus sellBonus = mainConfig.get()
+            .getShardSellOptions()
+            .getBonus(player);
         final Double shardsValue = amount * configShard.getPrice();
+        final Double shardsMoney = shardsValue.applyPercentage(
+            sellBonus == null ? 0d : sellBonus.getBonus(), NumberExtensions.ApplyType.INCREMENT
+        );
 
         playerModel.setShards(shardId, playerModel.getShards(shardId) - amount);
-        economy.depositPlayer(player, shardsValue);
+        economy.depositPlayer(player, shardsMoney);
         player.respond("Fragmentos-vendidos", message -> message.replace(
             "@quantia".to(amount.suffixed()),
-            "@dinheiro".to(shardsValue.suffixed()),
+            "@dinheiro".to(shardsMoney.suffixed()),
             "@fragmento".to(configShard.getDisplay())
         ));
         return null;

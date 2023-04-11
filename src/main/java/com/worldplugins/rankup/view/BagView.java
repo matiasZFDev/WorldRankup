@@ -6,6 +6,7 @@ import com.worldplugins.lib.config.cache.menu.MenuItem;
 import com.worldplugins.lib.config.data.ItemDisplay;
 import com.worldplugins.lib.extension.CollectionExtensions;
 import com.worldplugins.lib.extension.GenericExtensions;
+import com.worldplugins.lib.extension.NumberExtensions;
 import com.worldplugins.lib.extension.NumberFormatExtensions;
 import com.worldplugins.lib.extension.bukkit.ItemExtensions;
 import com.worldplugins.lib.extension.bukkit.NBTExtensions;
@@ -43,7 +44,8 @@ import java.util.stream.Collectors;
     GenericExtensions.class,
     NumberFormatExtensions.class,
     NBTExtensions.class,
-    ResponseExtensions.class
+    ResponseExtensions.class,
+    NumberExtensions.class
 })
 
 @ViewOf(menuContainer = BagMenuContainer.class)
@@ -62,6 +64,20 @@ public class BagView extends MenuDataView<ViewContext> {
         final ItemDisplay shardDisplay = menuData.getData("Display-fragmento");
         final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
 
+        final String sellBonus;
+        final String bonusTag;
+
+        if (mainConfig.get().getShardSellOptions() == null) {
+            sellBonus = "0";
+            bonusTag = "";
+        } else {
+            final MainConfig.Config.ShardSellOptions.SellBonus bonus = mainConfig.get()
+                .getShardSellOptions()
+                .getBonus(player);
+            sellBonus = bonus == null ? "0" : ((Double) bonus.getBonus()).plainFormat();
+            bonusTag = bonus != null && bonus.getTag() != null ? bonus.getTag() : "";
+        }
+
         return MenuItemsUtils.newSession(menuData.getItems(), session -> {
             session.addDynamics(() -> {
                 return shardsConfig.get().getAll().zip(itemSlots).stream()
@@ -74,6 +90,8 @@ public class BagView extends MenuDataView<ViewContext> {
                                 "@quantia".to(((Integer) playerModel.getShards(shard.getId())).suffixed()),
                                 "@limite".to(((Integer) playerModel.getShardLimit(shard.getId())).suffixed()),
                                 "@limite-max".to(((Integer) shard.getLimit()).suffixed()),
+                                "@bonus-tag".to(bonusTag),
+                                "@bonus-venda".to(sellBonus),
                                 "@preco".to(((Double) shard.getPrice()).suffixed())
                             )
                             .colorMeta()
