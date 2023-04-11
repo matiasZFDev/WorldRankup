@@ -55,7 +55,7 @@ public class EvolveRank implements CommandModule {
                 configRank.getEvolution().getNextRankName()
             );
             evolutionManager.setRank(player, nextRank.getId());
-            sender.respond("Rank-evoluido", message -> message.replace(
+            sender.respond("Rank-evoluido-comando", message -> message.replace(
                 "@jogador".to(player.getName()),
                 "@rank".to(nextRank.getDisplay())
             ));

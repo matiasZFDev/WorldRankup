@@ -5,7 +5,6 @@ import com.worldplugins.lib.command.annotation.ArgsChecker;
 import com.worldplugins.lib.command.annotation.Command;
 import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.rankup.config.PrestigeConfig;
-import com.worldplugins.rankup.config.RanksConfig;
 import com.worldplugins.rankup.config.data.prestige.Prestige;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
@@ -57,7 +56,7 @@ public class EvolvePrestige implements CommandModule {
                 configPrestige.getNext()
             );
             evolutionManager.setRank(player, nextPrestige.getId());
-            sender.respond("Prestigio-evoluido", message -> message.replace(
+            sender.respond("Prestigio-evoluido-comando", message -> message.replace(
                 "@jogador".to(player.getName()),
                 "@rank".to(nextPrestige.getDisplay())
             ));
