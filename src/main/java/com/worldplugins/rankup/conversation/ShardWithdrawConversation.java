@@ -38,7 +38,11 @@ public class ShardWithdrawConversation extends StringPrompt {
 
     @Override
     public String getPromptText(ConversationContext context) {
-        ((Player) context.getForWhom()).respond("Retirar-fragmentos");
+        final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
+
+        ((Player) context.getForWhom()).respond("Retirar-fragmentos", message -> message.replace(
+            "@fragmento".to(configShard.getDisplay())
+        ));
         return "";
     }
 

@@ -38,7 +38,12 @@ public class ShardSellConversation extends StringPrompt {
 
     @Override
     public String getPromptText(ConversationContext context) {
-        ((Player) context.getForWhom()).respond("Vender-fragmentos");
+        final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
+
+        ((Player) context.getForWhom()).respond("Vender-fragmentos", message -> message.replace(
+            "@fragmento".to(configShard.getDisplay()),
+            "@valor".to(((Double) configShard.getPrice()).suffixed())
+        ));
         return "";
     }
 
