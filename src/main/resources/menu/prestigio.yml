@@ -1,0 +1,36 @@
+Nome: 'Prestigio!'
+Linhas: 3
+Data: {}
+Conteudo:
+  Prestigio-habilitado: # Iten mostrado quando o jogador pode dar prestigio
+    Slot: 13
+    Id: 266
+    Nome: '&6Prestigio @prestigio'
+    Lore:
+      - '&6Uma nova jornada.'
+      - '&7Volte pro rank inicial'
+      - '&7e obtenha diversos beneficios.'
+      - ''
+      - '&aClique para confirmar!'
+  Prestigio-desabilitado: # Iten mostrado quando o jogador *não* pode dar prestigio
+    Slot: 13
+    Id: 266
+    Nome: '&6Prestigio @prestigio'
+    Lore:
+      - '&6Uma nova jornada.'
+      - '&7Volte pro rank inicial'
+      - '&7e obtenha diversos beneficios.'
+      - ''
+      - '&eVocê se encontra a &e&n@ranks'
+      - '&eranks do último rank!'
+  Prestigio-ultimo: # Iten mostrado quando o jogador se encontra no último prestigio
+    Slot: 13
+    Id: 266
+    Nome: '&6Prestigio @prestigio'
+    Lore:
+      - '&6Uma nova jornada.'
+      - '&7Volte pro rank inicial'
+      - '&7e obtenha diversos beneficios.'
+      - ''
+      - '&6Você se encontra no'
+      - '&6prestigio final!'

@@ -28,6 +28,7 @@ public class PrestigeConfig extends StateConfig<PrestigeConfig.Config> {
     @RequiredArgsConstructor
     @Getter
     public static class Config {
+        private final short defaulPrestige;
         private final @NonNull Prestiges prestiges;
     }
 
@@ -36,18 +37,21 @@ public class PrestigeConfig extends StateConfig<PrestigeConfig.Config> {
         final String type = config.getString("Tipo");
 
         if (type.equals("INDIVIDUAL")) {
-            return new Config(new IndividualPrestiges(
-                config.getConfigurationSection("Prestigio").map(section ->
-                    new Prestige(
-                        section.getShort("Id"),
-                        section.getString("Display"),
-                        section.getString("Grupo"),
-                        !section.getBoolean("Proximo")
-                            ? null
-                            : section.getShort("Grupo")
+            return new Config(
+                config.getShort("Prestigio-padrao"),
+                new IndividualPrestiges(
+                    config.getConfigurationSection("Prestigio").map(section ->
+                        new Prestige(
+                            section.getShort("Id"),
+                            section.getString("Display"),
+                            section.getString("Grupo"),
+                            !section.getBoolean("Proximo")
+                                ? null
+                                : section.getShort("Grupo")
+                        )
                     )
                 )
-            ));
+            );
         }
 
         throw new Error("O tipo de prestigio '" + type + "' não existe.");

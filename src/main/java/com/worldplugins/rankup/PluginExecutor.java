@@ -36,6 +36,7 @@ import com.worldplugins.rankup.listener.*;
 import com.worldplugins.rankup.listener.earn.EarnExecutor;
 import com.worldplugins.rankup.manager.EvolutionManager;
 import com.worldplugins.rankup.view.BagView;
+import com.worldplugins.rankup.view.PrestigeView;
 import com.worldplugins.rankup.view.RankupView;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -111,7 +112,7 @@ public class PluginExecutor {
 
     private void registerListeners() {
         final RankupPlayerFactory playerFactory = new NewRankupPlayerFactory(
-            configCacheManager.get(ShardsConfig.class)
+            config(RanksConfig.class), config(PrestigeConfig.class), config(ShardsConfig.class)
         );
         final EarnExecutor earnExecutor = new EarnExecutor(
             config(EarnConfig.class), shardFactory, config(ShardsConfig.class),
@@ -173,6 +174,10 @@ public class PluginExecutor {
             new RankupView(
                 databaseManager.getPlayerService(), config(RanksConfig.class), config(ShardsConfig.class),
                 economy, evolutionManager
+            ),
+            new PrestigeView(
+                databaseManager.getPlayerService(), config(RanksConfig.class), config(PrestigeConfig.class),
+                evolutionManager
             )
         );
     }

@@ -56,10 +56,13 @@ public class RanksConfig extends StateConfig<RanksConfig.Config> {
             private final Evolution evolution;
         }
 
+        @Getter
+        private final @NonNull String defaultRank;
         private final @NonNull Map<Short, Rank> ranksById;
         private final @NonNull Map<String, Rank> ranksByName;
 
-        private Config(@NonNull Collection<Rank> ranks) {
+        private Config(@NonNull String defaultRank, @NonNull Collection<Rank> ranks) {
+            this.defaultRank = defaultRank;
             this.ranksById = ranks.stream().collect(Collectors.toMap(Rank::getId, Function.identity()));
             this.ranksByName = ranks.stream().collect(Collectors.toMap(Rank::getName, Function.identity()));
         }
@@ -89,6 +92,7 @@ public class RanksConfig extends StateConfig<RanksConfig.Config> {
     @Override
     public @NonNull Config fetch(@NonNull FileConfiguration config) {
         return new Config(
+            config.getString("Rank-padrao"),
             config.map(section -> new Config.Rank(
                 section.getByte("Id"),
                 section.getString("Nome"),

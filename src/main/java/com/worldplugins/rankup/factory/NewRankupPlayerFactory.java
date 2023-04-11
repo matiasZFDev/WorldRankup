@@ -1,5 +1,7 @@
 package com.worldplugins.rankup.factory;
 
+import com.worldplugins.rankup.config.PrestigeConfig;
+import com.worldplugins.rankup.config.RanksConfig;
 import com.worldplugins.rankup.config.ShardsConfig;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.model.RankupPlayerImpl;
@@ -13,12 +15,14 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class NewRankupPlayerFactory implements RankupPlayerFactory {
+    private final @NonNull RanksConfig ranksConfig;
+    private final @NonNull PrestigeConfig prestigeConfig;
     private final @NonNull ShardsConfig shardsConfig;
 
     @Override
     public @NonNull RankupPlayer create(@NonNull UUID playerId) {
-        final short rank = 0;
-        final short prestige = 0;
+        final short rank = ranksConfig.get().getByName(ranksConfig.get().getDefaultRank()).getId();
+        final short prestige = prestigeConfig.get().getDefaulPrestige();
         final Collection<Shard> shards = shardsConfig.get().getAll().stream()
             .map(configShard -> new Shard(configShard.getId(), 0, configShard.getDefaultLimit()))
             .collect(Collectors.toList());

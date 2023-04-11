@@ -187,3 +187,21 @@ Rank-evoluido-ultimo:
       Server-title:
         Titulo: '&6&lNOVO MESTRE'
         Subtitulo: '&eO jogador &f@jogador &echegou pro rank @rank&e!'
+
+Prestigio-rank-error: '&cOcorreu um error durante o processo. Tente novamente.'
+Prestigio-ultimo-error: '&cOcorreu um error durante o processo. Tente novamente.'
+Prestigio-evoluido:
+  _@Lista:
+    m1: '&6Parabêns! Você evoluiu pro prestigio @prestigio&6 com sucesso.'
+    m2:
+      Server-actionbar: '&6O jogador &f@jogador &6evoluiu pro prestigio @prestigio&6.'
+Prestigio-evoluido-ultimo:
+  _@Lista:
+    m1:
+      - '&6Parabêns! Você evoluiu pro prestigio @prestigio&6 com sucesso.'
+      - '&6Você Chegou ao último prestigio!.'
+    m2:
+      Server-actionbar: '&6O jogador &f@jogador &6evoluiu pro prestigio @prestigio&6.'
+      Server-title:
+        Titulo: '&4&lNOVA LENDA'
+        Subtitulo: '&6O jogador &f@jogador &6chegou no prestigio @prestigio&6!'
