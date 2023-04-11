@@ -3,7 +3,9 @@ package com.worldplugins.rankup.command;
 import com.worldplugins.lib.command.CommandModule;
 import com.worldplugins.lib.command.CommandTarget;
 import com.worldplugins.lib.command.annotation.Command;
+import com.worldplugins.rankup.config.RanksConfig;
 import com.worldplugins.rankup.database.service.PlayerService;
+import com.worldplugins.rankup.extension.ResponseExtensions;
 import com.worldplugins.rankup.extension.ViewExtensions;
 import com.worldplugins.rankup.view.RankupView;
 import lombok.NonNull;
@@ -13,12 +15,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 @ExtensionMethod({
-    ViewExtensions.class
+    ViewExtensions.class,
+    ResponseExtensions.class
 })
 
 @RequiredArgsConstructor
 public class Rankup implements CommandModule {
     private final @NonNull PlayerService playerService;
+    private final @NonNull RanksConfig ranksConfig;
 
     @Command(
         name = "rankup",
@@ -28,6 +32,13 @@ public class Rankup implements CommandModule {
     @Override
     public void execute(@NonNull CommandSender sender, @NonNull String[] args) {
         final Player player = (Player) sender;
-        playerService.consumePlayer(player.getUniqueId(), playerModel -> player.openView(RankupView.class));
+        playerService.consumePlayer(player.getUniqueId(), playerModel -> {
+            if (ranksConfig.get().getById(playerModel.getRank()).getEvolution() == null) {
+                player.respond("Rank-evoluir-ultimo");
+                return;
+            }
+
+            player.openView(RankupView.class);
+        });
     }
 }
