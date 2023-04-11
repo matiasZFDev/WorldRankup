@@ -121,7 +121,8 @@ public class PluginExecutor {
 
         regListeners(
             new LoadOnJoinListener(
-                databaseManager.getPlayerService(), playerFactory, databaseManager.getCacheUnloader()
+                databaseManager.getPlayerService(), playerFactory, databaseManager.getCacheUnloader(),
+                evolutionManager
             ),
             new ShardInteractListener(
                 config(ShardsConfig.class), config(MainConfig.class),
