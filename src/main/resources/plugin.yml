@@ -8,3 +8,5 @@ commands:
     description: Main command
   mochila:
     description: Shards bag command
+  prestige:
+    description: Prestige GUI command
