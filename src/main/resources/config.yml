@@ -1,19 +1,19 @@
 Database:
-  # [MySQL]
+  # [MySQL] (NÃO RECOMENDADO)
   # Tipo: MySQL
   # Url:       <Url do banco de dados>
   # Database:  <Nome do banco de dados>
   # Usuario:   <Nome de usuario>
   # Senha:     <Senha do usuario>
   #
-  # [MySQL + Connection pool (HikariCP)]
+  # [MySQL + Connection pool (HikariCP)] (RECOMENDADO)
   # Tipo: MySQL-pooling
   # Url:       <Url do banco de dados>
   # Database:  <Nome do banco de dados>
   # Usuario:   <Nome de usuario>
   # Senha:     <Senha do usuario>
   #
-  # [SQLite]
+  # [SQLite] (RECOMENDADO)
   # Tipo: SQLite
   # Path:      <Path do arquivo. Ex.: database.sql>
   Tipo: SQLite
