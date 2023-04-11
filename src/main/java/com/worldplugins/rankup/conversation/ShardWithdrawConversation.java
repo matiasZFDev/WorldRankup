@@ -47,7 +47,7 @@ public class ShardWithdrawConversation extends StringPrompt {
         final Player player = (Player) context.getForWhom();
 
         if (value.equalsIgnoreCase("cancelar")) {
-            player.respond("Retiro-cancelada");
+            player.respond("Retiro-cancelado");
             player.openView(BagView.class);
             return null;
         }

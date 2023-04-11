@@ -205,3 +205,24 @@ Prestigio-evoluido-ultimo:
       Server-title:
         Titulo: '&4&lNOVA LENDA'
         Subtitulo: '&6O jogador &f@jogador &6chegou no prestigio @prestigio&6!'
+
+Vender-fragmentos:
+  - ''
+  - '  &f> &bDigite a quantia de fragmentos de @fragmento &bdeseja &nvender&b.'
+  - '  &f> &bO valor do fragmento é &2$&a@valor'
+  - '  &f> &bPara cancelar, digite &cCANCELAR&b.'
+  - ''
+Venda-cancelada: '&cVenda cancelada.'
+Venda-desabilitada: '&cA operação de venda foi desabilitada.'
+Vender-quantia-insuficiente: '&cVocê nao possui essa quantia de fragmentos.'
+Fragmentos-vendidos: '&bVocê vendeu &f@quantiax &bfragmentos de @fragmento &bpor &2$&a@dinheiro&b.'
+
+Retirar-fragmentos:
+  - ''
+  - '  &f> &bDigite a quantia de fragmentos de @fragmento &bdeseja &nretirar&b.'
+  - '  &f> &bPara cancelar, digite &cCANCELAR&b.'
+  - ''
+Retiro-cancelado: '&cRetiro cancelado.'
+Retiro-desabilitada: '&cA operação de retiro foi desabilitada.'
+Retirar-quantia-insuficiente: '&cVocê nao possui essa quantia de fragmentos.'
+Fragmentos-retirados: '&bVocê retirou &f@quantiax &bfragmentos de @fragmento &bda sua mochila.'
