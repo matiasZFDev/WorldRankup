@@ -23,6 +23,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.26")
     compileOnly(files("/home/post/dev/bukkit-libs/spigot.jar"))
     compileOnly(files("/home/post/dev/bukkit-libs/worldplugins/WorldLib/WorldLib-LATEST.jar"))
+    compileOnly(files("/home/post/dev/bukkit-libs/LegendChat.jar"))
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude(group = "org.bukkit", module = "bukkit")
     }

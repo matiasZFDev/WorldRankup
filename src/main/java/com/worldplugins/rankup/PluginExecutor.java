@@ -133,7 +133,10 @@ public class PluginExecutor {
                 databaseAccessor.getPlayerService(), shardFactory
             ),
             new ShardEarnListener(earnExecutor),
-            new UnloadOnQuitListener(databaseAccessor.getCacheUnloader())
+            new UnloadOnQuitListener(databaseAccessor.getCacheUnloader()),
+            new PlayerTagChatListener(
+                databaseAccessor.getPlayerService(), config(RanksConfig.class), config(PrestigeConfig.class)
+            )
         );
     }
 
