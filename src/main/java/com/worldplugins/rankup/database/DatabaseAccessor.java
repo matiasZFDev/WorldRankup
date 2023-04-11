@@ -20,7 +20,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class DatabaseManager {
+public class DatabaseAccessor {
     @Getter
     private final @NonNull ShardBulkUpdater shardUpdater;
     @Getter
@@ -28,7 +28,7 @@ public class DatabaseManager {
     @Getter
     private final @NonNull CacheUnloadTimer<UUID> cacheUnloader;
 
-    public DatabaseManager(
+    public DatabaseAccessor(
         @NonNull ConfigManager configManager,
         @NonNull Plugin plugin,
         @NonNull SchedulerBuilder scheduler
