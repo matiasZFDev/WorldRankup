@@ -11,6 +11,7 @@ version = "1.0.0-SNAPSHOT"
 repositories {
     mavenCentral()
     maven { url = uri("https://jitpack.io") }
+    maven { url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/") }
 }
 
 val projectFullName = "${project.name}-${project.version}.jar";
@@ -22,12 +23,14 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.26")
     annotationProcessor("org.projectlombok:lombok:1.18.26")
     compileOnly(files("/home/post/dev/bukkit-libs/spigot.jar"))
+    compileOnly(files("/home/post/dev/bukkit-libs/GrandeOWRankup.jar"))
     compileOnly(files("/home/post/dev/bukkit-libs/worldplugins/WorldLib/WorldLib-LATEST.jar"))
     compileOnly(files("/home/post/dev/bukkit-libs/LegendChat.jar"))
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude(group = "org.bukkit", module = "bukkit")
     }
     compileOnly("net.luckperms:api:5.4")
+    compileOnly("me.clip:placeholderapi:2.10.4")
 }
 
 tasks.getByName<Test>("test") {

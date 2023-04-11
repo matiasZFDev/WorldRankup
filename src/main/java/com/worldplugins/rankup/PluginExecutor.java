@@ -41,6 +41,7 @@ import com.worldplugins.rankup.view.RankupView;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -86,6 +87,7 @@ public class PluginExecutor {
         registerListeners();
         registerCommands();
         registerViews();
+        registerPlaceholders();
         scheduleTasks();
         return () -> {
             databaseAccessor.getShardUpdater().update();
@@ -185,6 +187,15 @@ public class PluginExecutor {
                 evolutionManager
             )
         );
+    }
+
+    private void registerPlaceholders() {
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null)
+            return;
+
+        new RankupPlaceholders(
+            databaseAccessor.getPlayerService(), config(RanksConfig.class), config(PrestigeConfig.class)
+        ).register();
     }
 
     private void scheduleTasks() {
