@@ -12,7 +12,7 @@ Data:
       - ' &fQuantia: &e@quantia'
       - ' &fLimite: &e@limite (Max. @limite-max)'
       - ' &fBonus de venda: @bonus-tag'
-      - ' &fPreço: &2$&a@preco (&e+@bonus-venda%)'
+      - ' &fPreço: &2$&a@preco &e(+@bonus-venda%)'
       - ''
       - '&fB. direito: &7Retirar'
       - '&fB. esquerdo: &7Vender'
