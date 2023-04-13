@@ -111,7 +111,7 @@ public class MainConfig extends StateConfig<MainConfig.Config> {
             fetchShardCompensations(config.getConfigurationSection("Compensacao-fragmentos")),
             fetchShardCompensations(config.getConfigurationSection("Compensacao-limite")),
             config.getBoolean("Retirar-fragmentos"),
-            !config.getBoolean("Venda-fragmentos")
+            config.notExistingOrFalse("Venda-fragmentos")
                 ? null
                 : fetchSellOptions(config.getConfigurationSection("Venda-fragmentos"))
         );
