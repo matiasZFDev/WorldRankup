@@ -12,6 +12,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -63,8 +64,8 @@ public class RanksConfig extends StateConfig<RanksConfig.Config> {
 
         private Config(@NonNull String defaultRank, @NonNull Collection<Rank> ranks) {
             this.defaultRank = defaultRank;
-            this.ranksById = ranks.stream().collect(Collectors.toMap(Rank::getId, Function.identity()));
-            this.ranksByName = ranks.stream().collect(Collectors.toMap(Rank::getName, Function.identity()));
+            this.ranksById = ranks.stream().collect(Collectors.toMap(Rank::getId, Function.identity(), (r1, r2) -> r1));
+            this.ranksByName = ranks.stream().collect(Collectors.toMap(Rank::getName, Function.identity(), (r1, r2) -> r1));
         }
 
         public Rank getById(short id) {
@@ -93,7 +94,7 @@ public class RanksConfig extends StateConfig<RanksConfig.Config> {
     public @NonNull Config fetch(@NonNull FileConfiguration config) {
         return new Config(
             config.getString("Rank-padrao"),
-            config.map(section -> new Config.Rank(
+            config.section("Ranks").map(section -> new Config.Rank(
                 section.getByte("Id"),
                 section.getString("Nome"),
                 section.getString("Display"),

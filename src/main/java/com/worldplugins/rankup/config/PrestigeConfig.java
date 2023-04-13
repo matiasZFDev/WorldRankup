@@ -40,7 +40,7 @@ public class PrestigeConfig extends StateConfig<PrestigeConfig.Config> {
             return new Config(
                 config.getShort("Prestigio-padrao"),
                 new IndividualPrestiges(
-                    config.getConfigurationSection("Prestigio").map(section ->
+                    config.section("Prestigio").map(section ->
                         new Prestige(
                             section.getShort("Id"),
                             section.getString("Display"),
