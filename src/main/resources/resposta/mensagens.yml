@@ -176,8 +176,8 @@ Prestigio-regredido: '&bO jogador &f@jogador &bregrediu pro rank @rank&b.'
 
 Rank-evoluir-ultimo: '&eVocê ja se encontra no último rank. Digite /prestigio para mais informações'
 Rank-ultimo-error: '&cOcorreu um erro durante o processo. Tente novamente.'
-Rank-ultimo-dinheiro-insuficiente: '&cVocê não tem o dinheiro suficiente.'
-Rank-ultimo-fragmentos-insuficientes: '&cVocê não possui os fragmentos necessários.'
+Rank-evoluir-dinheiro-insuficiente: '&cVocê não tem o dinheiro suficiente.'
+Rank-evoluir-fragmentos-insuficientes: '&cVocê não possui os fragmentos necessários.'
 Rank-evoluido:
   _@Lista:
     m1: '&bParabêns! Você evoluiu pro rank @rank&b com sucesso.'
