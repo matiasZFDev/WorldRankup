@@ -24,7 +24,7 @@ Ranks:
       Dinheiro: 15k
       Fragmentos: ['chumbo:100', 'gelo:75', 'moeda_ouro:35']
       Seguinte: 'mago'
-      Comando-console: 'give @jogador DIAMOND 1'
+      Comando-console: 'give @jogador diamond 1'
 
   Rank-2:
     Id: 1
@@ -38,7 +38,7 @@ Ranks:
       Dinheiro: 1M
       Fragmentos: ['moeda_ouro:350', 'fossil:50', 'magma:10']
       Seguinte: 'mestre'
-      Comando-console: 'give @jogador DIAMOND 2'
+      Comando-console: 'give @jogador diamond 2'
 
   Rank-3:
     Id: 2
