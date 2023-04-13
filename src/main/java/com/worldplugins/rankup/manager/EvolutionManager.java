@@ -28,14 +28,12 @@ public class EvolutionManager {
 
     public void setPrestige(@NonNull Player player, short prestige) {
         playerService.consumePlayer(player.getUniqueId(), playerModel -> {
-            final Prestige configPrestige = prestigeConfig.get().getPrestiges().getById(prestige);
-            final Prestige oldPrestige = prestigeConfig.get().getPrestiges().getPrevious(prestige);
+            final Prestige playerPrestige = prestigeConfig.get().getPrestiges().getById(playerModel.getPrestige());
+            final Prestige newPrestige = prestigeConfig.get().getPrestiges().getPrevious(prestige);
 
             playerModel.setPrestige(prestige);
-            permissionManager.addGroup(player, configPrestige.getGroup());
-
-            if (oldPrestige != null)
-                permissionManager.removeGroup(player, oldPrestige.getGroup());
+            permissionManager.removeGroup(player, playerPrestige.getGroup());
+            permissionManager.addGroup(player, newPrestige.getGroup());
         });
     }
 }
