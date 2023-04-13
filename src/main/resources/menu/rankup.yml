@@ -3,7 +3,7 @@ Linhas: 5
 Data:
   Status-suficiente: '&a✔'
   Status-insuficiente: '&c✖'
-  Formato-fragmento: '&8* @fragmento &7(@quantia)'
+  Formato-fragmento: ' &8* @fragmento &7(@quantia)'
 Conteudo:
   Info:
     Slot: 13

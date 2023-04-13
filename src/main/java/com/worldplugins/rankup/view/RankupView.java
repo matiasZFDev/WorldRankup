@@ -62,21 +62,28 @@ public class RankupView extends MenuDataView<ViewContext> {
 
         return MenuItemsUtils.newSession(menuData.getItems(), session -> {
             session.modify("Info", item ->
-                item
+                nextRank.getItem().display(item)
                     .nameFormat("@rank".to(nextRank.getDisplay()))
                     .loreFormat(
-                        "@coins-atuais".to(((Double) economy.getBalance(player)).suffixed()),
+                        "@coins-totais".to(((Double) economy.getBalance(player)).suffixed()),
                         "@coins-precisas".to(((Double) configRank.getEvolution().getCoinsPrice()).suffixed()),
                         "@coins-status".to(coinsStatus)
                     )
                     .loreListFormat("@@fragmentos",
                         configRank.getEvolution().getRequiredShards().stream()
-                            .map(shard ->
-                                shardFormat.formatReplace(
-                                    "@fragmento".to(shardsConfig.get().getByName(shard.getName()).getDisplay()),
-                                    "@quantia".to(((Integer) shard.getAmount()).suffixed())
-                                )
-                            )
+                            .map(shard -> {
+                                final ShardsConfig.Config.Shard configShard = shardsConfig.get().getByName(
+                                    shard.getName()
+                                );
+                                final String status = playerModel.getShards(configShard.getId()) >= shard.getAmount()
+                                    ? sufficientStatus
+                                    : insufficientStatus;
+                                return shardFormat.formatReplace(
+                                    "@fragmento".to(configShard.getDisplay()),
+                                    "@quantia".to(((Integer) shard.getAmount()).suffixed()),
+                                    "@status".to(status)
+                                );
+                            })
                             .collect(Collectors.toList())
                     )
                     .colorMeta()
