@@ -21,8 +21,8 @@ public class EvolutionManager {
             final RanksConfig.Config.Rank newRank = ranksConfig.get().getPrevious(rank);
 
             playerModel.setRank(rank);
-            permissionManager.addGroup(player, newRank.getGroup());
             permissionManager.removeGroup(player, playerRank.getGroup());
+            permissionManager.addGroup(player, newRank.getGroup());
         });
     }
 
