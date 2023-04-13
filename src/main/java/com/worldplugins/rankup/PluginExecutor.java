@@ -127,12 +127,10 @@ public class PluginExecutor {
                 evolutionManager
             ),
             new ShardInteractListener(
-                config(ShardsConfig.class), config(MainConfig.class),
-                databaseAccessor.getPlayerService(), shardFactory
+                config(ShardsConfig.class), databaseAccessor.getPlayerService(), shardFactory
             ),
             new ShardLimitInteractListener(
-                config(ShardsConfig.class), config(MainConfig.class),
-                databaseAccessor.getPlayerService(), shardFactory
+                config(ShardsConfig.class), databaseAccessor.getPlayerService(), shardFactory
             ),
             new ShardEarnListener(earnExecutor),
             new UnloadOnQuitListener(databaseAccessor.getCacheUnloader()),

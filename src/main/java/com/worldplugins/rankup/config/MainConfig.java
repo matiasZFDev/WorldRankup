@@ -89,9 +89,6 @@ public class MainConfig extends StateConfig<MainConfig.Config> {
         private final @NonNull EnumSet<ShardCompensation> limitCompensations;
 
         @Getter
-        private final Integer maxMerged;
-
-        @Getter
         private final boolean shardWithdrawEnabled;
 
         @Getter
@@ -113,7 +110,6 @@ public class MainConfig extends StateConfig<MainConfig.Config> {
             config.itemDisplay("Display-limite-fisico"),
             fetchShardCompensations(config.getConfigurationSection("Compensacao-fragmentos")),
             fetchShardCompensations(config.getConfigurationSection("Compensacao-limite")),
-            1000000000,
             config.getBoolean("Retirar-fragmentos"),
             !config.getBoolean("Venda-fragmentos")
                 ? null

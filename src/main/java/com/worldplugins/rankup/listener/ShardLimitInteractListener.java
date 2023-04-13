@@ -7,6 +7,7 @@ import com.worldplugins.lib.extension.bukkit.InventoryExtensions;
 import com.worldplugins.lib.extension.bukkit.NBTExtensions;
 import com.worldplugins.lib.extension.bukkit.PlayerExtensions;
 import com.worldplugins.rankup.NBTKeys;
+import com.worldplugins.rankup.WorldRankup;
 import com.worldplugins.rankup.config.MainConfig;
 import com.worldplugins.rankup.config.ShardsConfig;
 import com.worldplugins.rankup.database.model.RankupPlayer;
@@ -37,7 +38,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ShardLimitInteractListener implements Listener {
     private final @NonNull ShardsConfig shardsConfig;
-    private final @NonNull MainConfig mainConfig;
     private final @NonNull PlayerService playerService;
     private final @NonNull ShardFactory shardFactory;
 
@@ -88,9 +88,9 @@ public class ShardLimitInteractListener implements Listener {
                 )
                 .sum();
 
-            if (mergedAmount >= mainConfig.get().getMaxMerged()) {
+            if (mergedAmount >= WorldRankup.MAX_COMPARATIVE_SHARD_AMOUNT) {
                 player.respond("Limite-juntar-max", message -> message.replace(
-                    "@quantia-max".to(mainConfig.get().getMaxMerged().suffixed())
+                    "@quantia-max".to(WorldRankup.MAX_COMPARATIVE_SHARD_AMOUNT.suffixed())
                 ));
                 return;
             }
