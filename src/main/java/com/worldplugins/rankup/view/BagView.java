@@ -75,7 +75,9 @@ public class BagView extends MenuDataView<ViewContext> {
                 .getShardSellOptions()
                 .getBonus(player);
             sellBonus = bonus == null ? "0" : ((Double) bonus.getBonus()).plainFormat();
-            bonusTag = bonus != null && bonus.getTag() != null ? bonus.getTag() : "";
+            bonusTag = bonus != null && bonus.getTag() != null
+                ? bonus.getTag()
+                : mainConfig.get().getShardSellOptions().getNoGroupTag();
         }
 
         return MenuItemsUtils.newSession(menuData.getItems(), session -> {

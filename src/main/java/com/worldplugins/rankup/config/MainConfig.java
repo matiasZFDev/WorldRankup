@@ -40,7 +40,7 @@ public class MainConfig extends StateConfig<MainConfig.Config> {
             @RequiredArgsConstructor
             @Getter
             public static class SellBonus {
-                private final @NonNull String permission;
+                private final @NonNull String group;
                 private final byte priority;
                 private final double bonus;
                 private final String tag;
@@ -63,7 +63,7 @@ public class MainConfig extends StateConfig<MainConfig.Config> {
                 this.useTag = useTag;
                 this.noGroupTag = noGroupTag;
                 this.sellBonusList = sellBonusList.stream()
-                    .sorted(Comparator.comparingInt(SellBonus::getPriority))
+                    .sorted(Comparator.comparingInt(SellBonus::getPriority).reversed())
                     .collect(Collectors.toList());
             }
 
@@ -72,7 +72,7 @@ public class MainConfig extends StateConfig<MainConfig.Config> {
              * */
             public SellBonus getBonus(@NonNull Player player) {
                 return sellBonusList.stream()
-                    .filter(bonus -> player.hasPermission(bonus.getPermission()))
+                    .filter(bonus -> player.hasPermission("group." + bonus.getGroup()))
                     .findFirst()
                     .orElse(null);
             }
@@ -140,7 +140,7 @@ public class MainConfig extends StateConfig<MainConfig.Config> {
             useTag ? section.getString("Sem-bonus") : null,
             section.getConfigurationSection("Bonus").map(bonusSection ->
                 new Config.ShardSellOptions.SellBonus(
-                    bonusSection.getString("Permissao"),
+                    bonusSection.getString("Grupo"),
                     bonusSection.getByte("Prioridade"),
                     bonusSection.getDouble("Bonus"),
                     useTag ? bonusSection.getString("Tag") : null
