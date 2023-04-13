@@ -97,14 +97,14 @@ public class RankupView extends MenuDataView<ViewContext> {
             final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
             final RanksConfig.Config.Rank configRank = ranksConfig.get().getById(playerModel.getRank());
 
+            player.closeInventory();
+
             if (configRank.getEvolution() == null) {
-                player.closeInventory();
                 player.respond("Rank-ultimo-error");
                 return;
             }
 
             if (!economy.has(player, configRank.getEvolution().getCoinsPrice())) {
-                player.closeInventory();
                 player.respond("Rank-evoluir-dinheiro-insuficiente");
                 return;
             }
@@ -116,7 +116,6 @@ public class RankupView extends MenuDataView<ViewContext> {
                 });
 
             if (!hasShardRequirements) {
-                player.closeInventory();
                 player.respond("Rank-evoluir-fragmentos-insuficientes");
                 return;
             }
@@ -126,6 +125,11 @@ public class RankupView extends MenuDataView<ViewContext> {
             );
 
             evolutionManager.setRank(player, nextRank.getId());
+            economy.withdrawPlayer(player, configRank.getEvolution().getCoinsPrice());
+            configRank.getEvolution().getRequiredShards().forEach(shard -> {
+                final byte shardId = shardsConfig.get().getByName(shard.getName()).getId();
+                playerModel.setShards(shardId, playerModel.getShards(shardId) - shard.getAmount());
+            });
 
             if (configRank.getEvolution().getConsoleCommand() != null)
                 BukkitUtils.consoleCommand(
@@ -142,7 +146,6 @@ public class RankupView extends MenuDataView<ViewContext> {
                     "@jogador".to(player.getName()),
                     "@rank".to(nextRank.getDisplay())
                 ));
-
             return;
         }
 
