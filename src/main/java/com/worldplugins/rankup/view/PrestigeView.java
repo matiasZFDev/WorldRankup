@@ -90,7 +90,7 @@ public class PrestigeView extends MenuDataView<ViewContext> {
             final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
             final RanksConfig.Config.Rank configRank = ranksConfig.get().getById(playerModel.getRank());
 
-            if (configRank.getEvolution() == null) {
+            if (configRank.getEvolution() != null) {
                 player.closeInventory();
                 player.respond("Prestigio-rank-error"); // error de atualização
                 return;
