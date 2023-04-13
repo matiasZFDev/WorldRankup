@@ -10,5 +10,5 @@ commands:
     description: Main command
   mochila:
     description: Shards bag command
-  prestige:
+  prestigio:
     description: Prestige GUI command
