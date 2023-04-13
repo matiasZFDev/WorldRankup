@@ -157,9 +157,9 @@ public class PluginExecutor {
             new SetRank(evolutionManager, config(RanksConfig.class)),
             new EvolveRank(databaseAccessor.getPlayerService(), evolutionManager, config(RanksConfig.class)),
             new RegressRank(databaseAccessor.getPlayerService(), evolutionManager, config(RanksConfig.class)),
-            new SetPrestige(evolutionManager, config(RanksConfig.class)),
-            new EvolvePrestige(databaseAccessor.getPlayerService(), evolutionManager, config(RanksConfig.class)),
-            new RegressPrestige(databaseAccessor.getPlayerService(), evolutionManager, config(RanksConfig.class)),
+            new SetPrestige(evolutionManager, config(PrestigeConfig.class)),
+            new EvolvePrestige(databaseAccessor.getPlayerService(), evolutionManager, config(PrestigeConfig.class)),
+            new RegressPrestige(databaseAccessor.getPlayerService(), evolutionManager, config(PrestigeConfig.class)),
             new Rankup(databaseAccessor.getPlayerService(), config(RanksConfig.class)),
             new Prestige(databaseAccessor.getPlayerService()),
             new Reload(configManager, configCacheManager, menuContainerManager)
