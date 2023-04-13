@@ -103,8 +103,8 @@ public class RanksConfig extends StateConfig<RanksConfig.Config> {
                 section.notExistingOrFalse("Evolucao")
                     ? null
                     : new Config.Rank.Evolution(
-                        section.numberFormat("Dinheiro"),
-                    ((Stream<String>) section.getStringList("Fragmentos").stream())
+                        section.numberFormat("Evolucao.Dinheiro"),
+                    ((Stream<String>) section.getStringList("Evolucao.Fragmentos").stream())
                             .map(shardEntry -> {
                                 final String[] shardData = shardEntry.split(":");
                                 final String name = shardData[0];
@@ -112,10 +112,10 @@ public class RanksConfig extends StateConfig<RanksConfig.Config> {
                                 return new Config.Rank.Evolution.ShardRequirement(name, amount);
                             })
                             .collect(Collectors.toList()),
-                        section.getString("Seguinte"),
-                        !section.getBoolean("Comando-console")
+                        section.getString("Evolucao.Seguinte"),
+                        section.notExistingOrFalse("Evolucao.Comando-console")
                             ? null
-                            : section.getString("Comando-console")
+                            : section.getString("Evolucao.Comando-console")
                     )
             ))
         );
