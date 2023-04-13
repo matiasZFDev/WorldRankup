@@ -14,7 +14,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.ExtensionMethod;
 import net.milkbowl.vault.economy.Economy;
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
@@ -67,9 +66,9 @@ public class ShardSellConversation extends StringPrompt {
             return null;
         }
 
-        final Integer amount = NumberUtils.toInt(value.numerify(), -1);
+        final Integer amount = value.numerify().toIntOrNull();
 
-        if (amount == -1) {
+        if (amount == null) {
             player.respond("Quantia-invalida");
             return null;
         }

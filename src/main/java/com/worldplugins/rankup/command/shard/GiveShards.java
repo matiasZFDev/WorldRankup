@@ -8,6 +8,7 @@ import com.worldplugins.lib.extension.NumberFormatExtensions;
 import com.worldplugins.lib.extension.bukkit.ItemExtensions;
 import com.worldplugins.lib.extension.bukkit.PlayerExtensions;
 import com.worldplugins.rankup.GlobalKeys;
+import com.worldplugins.rankup.WorldRankup;
 import com.worldplugins.rankup.config.MainConfig;
 import com.worldplugins.rankup.config.ShardsConfig;
 import com.worldplugins.rankup.config.data.ShardCompensation;
@@ -90,6 +91,11 @@ public class GiveShards implements CommandModule {
         }
 
         if (sendType.equals(GlobalKeys.VIRTUAL_SEND)) {
+            if (amount > WorldRankup.MAX_COMPARATIVE_SHARD_AMOUNT) {
+                sender.respond("Fragmentos-quantia-maxima");
+                return;
+            }
+
             playerService.consumePlayer(player.getUniqueId(), playerModel -> {
                 final byte shardId = configShard.getId();
                 final int currentAmount = playerModel.getShards(shardId);

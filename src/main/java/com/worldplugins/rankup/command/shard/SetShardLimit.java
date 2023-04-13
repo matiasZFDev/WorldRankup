@@ -7,6 +7,7 @@ import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.lib.extension.NumberFormatExtensions;
 import com.worldplugins.lib.extension.bukkit.ItemExtensions;
 import com.worldplugins.lib.extension.bukkit.PlayerExtensions;
+import com.worldplugins.rankup.WorldRankup;
 import com.worldplugins.rankup.config.ShardsConfig;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
@@ -66,8 +67,14 @@ public class SetShardLimit implements CommandModule {
             return;
         }
 
+        final int amount = Integer.parseInt(args[2].numerify());
+
+        if (amount > WorldRankup.MAX_COMPARATIVE_SHARD_AMOUNT) {
+            sender.respond("Fragmentos-quantia-maxima");
+            return;
+        }
+
         playerService.consumePlayer(player.getUniqueId(), playerModel -> {
-            final int amount = Integer.parseInt(args[2].numerify());
             final byte shardId = configShard.getId();
             final Integer finalAmount = Math.min(amount, configShard.getLimit());
 
