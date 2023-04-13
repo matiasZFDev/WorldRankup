@@ -17,7 +17,7 @@ Ranks:
     Id: 0
     Nome: 'aprendiz'
     Display: '&b&lA&bprendiz'
-    Grupo: 'worldrankup.rank.rank_1'
+    Grupo: 'rank_1'
     Iten:
       Id: 270
     Evolucao:
@@ -30,7 +30,7 @@ Ranks:
     Id: 1
     Nome: 'mago'
     Display: '&5&lM&5ago'
-    Grupo: 'worldrankup.rank.rank_2'
+    Grupo: 'rank_2'
     Iten:
       Id: 373
       Data: 8201
@@ -44,7 +44,7 @@ Ranks:
     Id: 2
     Nome: 'mestre'
     Display: '&6&lM&6estre'
-    Grupo: 'worldrankup.rank.rank_3'
+    Grupo: 'rank_3'
     Iten:
       Id: 377
     Evolucao: false
