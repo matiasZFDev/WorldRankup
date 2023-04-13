@@ -116,8 +116,8 @@ public class BagView extends MenuDataView<ViewContext> {
             if (event.isRightClick() && mainConfig.get().isShardWithdrawEnabled()) {
                 player.closeInventory();
                 conversationProvider.create()
-                    .withFirstPrompt(new ShardSellConversation(
-                        shardId, playerService, mainConfig, shardsConfig, economy
+                    .withFirstPrompt(new ShardWithdrawConversation(
+                        shardId, playerService, mainConfig, shardsConfig, shardFactory
                     ))
                     .withLocalEcho(false)
                     .withTimeout(20)
@@ -129,8 +129,8 @@ public class BagView extends MenuDataView<ViewContext> {
             if (event.isLeftClick() && mainConfig.get().getShardSellOptions() != null) {
                 player.closeInventory();
                 conversationProvider.create()
-                    .withFirstPrompt(new ShardWithdrawConversation(
-                        shardId, playerService, mainConfig, shardsConfig, shardFactory
+                    .withFirstPrompt(new ShardSellConversation(
+                        shardId, playerService, mainConfig, shardsConfig, economy
                     ))
                     .withLocalEcho(false)
                     .withTimeout(20)
