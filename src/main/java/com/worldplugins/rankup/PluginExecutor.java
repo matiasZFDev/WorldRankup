@@ -163,7 +163,8 @@ public class PluginExecutor {
             new EvolvePrestige(databaseAccessor.getPlayerService(), evolutionManager, config(RanksConfig.class)),
             new RegressPrestige(databaseAccessor.getPlayerService(), evolutionManager, config(RanksConfig.class)),
             new Rankup(databaseAccessor.getPlayerService(), config(RanksConfig.class)),
-            new Prestige(databaseAccessor.getPlayerService())
+            new Prestige(databaseAccessor.getPlayerService()),
+            new Reload(configManager, configCacheManager, menuContainerManager)
         );
         registry.autoTabCompleter("rankup");
         registry.registerAll();
