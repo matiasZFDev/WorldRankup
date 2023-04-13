@@ -16,7 +16,7 @@ Ranks:
   Rank-1:
     Id: 0
     Nome: 'aprendiz'
-    Display: '&b&lA&bprendiz'
+    Display: '&b[&lA&bprendiz]'
     Grupo: 'rank_1'
     Iten:
       Id: 270
@@ -29,7 +29,7 @@ Ranks:
   Rank-2:
     Id: 1
     Nome: 'mago'
-    Display: '&5&lM&5ago'
+    Display: '&5[&lM&5ago]'
     Grupo: 'rank_2'
     Iten:
       Id: 373
@@ -43,7 +43,7 @@ Ranks:
   Rank-3:
     Id: 2
     Nome: 'mestre'
-    Display: '&6&lM&6estre'
+    Display: '&6[&lM&6estre]'
     Grupo: 'rank_3'
     Iten:
       Id: 377
