@@ -100,7 +100,7 @@ public class RanksConfig extends StateConfig<RanksConfig.Config> {
                 section.getString("Display"),
                 section.getString("Grupo"),
                 section.getItem("Iten", false),
-                !section.getBoolean("Evolucao")
+                section.notExistingOrFalse("Evolucao")
                     ? null
                     : new Config.Rank.Evolution(
                         section.numberFormat("Dinheiro"),
