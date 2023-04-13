@@ -33,7 +33,6 @@ public class PlayerServiceImpl implements PlayerService {
     public void register(@NonNull RankupPlayer player) {
         loadedPlayers.set(player.getId(), player);
         playerDao.save(player);
-        runPlayerPendingTasks(player);
     }
 
     @Override
