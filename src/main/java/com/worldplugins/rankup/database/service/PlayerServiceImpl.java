@@ -33,6 +33,7 @@ public class PlayerServiceImpl implements PlayerService {
     public void register(@NonNull RankupPlayer player) {
         loadedPlayers.set(player.getId(), player);
         playerDao.save(player);
+        runPlayerPendingTasks(player);
     }
 
     @Override
@@ -42,15 +43,18 @@ public class PlayerServiceImpl implements PlayerService {
                 if (!player.isPresent())
                     return;
 
-                final Queue<Consumer<RankupPlayer>> pendingTask = playerConsumingQueue.get(playerId);
-
                 loadedPlayers.set(playerId, player.get());
-
-                if (pendingTask != null) {
-                    pendingTask.forEach(task -> task.accept(player.get()));
-                    playerConsumingQueue.remove(playerId);
-                }
+                runPlayerPendingTasks(player.get());
             }).run());
+    }
+
+    private void runPlayerPendingTasks(@NonNull RankupPlayer player) {
+        final Queue<Consumer<RankupPlayer>> pendingTask = playerConsumingQueue.get(player.getId());
+
+        if (pendingTask != null) {
+            pendingTask.forEach(task -> task.accept(player));
+            playerConsumingQueue.remove(player.getId());
+        }
     }
 
     @Override

@@ -6,5 +6,5 @@ import lombok.NonNull;
 import java.util.UUID;
 
 public interface RankupPlayerFactory {
-    @NonNull  RankupPlayer create(@NonNull UUID playerId);
+    @NonNull RankupPlayer create(@NonNull UUID playerId);
 }

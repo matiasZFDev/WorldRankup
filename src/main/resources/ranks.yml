@@ -10,7 +10,7 @@
 #     Fragmentos: <lista de fragmentos> # Fragmentos numa lista: ['fragmento:quantia', ...]
 #     Seguinte: <nome-seguinte-rank> # Seguinte rank
 #     Comando-console: <seu-comando> # Executar um comando relacionado ao jogador usando o placeholder @jogador
-Rank-padrao: 'Rank-1'
+Rank-padrao: 'aprendiz'
 
 Ranks:
   Rank-1:
