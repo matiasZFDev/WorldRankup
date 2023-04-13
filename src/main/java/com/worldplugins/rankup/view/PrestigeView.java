@@ -72,7 +72,7 @@ public class PrestigeView extends MenuDataView<ViewContext> {
                     );
                 } else {
                     session.remove("Prestigio-habilitado", "Prestigio-ultimo");
-                    session.modify("Prestigio-deabilitado", item ->
+                    session.modify("Prestigio-desabilitado", item ->
                         item
                             .nameFormat("@prestigio".to(configPrestige.getDisplay()))
                             .loreFormat("@ranks".to(rankOffsetDistance.toString()))

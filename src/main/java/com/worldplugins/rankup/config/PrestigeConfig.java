@@ -45,7 +45,7 @@ public class PrestigeConfig extends StateConfig<PrestigeConfig.Config> {
                             section.getShort("Id"),
                             section.getString("Display"),
                             section.getString("Grupo"),
-                            !section.getBoolean("Proximo")
+                            section.notExistingOrFalse("Proximo")
                                 ? null
                                 : section.getShort("Proximo")
                         )
