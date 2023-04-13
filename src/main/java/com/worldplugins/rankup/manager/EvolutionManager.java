@@ -17,15 +17,12 @@ public class EvolutionManager {
 
     public void setRank(@NonNull Player player, short rank) {
         playerService.consumePlayer(player.getUniqueId(), playerModel -> {
-            final RanksConfig.Config.Rank configRank = ranksConfig.get().getById(rank);
-            final RanksConfig.Config.Rank previousRank = ranksConfig.get().getPrevious(rank);
+            final RanksConfig.Config.Rank playerRank = ranksConfig.get().getById(playerModel.getRank());
+            final RanksConfig.Config.Rank newRank = ranksConfig.get().getPrevious(rank);
 
             playerModel.setRank(rank);
-            permissionManager.addGroup(player, configRank.getGroup());
-
-            if (previousRank != null) {
-                permissionManager.removeGroup(player, previousRank.getGroup());
-            }
+            permissionManager.addGroup(player, newRank.getGroup());
+            permissionManager.removeGroup(player, playerRank.getGroup());
         });
     }
 

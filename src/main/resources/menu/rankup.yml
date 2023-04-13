@@ -3,11 +3,12 @@ Linhas: 5
 Data:
   Status-suficiente: '&a✔'
   Status-insuficiente: '&c✖'
-  Formato-fragmento: ' &8* @fragmento &7(@quantia)'
+  Formato-fragmento: ' &8* @fragmento &7(@quantia) @status'
 Conteudo:
   Info:
     Slot: 13
     Id: 1 # Iten do rank
+    Flags: [HIDE_ATTRIBUTES, HIDE_POTION_EFFECTS]
     Nome: '@rank'
     Lore:
       - '&8Seu próximo rank.'
