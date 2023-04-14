@@ -23,7 +23,7 @@ public class RankupPlaceholders extends PlaceholderExpansion {
 
     @Override
     public String getIdentifier() {
-        return "worldplugins";
+        return "worldrankup";
     }
 
     @Override
@@ -42,18 +42,18 @@ public class RankupPlaceholders extends PlaceholderExpansion {
 
         if (playerModel == null) {
             switch (params) {
-                case "worldrankup_rank":
-                case "worldrankup_prestigio":
+                case "rank":
+                case "prestigio":
                     return "&c?".color();
             }
         }
 
         else {
             switch (params) {
-                case "worldrankup_rank":
+                case "rank":
                     return ranksConfig.get().getById(playerModel.getRank()).getDisplay();
 
-                case "worldrankup_prestigio":
+                case "prestigio":
                     return prestigeConfig.get().getPrestiges().getById(playerModel.getPrestige()).getDisplay();
             }
         }
