@@ -49,14 +49,16 @@ public class RegressPrestige implements CommandModule {
             final Prestige previousPrestige = prestigeConfig.get().getPrestiges().getPrevious(configPrestige.getId());
 
             if (previousPrestige == null) {
-                sender.respond("Regredir-prestigio-primeiro");
+                sender.respond("Regredir-prestigio-primeiro", message -> message.replace(
+                    "@jogador".to(player.getName())
+                ));
                 return;
             }
 
             evolutionManager.setPrestige(player, previousPrestige.getId());
             sender.respond("Prestigio-regredido", message -> message.replace(
                 "@jogador".to(player.getName()),
-                "@rank".to(previousPrestige.getDisplay())
+                "@prestigio".to(previousPrestige.getDisplay())
             ));
         });
     }

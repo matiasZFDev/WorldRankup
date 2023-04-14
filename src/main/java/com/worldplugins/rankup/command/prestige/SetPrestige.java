@@ -44,17 +44,22 @@ public class SetPrestige implements CommandModule {
             return;
         }
 
-        final Short prestige = args[1].toShortOrNull();
+        final Short prestige = args[1].equals("0") ? Short.valueOf("0") : args[1].toShortOrNull();
 
         if (prestige == null) {
-            sender.respond("Prestigio-invalido");
+            sender.respond("Prestigio-invalido", message -> message.replace(
+                "@prestigio".to(args[1])
+            ));
             return;
         }
+
+        System.out.println("AFTER");
+        System.out.println(prestige);
 
         final Prestige configPrestige = prestigeConfig.get().getPrestiges().getById(prestige);
 
         if (configPrestige == null) {
-            sender.respond("Setar-prestigio-invalido", message -> message.replace(
+            sender.respond("Prestigio-invalido", message -> message.replace(
                 "@prestigio".to(args[1])
             ));
             return;
@@ -63,7 +68,7 @@ public class SetPrestige implements CommandModule {
         evolutionManager.setPrestige(player, prestige);
         sender.respond("Prestigio-setado", message -> message.replace(
             "@jogador".to(player.getName()),
-            "@rank".to(configPrestige.getDisplay())
+            "@prestigio".to(configPrestige.getDisplay())
         ));
     }
 }

@@ -48,7 +48,9 @@ public class RegressRank implements CommandModule {
             final RanksConfig.Config.Rank previousRank = ranksConfig.get().getPrevious(configRank.getId());
 
             if (previousRank == null) {
-                sender.respond("Regredir-rank-primeiro");
+                sender.respond("Regredir-rank-primeiro", message -> message.replace(
+                    "@jogador".to(player.getName())
+                ));
                 return;
             }
 

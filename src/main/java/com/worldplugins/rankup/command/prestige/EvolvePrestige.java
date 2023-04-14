@@ -48,17 +48,19 @@ public class EvolvePrestige implements CommandModule {
             final Prestige configPrestige = prestigeConfig.get().getPrestiges().getById(playerModel.getPrestige());
 
             if (configPrestige.getNext() == null) {
-                sender.respond("Evoluir-prestigio-ultimo");
+                sender.respond("Evoluir-prestigio-ultimo", message -> message.replace(
+                    "@jogador".to(player.getName())
+                ));
                 return;
             }
 
             final Prestige nextPrestige = prestigeConfig.get().getPrestiges().getById(
                 configPrestige.getNext()
             );
-            evolutionManager.setRank(player, nextPrestige.getId());
+            evolutionManager.setPrestige(player, nextPrestige.getId());
             sender.respond("Prestigio-evoluido-comando", message -> message.replace(
                 "@jogador".to(player.getName()),
-                "@rank".to(nextPrestige.getDisplay())
+                "@prestigio".to(nextPrestige.getDisplay())
             ));
         });
     }

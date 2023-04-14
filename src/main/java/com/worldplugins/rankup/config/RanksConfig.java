@@ -75,7 +75,6 @@ public class RanksConfig extends StateConfig<RanksConfig.Config> {
         public Rank getPrevious(short id) {
             return ranksById.entrySet().stream()
                 .filter(rankEntry ->
-                    rankEntry.getValue().id == id &&
                     rankEntry.getValue().getEvolution() != null &&
                     rankEntry.getValue().getEvolution().nextRankName.equals(getById(id).name)
                 )

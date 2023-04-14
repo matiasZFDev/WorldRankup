@@ -167,12 +167,12 @@ Rank-evoluido-comando: '&bO jogador &f@jogador &bevoluiu pro rank @rank&b!'
 Regredir-rank-primeiro: '&eO jogador &f@jogador &ese encontra no primeiro rank'
 Rank-regredido: '&bO jogador &f@jogador &bregrediu pro rank @rank&b.'
 
-Setar-prestigio-invalido: "&cO rank '@rank' não existe."
-Prestigio-setado: '&bO rank do jogador &f@jogador &bfoi setado para @rank&b.'
-Evoluir-prestigio-ultimo: '&eO jogador &f@jogador &ese encontra no último rank!'
-Prestigio-evoluido-comando: '&bO jogador &f@jogador &bevoluiu pro rank @rank&b!'
-Regredir-prestigio-primeiro: '&eO jogador &f@jogador &ese encontra no primeiro rank'
-Prestigio-regredido: '&bO jogador &f@jogador &bregrediu pro rank @rank&b.'
+Prestigio-invalido: "&cO prestigio '@prestigio' não existe."
+Prestigio-setado: '&bO prestigio do jogador &f@jogador &bfoi setado para @prestigio&b.'
+Evoluir-prestigio-ultimo: '&eO jogador &f@jogador &ese encontra no último prestigio!'
+Prestigio-evoluido-comando: '&bO jogador &f@jogador &bevoluiu pro prestigio @prestigio&b!'
+Regredir-prestigio-primeiro: '&eO jogador &f@jogador &ese encontra no primeiro prestigio'
+Prestigio-regredido: '&bO jogador &f@jogador &bregrediu pro prestigio @prestigio&b.'
 
 Rank-evoluir-ultimo: '&eVocê ja se encontra no último rank. Digite /prestigio para mais informações'
 Rank-ultimo-error: '&cOcorreu um erro durante o processo. Tente novamente.'
