@@ -47,7 +47,9 @@ public class EvolveRank implements CommandModule {
             final RanksConfig.Config.Rank configRank = ranksConfig.get().getById(playerModel.getRank());
 
             if (configRank.getEvolution() == null) {
-                sender.respond("Evoluir-rank-ultimo");
+                sender.respond("Evoluir-rank-ultimo", message -> message.replace(
+                    "@jogador".to(player.getName())
+                ));
                 return;
             }
 
