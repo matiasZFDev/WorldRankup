@@ -85,6 +85,9 @@ public class BagView extends MenuDataView<ViewContext> {
                 return shardsConfig.get().getAll().zip(itemSlots).stream()
                     .map(pair -> {
                         final ShardsConfig.Config.Shard shard = pair.first();
+                        final Double shardPrice = ((Double) shard.getPrice()).applyPercentage(
+                            Double.parseDouble(sellBonus), NumberExtensions.ApplyType.INCREMENT
+                        );
                         final ItemStack shardItem = shard.getItem()
                             .display(shardDisplay)
                             .nameFormat("@nome".to(shard.getDisplay()))
@@ -94,7 +97,7 @@ public class BagView extends MenuDataView<ViewContext> {
                                 "@limite-max".to(((Integer) shard.getLimit()).suffixed()),
                                 "@bonus-tag".to(bonusTag),
                                 "@bonus-venda".to(sellBonus),
-                                "@preco".to(((Double) shard.getPrice()).suffixed())
+                                "@preco".to(shardPrice.suffixed())
                             )
                             .colorMeta()
                             .addReferenceValue(NBTKeys.BAG_SHARD, new NBTTagByte(shard.getId()));
