@@ -110,7 +110,7 @@ public class ShardInteractListener implements Listener {
         );
         final int playerShards = playerModel.getShards(shardId);
 
-        if (playerShards == configShard.getLimit()) {
+        if (playerShards == playerModel.getShardLimit(shardId)) {
             player.respond("Ativar-fragmento-limite");
             return;
         }
@@ -119,11 +119,12 @@ public class ShardInteractListener implements Listener {
             ? configShard.getLimit() - playerShards
             : amount;
 
+        System.out.println(addedAmount);
+
         if (!addedAmount.equals(amount)) {
             player.giveItems(shardFactory.createShard(shardId, amount - addedAmount));
         }
 
-        playerModel.setShards(shardId, playerShards + amount);
         player.reduceHandItem();
         player.respond("Fragmento-ativado", message -> message.replace(
             "@fragmento".to(configShard.getDisplay()),
