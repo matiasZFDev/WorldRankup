@@ -7,15 +7,16 @@ import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.lib.extension.NumberFormatExtensions;
 import com.worldplugins.lib.extension.ReplaceExtensions;
 import com.worldplugins.lib.extension.bukkit.ItemExtensions;
+import com.worldplugins.lib.extension.bukkit.NBTExtensions;
 import com.worldplugins.lib.util.MenuItemsUtils;
 import com.worldplugins.lib.view.MenuDataView;
 import com.worldplugins.lib.view.ViewContext;
 import com.worldplugins.lib.view.annotation.ViewOf;
+import com.worldplugins.rankup.NBTKeys;
 import com.worldplugins.rankup.config.PrestigeConfig;
 import com.worldplugins.rankup.config.RanksConfig;
 import com.worldplugins.rankup.config.data.prestige.Prestige;
 import com.worldplugins.rankup.config.menu.PrestigeMenuContainer;
-import com.worldplugins.rankup.config.menu.RankupMenuContainer;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
@@ -33,7 +34,8 @@ import java.util.concurrent.atomic.AtomicInteger;
     GenericExtensions.class,
     NumberFormatExtensions.class,
     ReplaceExtensions.class,
-    ResponseExtensions.class
+    ResponseExtensions.class,
+    NBTExtensions.class
 }, suppressBaseMethods = false)
 
 @ViewOf(menuContainer = PrestigeMenuContainer.class)
@@ -68,7 +70,10 @@ public class PrestigeView extends MenuDataView<ViewContext> {
                 if (rankOffsetDistance.get() == 0) {
                     session.remove("Prestigio-desabilitado", "Prestigio-ultimo");
                     session.modify("Prestigio-habilitado", item ->
-                        item.nameFormat("@prestigio".to(configPrestige.getDisplay())).colorMeta()
+                        item
+                            .nameFormat("@prestigio".to(configPrestige.getDisplay()))
+                            .addReferenceId(NBTKeys.PRESTIGE_ENABLED)
+                            .colorMeta()
                     );
                 } else {
                     session.remove("Prestigio-habilitado", "Prestigio-ultimo");
@@ -86,7 +91,7 @@ public class PrestigeView extends MenuDataView<ViewContext> {
 
     @Override
     public void onClick(@NonNull Player player, @NonNull MenuItem item, @NonNull InventoryClickEvent event) {
-        if (item.getId().equals("Prestigio-habilitado")) {
+        if (event.getCurrentItem().hasReference(NBTKeys.PRESTIGE_ENABLED)) {
             final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
             final RanksConfig.Config.Rank configRank = ranksConfig.get().getById(playerModel.getRank());
 

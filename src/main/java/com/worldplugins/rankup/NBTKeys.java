@@ -8,4 +8,5 @@ public class NBTKeys {
     public static final @NonNull String PHYISIC_SHARD_AMOUNT = "wrankup_physic_shard_amount";
     public static final @NonNull String PHYISIC_LIMIT_ID = "wrankup_physic_limit_id";
     public static final @NonNull String PHYISIC_LIMIT_AMOUNT = "wrankup_physic_limit_amount";
+    public static final @NonNull String PRESTIGE_ENABLED = "wrankup_prestigio";
 }

@@ -7,9 +7,10 @@ Conteudo:
     Id: 266
     Nome: '&6Prestigio @prestigio'
     Lore:
-      - '&6Uma nova jornada.'
+      - '&8Uma nova jornada.'
       - '&7Volte pro rank inicial'
-      - '&7e obtenha diversos beneficios.'
+      - '&7e obtenha diversos'
+      - '&7beneficios.'
       - ''
       - '&aClique para confirmar!'
   Prestigio-desabilitado: # Iten mostrado quando o jogador *não* pode dar prestigio
@@ -19,7 +20,8 @@ Conteudo:
     Lore:
       - '&6Uma nova jornada.'
       - '&7Volte pro rank inicial'
-      - '&7e obtenha diversos beneficios.'
+      - '&7e obtenha diversos'
+      - '&7beneficios.'
       - ''
       - '&eVocê se encontra a &e&n@ranks'
       - '&eranks do último rank!'
@@ -30,7 +32,8 @@ Conteudo:
     Lore:
       - '&6Uma nova jornada.'
       - '&7Volte pro rank inicial'
-      - '&7e obtenha diversos beneficios.'
+      - '&7e obtenha diversos'
+      - '&7beneficios.'
       - ''
       - '&6Você se encontra no'
       - '&6prestigio final!'
