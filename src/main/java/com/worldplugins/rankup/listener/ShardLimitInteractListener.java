@@ -114,10 +114,11 @@ public class ShardLimitInteractListener implements Listener {
             return;
         }
 
-        final int limitSum = playerModel.getShardLimit(shardId) + amount;
+        final int playerLimit = playerModel.getShardLimit(shardId);
+        final int limitSum = playerLimit + amount;
         final int setAmount = Math.min(limitSum, configShard.getLimit());
         final Integer addedAmount = limitSum > configShard.getLimit()
-            ? limitSum - configShard.getLimit()
+            ? configShard.getLimit() - playerLimit
             : amount;
 
         if (limitSum > configShard.getLimit()) {
