@@ -1,13 +1,12 @@
 package com.worldplugins.rankup.config;
 
-import com.worldplugins.lib.common.Logger;
-import com.worldplugins.lib.config.bukkit.ConfigContainer;
-import com.worldplugins.lib.config.cache.StateConfig;
-import com.worldplugins.lib.config.cache.annotation.Config;
+import com.worldplugins.lib.config.cache.InjectedConfigCache;
+import com.worldplugins.lib.config.cache.annotation.ConfigSpec;
 import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.lib.extension.bukkit.ConfigurationExtensions;
-import com.worldplugins.rankup.config.data.ChanceShard;
-import com.worldplugins.rankup.config.data.ShardSendType;
+import com.worldplugins.rankup.config.data.EarnData;
+import com.worldplugins.rankup.config.data.shard.ChanceShard;
+import com.worldplugins.rankup.config.data.shard.ShardSendType;
 import com.worldplugins.rankup.config.data.earn.*;
 import lombok.NonNull;
 import lombok.experimental.ExtensionMethod;
@@ -23,37 +22,10 @@ import java.util.stream.Collectors;
     ConfigurationExtensions.class
 })
 
-@Config(path = "recompensas")
-public class EarnConfig extends StateConfig<EarnConfig.Config> {
-
-    public EarnConfig(Logger logger, @NonNull ConfigContainer configContainer) {
-        super(logger, configContainer);
-    }
-
-    public static class Config {
-        private final @NonNull Map<Class<? extends ShardEarn>, List<ShardEarn>> shardEarns;
-        private final @NonNull Map<Class<? extends ShardEarn>, List<ShardEarn>> limitEarns;
-
-        public Config(
-            @NonNull Collection<ShardEarn> shardEarns,
-            @NonNull Collection<ShardEarn> limitEarns
-        ) {
-            this.shardEarns = shardEarns.stream().collect(Collectors.groupingBy(ShardEarn::getClass));
-            this.limitEarns = limitEarns.stream().collect(Collectors.groupingBy(ShardEarn::getClass));
-        }
-
-        public List<ShardEarn> getShardEarnsByType(@NonNull Class<? extends ShardEarn> earnType) {
-            return shardEarns.get(earnType);
-        }
-
-        public List<ShardEarn> getLimitEarnsByType(@NonNull Class<? extends ShardEarn> earnType) {
-            return limitEarns.get(earnType);
-        }
-    }
-
-    @Override
-    public @NonNull Config fetch(@NonNull FileConfiguration config) {
-        return new Config(
+public class EarnConfig implements InjectedConfigCache<EarnData> {
+    @ConfigSpec(path = "recompensas")
+    public @NonNull EarnData transform(@NonNull FileConfiguration config) {
+        return new EarnData(
             config.section("Fragmentos").map(this::fetchEarn),
             config.section("Limite").map(this::fetchEarn)
         );

@@ -3,8 +3,9 @@ package com.worldplugins.rankup.command.rank;
 import com.worldplugins.lib.command.CommandModule;
 import com.worldplugins.lib.command.annotation.ArgsChecker;
 import com.worldplugins.lib.command.annotation.Command;
+import com.worldplugins.lib.config.cache.ConfigCache;
 import com.worldplugins.lib.extension.GenericExtensions;
-import com.worldplugins.rankup.config.RanksConfig;
+import com.worldplugins.rankup.config.data.RanksData;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
 import com.worldplugins.rankup.manager.EvolutionManager;
@@ -24,7 +25,7 @@ import org.bukkit.entity.Player;
 public class RegressRank implements CommandModule {
     private final @NonNull PlayerService playerService;
     private final @NonNull EvolutionManager evolutionManager;
-    private final @NonNull RanksConfig ranksConfig;
+    private final @NonNull ConfigCache<RanksData> ranksConfig;
 
     @Command(
         name = "rankup regredir",
@@ -44,8 +45,8 @@ public class RegressRank implements CommandModule {
         }
 
         playerService.consumePlayer(player.getUniqueId(), playerModel -> {
-            final RanksConfig.Config.Rank configRank = ranksConfig.get().getById(playerModel.getRank());
-            final RanksConfig.Config.Rank previousRank = ranksConfig.get().getPrevious(configRank.getId());
+            final RanksData.Rank configRank = ranksConfig.data().getById(playerModel.getRank());
+            final RanksData.Rank previousRank = ranksConfig.data().getPrevious(configRank.getId());
 
             if (previousRank == null) {
                 sender.respond("Regredir-rank-primeiro", message -> message.replace(

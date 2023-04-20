@@ -3,9 +3,10 @@ package com.worldplugins.rankup.command.shard;
 import com.worldplugins.lib.command.CommandModule;
 import com.worldplugins.lib.command.annotation.ArgsChecker;
 import com.worldplugins.lib.command.annotation.Command;
+import com.worldplugins.lib.config.cache.ConfigCache;
 import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.lib.extension.NumberFormatExtensions;
-import com.worldplugins.rankup.config.ShardsConfig;
+import com.worldplugins.rankup.config.data.ShardsData;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
 import lombok.NonNull;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class RemoveShards implements CommandModule {
-    private final @NonNull ShardsConfig shardsConfig;
+    private final @NonNull ConfigCache<ShardsData> shardsConfig;
     private final @NonNull PlayerService playerService;
 
     @Command(
@@ -44,11 +45,11 @@ public class RemoveShards implements CommandModule {
             return;
         }
 
-        final ShardsConfig.Config.Shard configShard = shardsConfig.get().getByName(args[1]);
+        final ShardsData.Shard configShard = shardsConfig.data().getByName(args[1]);
 
         if (configShard == null) {
-            final List<String> existingShards = shardsConfig.get().getAll()
-                .stream().map(ShardsConfig.Config.Shard::getName)
+            final List<String> existingShards = shardsConfig.data().getAll()
+                .stream().map(ShardsData.Shard::getName)
                 .collect(Collectors.toList());
             sender.respond("Fragmento-inexistente", message -> message.replace(
                 "@fragmento".to(args[1]),

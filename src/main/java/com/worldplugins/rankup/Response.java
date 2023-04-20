@@ -118,8 +118,8 @@ public class Response {
         message(sender, key, transformFunction);
 
         if (sender instanceof Player) {
-            GlobalAccess.getSounds().value(key).ifNotNull(message -> message.send(sender));
-            GlobalAccess.getEffects().value(key).ifNotNull(message -> message.send(sender));
+            GlobalAccess.getSounds().data().get(key).ifNotNull(message -> message.send(sender));
+            GlobalAccess.getEffects().data().get(key).ifNotNull(message -> message.send(sender));
         }
     }
 
@@ -143,7 +143,7 @@ public class Response {
         @NonNull String key,
         Function<SubjectMessage, SubjectMessage> transformFunction
     ) {
-        final SubjectMessage message = GlobalAccess.getMessages().value(key);
+        final SubjectMessage message = GlobalAccess.getMessages().data().get(key);
 
         if (message == null)
             return;

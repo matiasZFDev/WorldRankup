@@ -1,5 +1,6 @@
 package com.worldplugins.rankup.view;
 
+import com.worldplugins.lib.config.cache.ConfigCache;
 import com.worldplugins.lib.config.cache.menu.ItemProcessResult;
 import com.worldplugins.lib.config.cache.menu.MenuData;
 import com.worldplugins.lib.config.cache.menu.MenuItem;
@@ -14,10 +15,10 @@ import com.worldplugins.lib.util.ConversationProvider;
 import com.worldplugins.lib.util.MenuItemsUtils;
 import com.worldplugins.lib.view.MenuDataView;
 import com.worldplugins.lib.view.ViewContext;
-import com.worldplugins.lib.view.annotation.ViewOf;
+import com.worldplugins.lib.view.annotation.ViewSpec;
 import com.worldplugins.rankup.NBTKeys;
-import com.worldplugins.rankup.config.MainConfig;
-import com.worldplugins.rankup.config.ShardsConfig;
+import com.worldplugins.rankup.config.data.MainData;
+import com.worldplugins.rankup.config.data.ShardsData;
 import com.worldplugins.rankup.config.menu.BagMenuContainer;
 import com.worldplugins.rankup.conversation.ShardSellConversation;
 import com.worldplugins.rankup.conversation.ShardWithdrawConversation;
@@ -48,12 +49,12 @@ import java.util.stream.Collectors;
     NumberExtensions.class
 })
 
-@ViewOf(menuContainer = BagMenuContainer.class)
+@ViewSpec(menuContainer = BagMenuContainer.class)
 @RequiredArgsConstructor
 public class BagView extends MenuDataView<ViewContext> {
-    private final @NonNull ShardsConfig shardsConfig;
+    private final @NonNull ConfigCache<ShardsData> shardsConfig;
     private final @NonNull PlayerService playerService;
-    private final @NonNull MainConfig mainConfig;
+    private final @NonNull ConfigCache<MainData> mainConfig;
     private final @NonNull ConversationProvider conversationProvider;
     private final Economy economy;
     private final @NonNull ShardFactory shardFactory;
@@ -67,24 +68,24 @@ public class BagView extends MenuDataView<ViewContext> {
         final String sellBonus;
         final String bonusTag;
 
-        if (mainConfig.get().getShardSellOptions() == null) {
+        if (mainConfig.data().getShardSellOptions() == null) {
             sellBonus = "0";
             bonusTag = "";
         } else {
-            final MainConfig.Config.ShardSellOptions.SellBonus bonus = mainConfig.get()
+            final MainData.ShardSellOptions.SellBonus bonus =mainConfig.data()
                 .getShardSellOptions()
                 .getBonus(player);
             sellBonus = bonus == null ? "0" : ((Double) bonus.getBonus()).plainFormat();
             bonusTag = bonus != null && bonus.getTag() != null
                 ? bonus.getTag()
-                : mainConfig.get().getShardSellOptions().getNoGroupTag();
+                : mainConfig.data().getShardSellOptions().getNoGroupTag();
         }
 
         return MenuItemsUtils.newSession(menuData.getItems(), session -> {
             session.addDynamics(() -> {
-                return shardsConfig.get().getAll().zip(itemSlots).stream()
+                return shardsConfig.data().getAll().zip(itemSlots).stream()
                     .map(pair -> {
-                        final ShardsConfig.Config.Shard shard = pair.first();
+                        final ShardsData.Shard shard = pair.first();
                         final Double shardPrice = ((Double) shard.getPrice()).applyPercentage(
                             Double.parseDouble(sellBonus), NumberExtensions.ApplyType.INCREMENT
                         );
@@ -113,12 +114,12 @@ public class BagView extends MenuDataView<ViewContext> {
         if (menuItem.getId().equals("Fragmento")) {
             final byte shardId = menuItem.getItem().getReferenceValue(NBTKeys.BAG_SHARD, NBTTagCompound::getByte);
 
-            if (shardsConfig.get().getById(shardId) == null) {
+            if (shardsConfig.data().getById(shardId) == null) {
                 player.respond("Fragmento-inexistente");
                 return;
             }
 
-            if (event.isRightClick() && mainConfig.get().isShardWithdrawEnabled()) {
+            if (event.isRightClick() && mainConfig.data().isShardWithdrawEnabled()) {
                 player.closeInventory();
                 conversationProvider.create()
                     .withFirstPrompt(new ShardWithdrawConversation(
@@ -131,7 +132,7 @@ public class BagView extends MenuDataView<ViewContext> {
                 return;
             }
 
-            if (event.isLeftClick() && mainConfig.get().getShardSellOptions() != null) {
+            if (event.isLeftClick() && mainConfig.data().getShardSellOptions() != null) {
                 player.closeInventory();
                 conversationProvider.create()
                     .withFirstPrompt(new ShardSellConversation(

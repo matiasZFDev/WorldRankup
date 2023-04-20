@@ -1,10 +1,11 @@
 package com.worldplugins.rankup.conversation;
 
+import com.worldplugins.lib.config.cache.ConfigCache;
 import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.lib.extension.NumberExtensions;
 import com.worldplugins.lib.extension.NumberFormatExtensions;
-import com.worldplugins.rankup.config.MainConfig;
-import com.worldplugins.rankup.config.ShardsConfig;
+import com.worldplugins.rankup.config.data.MainData;
+import com.worldplugins.rankup.config.data.ShardsData;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
@@ -31,13 +32,13 @@ import org.bukkit.entity.Player;
 public class ShardSellConversation extends StringPrompt {
     private final byte shardId;
     private final @NonNull PlayerService playerService;
-    private final @NonNull MainConfig mainConfig;
-    private final @NonNull ShardsConfig shardsConfig;
+    private final @NonNull ConfigCache<MainData> mainConfig;
+    private final @NonNull ConfigCache<ShardsData> shardsConfig;
     private final @NonNull Economy economy;
 
     @Override
     public String getPromptText(ConversationContext context) {
-        final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
+        final ShardsData.Shard configShard = shardsConfig.data().getById(shardId);
 
         ((Player) context.getForWhom()).respond("Vender-fragmentos", message -> message.replace(
             "@fragmento".to(configShard.getDisplay()),
@@ -56,7 +57,7 @@ public class ShardSellConversation extends StringPrompt {
             return null;
         }
 
-        if (mainConfig.get().getShardSellOptions() == null) {
+        if (mainConfig.data().getShardSellOptions() == null) {
             player.respond("Venda-desabilitada");
             return null;
         }
@@ -73,7 +74,7 @@ public class ShardSellConversation extends StringPrompt {
             return null;
         }
 
-        final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
+        final ShardsData.Shard configShard = shardsConfig.data().getById(shardId);
 
         if (configShard == null) {
             player.respond("Fragmento-invalido");
@@ -87,7 +88,7 @@ public class ShardSellConversation extends StringPrompt {
             return null;
         }
 
-        final MainConfig.Config.ShardSellOptions.SellBonus sellBonus = mainConfig.get()
+        final MainData.ShardSellOptions.SellBonus sellBonus = mainConfig.data()
             .getShardSellOptions()
             .getBonus(player);
         final Double shardsValue = amount * configShard.getPrice();

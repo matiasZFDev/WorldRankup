@@ -3,9 +3,10 @@ package com.worldplugins.rankup.command.prestige;
 import com.worldplugins.lib.command.CommandModule;
 import com.worldplugins.lib.command.annotation.ArgsChecker;
 import com.worldplugins.lib.command.annotation.Command;
+import com.worldplugins.lib.config.cache.ConfigCache;
 import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.lib.extension.NumberExtensions;
-import com.worldplugins.rankup.config.PrestigeConfig;
+import com.worldplugins.rankup.config.data.PrestigeData;
 import com.worldplugins.rankup.config.data.prestige.Prestige;
 import com.worldplugins.rankup.extension.ResponseExtensions;
 import com.worldplugins.rankup.manager.EvolutionManager;
@@ -25,7 +26,7 @@ import org.bukkit.entity.Player;
 @RequiredArgsConstructor
 public class SetPrestige implements CommandModule {
     private final @NonNull EvolutionManager evolutionManager;
-    private final @NonNull PrestigeConfig prestigeConfig;
+    private final @NonNull ConfigCache<PrestigeData> prestigeConfig;
 
     @Command(
         name = "rankup setprestigio",
@@ -56,7 +57,7 @@ public class SetPrestige implements CommandModule {
         System.out.println("AFTER");
         System.out.println(prestige);
 
-        final Prestige configPrestige = prestigeConfig.get().getPrestiges().getById(prestige);
+        final Prestige configPrestige = prestigeConfig.data().getPrestiges().getById(prestige);
 
         if (configPrestige == null) {
             sender.respond("Prestigio-invalido", message -> message.replace(

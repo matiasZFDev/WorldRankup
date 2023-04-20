@@ -3,8 +3,9 @@ package com.worldplugins.rankup.command.rank;
 import com.worldplugins.lib.command.CommandModule;
 import com.worldplugins.lib.command.annotation.ArgsChecker;
 import com.worldplugins.lib.command.annotation.Command;
+import com.worldplugins.lib.config.cache.ConfigCache;
 import com.worldplugins.lib.extension.GenericExtensions;
-import com.worldplugins.rankup.config.RanksConfig;
+import com.worldplugins.rankup.config.data.RanksData;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
 import com.worldplugins.rankup.manager.EvolutionManager;
@@ -24,7 +25,7 @@ import org.bukkit.entity.Player;
 public class EvolveRank implements CommandModule {
     private final @NonNull PlayerService playerService;
     private final @NonNull EvolutionManager evolutionManager;
-    private final @NonNull RanksConfig ranksConfig;
+    private final @NonNull ConfigCache<RanksData> ranksConfig;
 
     @Command(
         name = "rankup evoluir",
@@ -44,7 +45,7 @@ public class EvolveRank implements CommandModule {
         }
 
         playerService.consumePlayer(player.getUniqueId(), playerModel -> {
-            final RanksConfig.Config.Rank configRank = ranksConfig.get().getById(playerModel.getRank());
+            final RanksData.Rank configRank = ranksConfig.data().getById(playerModel.getRank());
 
             if (configRank.getEvolution() == null) {
                 sender.respond("Evoluir-rank-ultimo", message -> message.replace(
@@ -53,7 +54,7 @@ public class EvolveRank implements CommandModule {
                 return;
             }
 
-            final RanksConfig.Config.Rank nextRank = ranksConfig.get().getByName(
+            final RanksData.Rank nextRank = ranksConfig.data().getByName(
                 configRank.getEvolution().getNextRankName()
             );
             evolutionManager.setRank(player, nextRank.getId());

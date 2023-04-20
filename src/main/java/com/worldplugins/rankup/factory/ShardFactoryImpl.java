@@ -1,12 +1,13 @@
 package com.worldplugins.rankup.factory;
 
+import com.worldplugins.lib.config.cache.ConfigCache;
 import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.lib.extension.NumberFormatExtensions;
 import com.worldplugins.lib.extension.bukkit.ItemExtensions;
 import com.worldplugins.lib.extension.bukkit.NBTExtensions;
 import com.worldplugins.rankup.NBTKeys;
-import com.worldplugins.rankup.config.MainConfig;
-import com.worldplugins.rankup.config.ShardsConfig;
+import com.worldplugins.rankup.config.data.MainData;
+import com.worldplugins.rankup.config.data.ShardsData;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.ExtensionMethod;
@@ -23,14 +24,14 @@ import org.bukkit.inventory.ItemStack;
 
 @RequiredArgsConstructor
 public class ShardFactoryImpl implements ShardFactory {
-    private final @NonNull MainConfig mainConfig;
-    private final @NonNull ShardsConfig shardsConfig;
+    private final @NonNull ConfigCache<MainData> mainConfig;
+    private final @NonNull ConfigCache<ShardsData> shardsConfig;
 
     @Override
     public @NonNull ItemStack createShard(byte shardId, int amount) {
-        final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
+        final ShardsData.Shard configShard = shardsConfig.data().getById(shardId);
         return configShard.getItem()
-            .display(mainConfig.get().getShardDisplay())
+            .display(mainConfig.data().getShardDisplay())
             .nameFormat(
                 "@nome".to(configShard.getDisplay()),
                 "@quantia".to(Integer.valueOf(amount).suffixed())
@@ -42,9 +43,9 @@ public class ShardFactoryImpl implements ShardFactory {
 
     @Override
     public @NonNull ItemStack createLimit(byte shardId, int amount) {
-        final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
+        final ShardsData.Shard configShard = shardsConfig.data().getById(shardId);
         return configShard.getLimitItem()
-            .display(mainConfig.get().getLimitDisplay())
+            .display(mainConfig.data().getLimitDisplay())
             .nameFormat(
                 "@nome".to(configShard.getDisplay()),
                 "@quantia".to(Integer.valueOf(amount).suffixed())

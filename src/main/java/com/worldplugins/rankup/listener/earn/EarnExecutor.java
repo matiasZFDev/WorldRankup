@@ -1,10 +1,11 @@
 package com.worldplugins.rankup.listener.earn;
 
+import com.worldplugins.lib.config.cache.ConfigCache;
 import com.worldplugins.lib.extension.GenericExtensions;
-import com.worldplugins.rankup.config.EarnConfig;
-import com.worldplugins.rankup.config.MainConfig;
-import com.worldplugins.rankup.config.ShardsConfig;
-import com.worldplugins.rankup.config.data.ShardSendType;
+import com.worldplugins.rankup.config.data.EarnData;
+import com.worldplugins.rankup.config.data.MainData;
+import com.worldplugins.rankup.config.data.ShardsData;
+import com.worldplugins.rankup.config.data.shard.ShardSendType;
 import com.worldplugins.rankup.config.data.earn.ShardEarn;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
@@ -24,11 +25,11 @@ import java.util.function.Function;
 
 @RequiredArgsConstructor
 public final class EarnExecutor {
-    private final @NonNull EarnConfig earnConfig;
+    private final @NonNull ConfigCache<EarnData> earnConfig;
     private final @NonNull ShardFactory shardFactory;
-    private final @NonNull ShardsConfig shardsConfig;
+    private final @NonNull ConfigCache<ShardsData> shardsConfig;
     private final @NonNull PlayerService playerService;
-    private final @NonNull MainConfig mainConfig;
+    private final @NonNull ConfigCache<MainData> mainConfig;
 
     public void tryEarns(
         @NonNull String worldName,
@@ -58,7 +59,7 @@ public final class EarnExecutor {
                 if (((int) Math.floor(Math.random() * (100 / shard.getChance()))) != 0)
                     return;
 
-                final ShardsConfig.Config.Shard configShard = shardsConfig.get().getByName(shard.getName());
+                final ShardsData.Shard configShard = shardsConfig.data().getByName(shard.getName());
 
                 if (configShard == null) {
                     player.respond("Fragmento-consultado-invalido");

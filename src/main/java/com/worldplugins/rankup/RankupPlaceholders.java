@@ -1,8 +1,9 @@
 package com.worldplugins.rankup;
 
+import com.worldplugins.lib.config.cache.ConfigCache;
 import com.worldplugins.lib.extension.bukkit.ColorExtensions;
-import com.worldplugins.rankup.config.PrestigeConfig;
-import com.worldplugins.rankup.config.RanksConfig;
+import com.worldplugins.rankup.config.data.PrestigeData;
+import com.worldplugins.rankup.config.data.RanksData;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
 import lombok.NonNull;
@@ -18,8 +19,8 @@ import org.bukkit.entity.Player;
 @RequiredArgsConstructor
 public class RankupPlaceholders extends PlaceholderExpansion {
     private final @NonNull PlayerService playerService;
-    private final @NonNull RanksConfig ranksConfig;
-    private final @NonNull PrestigeConfig prestigeConfig;
+    private final @NonNull ConfigCache<RanksData> ranksConfig;
+    private final @NonNull ConfigCache<PrestigeData> prestigeConfig;
 
     @Override
     public String getIdentifier() {
@@ -51,10 +52,10 @@ public class RankupPlaceholders extends PlaceholderExpansion {
         else {
             switch (params) {
                 case "rank":
-                    return ranksConfig.get().getById(playerModel.getRank()).getDisplay();
+                    return ranksConfig.data().getById(playerModel.getRank()).getDisplay();
 
                 case "prestigio":
-                    return prestigeConfig.get().getPrestiges().getById(playerModel.getPrestige()).getDisplay();
+                    return prestigeConfig.data().getPrestiges().getById(playerModel.getPrestige()).getDisplay();
             }
         }
 

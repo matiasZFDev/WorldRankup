@@ -1,16 +1,12 @@
 package com.worldplugins.rankup.config;
 
-import com.worldplugins.lib.common.Logger;
-import com.worldplugins.lib.config.bukkit.ConfigContainer;
-import com.worldplugins.lib.config.cache.StateConfig;
-import com.worldplugins.lib.config.cache.annotation.Config;
+import com.worldplugins.lib.config.cache.InjectedConfigCache;
+import com.worldplugins.lib.config.cache.annotation.ConfigSpec;
 import com.worldplugins.lib.extension.bukkit.ConfigurationExtensions;
+import com.worldplugins.rankup.config.data.PrestigeData;
 import com.worldplugins.rankup.config.data.prestige.IndividualPrestiges;
 import com.worldplugins.rankup.config.data.prestige.Prestige;
-import com.worldplugins.rankup.config.data.prestige.Prestiges;
-import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.ExtensionMethod;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -18,26 +14,13 @@ import org.bukkit.configuration.file.FileConfiguration;
     ConfigurationExtensions.class
 })
 
-@Config(path = "prestigio")
-public class PrestigeConfig extends StateConfig<PrestigeConfig.Config> {
-
-    public PrestigeConfig(Logger logger, @NonNull ConfigContainer configContainer) {
-        super(logger, configContainer);
-    }
-
-    @RequiredArgsConstructor
-    @Getter
-    public static class Config {
-        private final short defaulPrestige;
-        private final @NonNull Prestiges prestiges;
-    }
-
-    @Override
-    public @NonNull Config fetch(@NonNull FileConfiguration config) {
+public class PrestigeConfig implements InjectedConfigCache<PrestigeData> {
+    @ConfigSpec(path = "prestigio")
+    public @NonNull PrestigeData transform(@NonNull FileConfiguration config) {
         final String type = config.getString("Tipo");
 
         if (type.equals("INDIVIDUAL")) {
-            return new Config(
+            return new PrestigeData(
                 config.getShort("Prestigio-padrao"),
                 new IndividualPrestiges(
                     config.section("Prestigios").map(section ->

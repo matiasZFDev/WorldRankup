@@ -3,8 +3,9 @@ package com.worldplugins.rankup.command.rank;
 import com.worldplugins.lib.command.CommandModule;
 import com.worldplugins.lib.command.annotation.ArgsChecker;
 import com.worldplugins.lib.command.annotation.Command;
+import com.worldplugins.lib.config.cache.ConfigCache;
 import com.worldplugins.lib.extension.GenericExtensions;
-import com.worldplugins.rankup.config.RanksConfig;
+import com.worldplugins.rankup.config.data.RanksData;
 import com.worldplugins.rankup.extension.ResponseExtensions;
 import com.worldplugins.rankup.manager.EvolutionManager;
 import lombok.NonNull;
@@ -22,7 +23,7 @@ import org.bukkit.entity.Player;
 @RequiredArgsConstructor
 public class SetRank implements CommandModule {
     private final @NonNull EvolutionManager evolutionManager;
-    private final @NonNull RanksConfig ranksConfig;
+    private final @NonNull ConfigCache<RanksData> ranksConfig;
 
     @Command(
         name = "rankup setrank",
@@ -41,7 +42,7 @@ public class SetRank implements CommandModule {
             return;
         }
 
-        final RanksConfig.Config.Rank configRank = ranksConfig.get().getByName(args[1]);
+        final RanksData.Rank configRank = ranksConfig.data().getByName(args[1]);
 
         if (configRank == null) {
             sender.respond("Setar-rank-invalido", message -> message.replace(

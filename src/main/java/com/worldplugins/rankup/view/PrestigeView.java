@@ -1,5 +1,6 @@
 package com.worldplugins.rankup.view;
 
+import com.worldplugins.lib.config.cache.ConfigCache;
 import com.worldplugins.lib.config.cache.menu.ItemProcessResult;
 import com.worldplugins.lib.config.cache.menu.MenuData;
 import com.worldplugins.lib.config.cache.menu.MenuItem;
@@ -11,10 +12,10 @@ import com.worldplugins.lib.extension.bukkit.NBTExtensions;
 import com.worldplugins.lib.util.MenuItemsUtils;
 import com.worldplugins.lib.view.MenuDataView;
 import com.worldplugins.lib.view.ViewContext;
-import com.worldplugins.lib.view.annotation.ViewOf;
+import com.worldplugins.lib.view.annotation.ViewSpec;
 import com.worldplugins.rankup.NBTKeys;
-import com.worldplugins.rankup.config.PrestigeConfig;
-import com.worldplugins.rankup.config.RanksConfig;
+import com.worldplugins.rankup.config.data.PrestigeData;
+import com.worldplugins.rankup.config.data.RanksData;
 import com.worldplugins.rankup.config.data.prestige.Prestige;
 import com.worldplugins.rankup.config.menu.PrestigeMenuContainer;
 import com.worldplugins.rankup.database.model.RankupPlayer;
@@ -38,19 +39,19 @@ import java.util.concurrent.atomic.AtomicInteger;
     NBTExtensions.class
 }, suppressBaseMethods = false)
 
-@ViewOf(menuContainer = PrestigeMenuContainer.class)
+@ViewSpec(menuContainer = PrestigeMenuContainer.class)
 @RequiredArgsConstructor
 public class PrestigeView extends MenuDataView<ViewContext> {
     private final @NonNull PlayerService playerService;
-    private final @NonNull RanksConfig ranksConfig;
-    private final @NonNull PrestigeConfig prestigeConfig;
+    private final @NonNull ConfigCache<RanksData> ranksConfig;
+    private final @NonNull ConfigCache<PrestigeData> prestigeConfig;
     private final @NonNull EvolutionManager evolutionManager;
 
     @Override
     public @NonNull ItemProcessResult processItems(@NonNull Player player, ViewContext context, @NonNull MenuData menuData) {
         final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-        final RanksConfig.Config.Rank configRank = ranksConfig.get().getById(playerModel.getRank());
-        final Prestige configPrestige = prestigeConfig.get().getPrestiges().getById(playerModel.getPrestige());
+        final RanksData.Rank configRank = ranksConfig.data().getById(playerModel.getRank());
+        final Prestige configPrestige = prestigeConfig.data().getPrestiges().getById(playerModel.getPrestige());
 
         return MenuItemsUtils.newSession(menuData.getItems(), session -> {
             if (configPrestige.getNext() == null) {
@@ -60,11 +61,11 @@ public class PrestigeView extends MenuDataView<ViewContext> {
                 );
             } else {
                 AtomicInteger rankOffsetDistance = new AtomicInteger(0);
-                RanksConfig.Config.Rank currentConfigRank = configRank;
+                RanksData.Rank currentConfigRank = configRank;
 
                 while (currentConfigRank.getEvolution() != null) {
                     rankOffsetDistance.incrementAndGet();
-                    currentConfigRank = ranksConfig.get().getByName(currentConfigRank.getEvolution().getNextRankName());
+                    currentConfigRank = ranksConfig.data().getByName(currentConfigRank.getEvolution().getNextRankName());
                 }
 
                 if (rankOffsetDistance.get() == 0) {
@@ -93,7 +94,7 @@ public class PrestigeView extends MenuDataView<ViewContext> {
     public void onClick(@NonNull Player player, @NonNull MenuItem item, @NonNull InventoryClickEvent event) {
         if (event.getCurrentItem().hasReference(NBTKeys.PRESTIGE_ENABLED)) {
             final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-            final RanksConfig.Config.Rank configRank = ranksConfig.get().getById(playerModel.getRank());
+            final RanksData.Rank configRank = ranksConfig.data().getById(playerModel.getRank());
 
             if (configRank.getEvolution() != null) {
                 player.closeInventory();
@@ -101,7 +102,7 @@ public class PrestigeView extends MenuDataView<ViewContext> {
                 return;
             }
 
-            final Prestige configPrestige = prestigeConfig.get().getPrestiges().getById(playerModel.getPrestige());
+            final Prestige configPrestige = prestigeConfig.data().getPrestiges().getById(playerModel.getPrestige());
 
             if (configPrestige.getNext() == null) {
                 player.closeInventory();
@@ -109,8 +110,8 @@ public class PrestigeView extends MenuDataView<ViewContext> {
                 return;
             }
 
-            final RanksConfig.Config.Rank firstRank = ranksConfig.get().getByName(ranksConfig.get().getDefaultRank());
-            final Prestige nextPrestige = prestigeConfig.get().getPrestiges().getById(configPrestige.getNext());
+            final RanksData.Rank firstRank = ranksConfig.data().getByName(ranksConfig.data().getDefaultRank());
+            final Prestige nextPrestige = prestigeConfig.data().getPrestiges().getById(configPrestige.getNext());
 
             evolutionManager.setRank(player, firstRank.getId());
             evolutionManager.setPrestige(player, nextPrestige.getId());

@@ -1,10 +1,11 @@
 package com.worldplugins.rankup.conversation;
 
+import com.worldplugins.lib.config.cache.ConfigCache;
 import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.lib.extension.NumberFormatExtensions;
 import com.worldplugins.lib.extension.bukkit.PlayerExtensions;
-import com.worldplugins.rankup.config.MainConfig;
-import com.worldplugins.rankup.config.ShardsConfig;
+import com.worldplugins.rankup.config.data.MainData;
+import com.worldplugins.rankup.config.data.ShardsData;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
@@ -32,13 +33,13 @@ import org.bukkit.entity.Player;
 public class ShardWithdrawConversation extends StringPrompt {
     private final byte shardId;
     private final @NonNull PlayerService playerService;
-    private final @NonNull MainConfig mainConfig;
-    private final @NonNull ShardsConfig shardsConfig;
+    private final @NonNull ConfigCache<MainData> mainConfig;
+    private final @NonNull ConfigCache<ShardsData> shardsConfig;
     private final @NonNull ShardFactory shardFactory;
 
     @Override
     public String getPromptText(ConversationContext context) {
-        final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
+        final ShardsData.Shard configShard = shardsConfig.data().getById(shardId);
 
         ((Player) context.getForWhom()).respond("Retirar-fragmentos", message -> message.replace(
             "@fragmento".to(configShard.getDisplay())
@@ -56,7 +57,7 @@ public class ShardWithdrawConversation extends StringPrompt {
             return null;
         }
 
-        if (!mainConfig.get().isShardWithdrawEnabled()) {
+        if (!mainConfig.data().isShardWithdrawEnabled()) {
             player.respond("Retiro-desabilitado");
             return null;
         }
@@ -73,7 +74,7 @@ public class ShardWithdrawConversation extends StringPrompt {
             return null;
         }
 
-        final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
+        final ShardsData.Shard configShard = shardsConfig.data().getById(shardId);
 
         if (configShard == null) {
             player.respond("Fragmento-invalido");

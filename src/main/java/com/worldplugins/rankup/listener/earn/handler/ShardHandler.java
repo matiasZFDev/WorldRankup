@@ -1,12 +1,13 @@
 package com.worldplugins.rankup.listener.earn.handler;
 
+import com.worldplugins.lib.config.cache.ConfigCache;
 import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.lib.extension.NumberFormatExtensions;
 import com.worldplugins.lib.extension.bukkit.PlayerExtensions;
-import com.worldplugins.rankup.config.EarnConfig;
-import com.worldplugins.rankup.config.MainConfig;
-import com.worldplugins.rankup.config.ShardsConfig;
-import com.worldplugins.rankup.config.data.ShardCompensation;
+import com.worldplugins.rankup.config.data.EarnData;
+import com.worldplugins.rankup.config.data.MainData;
+import com.worldplugins.rankup.config.data.ShardsData;
+import com.worldplugins.rankup.config.data.shard.ShardCompensation;
 import com.worldplugins.rankup.config.data.earn.ShardEarn;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.extension.ResponseExtensions;
@@ -26,15 +27,15 @@ import java.util.List;
 
 public class ShardHandler implements EarnHandler {
     @Override
-    public List<ShardEarn> getEarns(@NonNull EarnConfig earnConfig, @NonNull Class<? extends ShardEarn> earnType) {
-        return earnConfig.get().getShardEarnsByType(earnType);
+    public List<ShardEarn> getEarns(@NonNull ConfigCache<EarnData> earnConfig, @NonNull Class<? extends ShardEarn> earnType) {
+        return earnConfig.data().getShardEarnsByType(earnType);
     }
 
     @Override
     public void handlePhysicSend(
         @NonNull Player player,
         @NonNull ShardFactory shardFactory,
-        @NonNull ShardsConfig.Config.Shard configShard,
+        @NonNull ShardsData.Shard configShard,
         @NonNull Integer amount
     ) {
         player.giveItems(shardFactory.createShard(configShard.getId(), amount));
@@ -47,11 +48,11 @@ public class ShardHandler implements EarnHandler {
     @Override
     public void handleVirtualSend(
         @NonNull ShardFactory shardFactory,
-        ShardsConfig.Config.@NonNull Shard configShard,
+        @NonNull ShardsData.@NonNull Shard configShard,
         @NonNull Integer amount,
         @NonNull RankupPlayer playerModel,
         @NonNull Player player,
-        @NonNull MainConfig mainConfig,
+        @NonNull ConfigCache<MainData> mainConfig,
         @NonNull ShardCompensation compensation
     ) {
         final byte shardId = configShard.getId();
@@ -66,7 +67,7 @@ public class ShardHandler implements EarnHandler {
             "@quantia".to(addedAmount.suffixed())
         ));
 
-        if (mainConfig.get().hasShardCompensation(compensation)) {
+        if (mainConfig.data().hasShardCompensation(compensation)) {
             player.respond("Fragmentos-compensacao", message -> message.replace(
                 "@fragmento".to(configShard.getDisplay()),
                 "@quantia".to(addedAmount.suffixed())

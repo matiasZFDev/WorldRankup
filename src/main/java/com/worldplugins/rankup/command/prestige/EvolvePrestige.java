@@ -3,8 +3,9 @@ package com.worldplugins.rankup.command.prestige;
 import com.worldplugins.lib.command.CommandModule;
 import com.worldplugins.lib.command.annotation.ArgsChecker;
 import com.worldplugins.lib.command.annotation.Command;
+import com.worldplugins.lib.config.cache.ConfigCache;
 import com.worldplugins.lib.extension.GenericExtensions;
-import com.worldplugins.rankup.config.PrestigeConfig;
+import com.worldplugins.rankup.config.data.PrestigeData;
 import com.worldplugins.rankup.config.data.prestige.Prestige;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
@@ -25,7 +26,7 @@ import org.bukkit.entity.Player;
 public class EvolvePrestige implements CommandModule {
     private final @NonNull PlayerService playerService;
     private final @NonNull EvolutionManager evolutionManager;
-    private final @NonNull PrestigeConfig prestigeConfig;
+    private final @NonNull ConfigCache<PrestigeData> prestigeConfig;
 
     @Command(
         name = "rankup evoluirprestigio",
@@ -45,7 +46,7 @@ public class EvolvePrestige implements CommandModule {
         }
 
         playerService.consumePlayer(player.getUniqueId(), playerModel -> {
-            final Prestige configPrestige = prestigeConfig.get().getPrestiges().getById(playerModel.getPrestige());
+            final Prestige configPrestige = prestigeConfig.data().getPrestiges().getById(playerModel.getPrestige());
 
             if (configPrestige.getNext() == null) {
                 sender.respond("Evoluir-prestigio-ultimo", message -> message.replace(
@@ -54,7 +55,7 @@ public class EvolvePrestige implements CommandModule {
                 return;
             }
 
-            final Prestige nextPrestige = prestigeConfig.get().getPrestiges().getById(
+            final Prestige nextPrestige = prestigeConfig.data().getPrestiges().getById(
                 configPrestige.getNext()
             );
             evolutionManager.setPrestige(player, nextPrestige.getId());

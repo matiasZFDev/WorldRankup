@@ -3,7 +3,8 @@ package com.worldplugins.rankup.command;
 import com.worldplugins.lib.command.CommandModule;
 import com.worldplugins.lib.command.CommandTarget;
 import com.worldplugins.lib.command.annotation.Command;
-import com.worldplugins.rankup.config.RanksConfig;
+import com.worldplugins.lib.config.cache.ConfigCache;
+import com.worldplugins.rankup.config.data.RanksData;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
 import com.worldplugins.rankup.extension.ViewExtensions;
@@ -22,7 +23,7 @@ import org.bukkit.entity.Player;
 @RequiredArgsConstructor
 public class Rankup implements CommandModule {
     private final @NonNull PlayerService playerService;
-    private final @NonNull RanksConfig ranksConfig;
+    private final @NonNull ConfigCache<RanksData> ranksConfig;
 
     @Command(
         name = "rankup",
@@ -33,7 +34,7 @@ public class Rankup implements CommandModule {
     public void execute(@NonNull CommandSender sender, @NonNull String[] args) {
         final Player player = (Player) sender;
         playerService.consumePlayer(player.getUniqueId(), playerModel -> {
-            if (ranksConfig.get().getById(playerModel.getRank()).getEvolution() == null) {
+            if (ranksConfig.data().getById(playerModel.getRank()).getEvolution() == null) {
                 player.respond("Rank-evoluir-ultimo");
                 return;
             }

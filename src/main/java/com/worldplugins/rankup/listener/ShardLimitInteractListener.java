@@ -1,6 +1,7 @@
 package com.worldplugins.rankup.listener;
 
 import com.worldplugins.lib.common.SlotItem;
+import com.worldplugins.lib.config.cache.ConfigCache;
 import com.worldplugins.lib.extension.GenericExtensions;
 import com.worldplugins.lib.extension.NumberFormatExtensions;
 import com.worldplugins.lib.extension.bukkit.InventoryExtensions;
@@ -8,8 +9,7 @@ import com.worldplugins.lib.extension.bukkit.NBTExtensions;
 import com.worldplugins.lib.extension.bukkit.PlayerExtensions;
 import com.worldplugins.rankup.NBTKeys;
 import com.worldplugins.rankup.WorldRankup;
-import com.worldplugins.rankup.config.MainConfig;
-import com.worldplugins.rankup.config.ShardsConfig;
+import com.worldplugins.rankup.config.data.ShardsData;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ResponseExtensions;
@@ -37,7 +37,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class ShardLimitInteractListener implements Listener {
-    private final @NonNull ShardsConfig shardsConfig;
+    private final @NonNull ConfigCache<ShardsData> shardsConfig;
     private final @NonNull PlayerService playerService;
     private final @NonNull ShardFactory shardFactory;
 
@@ -64,7 +64,7 @@ public class ShardLimitInteractListener implements Listener {
         );
 
         final Player player = event.getPlayer();
-        final ShardsConfig.Config.Shard configShard = shardsConfig.get().getById(shardId);
+        final ShardsData.Shard configShard = shardsConfig.data().getById(shardId);
 
         if (configShard == null) {
             player.respond("Limite-invalido");

@@ -1,8 +1,8 @@
 package com.worldplugins.rankup.config.data.earn;
 
-import com.worldplugins.rankup.config.data.ChanceShard;
-import com.worldplugins.rankup.config.data.ShardCompensation;
-import com.worldplugins.rankup.config.data.ShardSendType;
+import com.worldplugins.rankup.config.data.shard.ChanceShard;
+import com.worldplugins.rankup.config.data.shard.ShardCompensation;
+import com.worldplugins.rankup.config.data.shard.ShardSendType;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

@@ -6,7 +6,6 @@ import com.worldplugins.lib.command.annotation.Command;
 import com.worldplugins.rankup.database.service.PlayerService;
 import com.worldplugins.rankup.extension.ViewExtensions;
 import com.worldplugins.rankup.view.PrestigeView;
-import com.worldplugins.rankup.view.RankupView;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.ExtensionMethod;

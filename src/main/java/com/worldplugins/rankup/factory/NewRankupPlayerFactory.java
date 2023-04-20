@@ -1,8 +1,9 @@
 package com.worldplugins.rankup.factory;
 
-import com.worldplugins.rankup.config.PrestigeConfig;
-import com.worldplugins.rankup.config.RanksConfig;
-import com.worldplugins.rankup.config.ShardsConfig;
+import com.worldplugins.lib.config.cache.ConfigCache;
+import com.worldplugins.rankup.config.data.PrestigeData;
+import com.worldplugins.rankup.config.data.RanksData;
+import com.worldplugins.rankup.config.data.ShardsData;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.model.RankupPlayerImpl;
 import com.worldplugins.rankup.database.model.Shard;
@@ -15,15 +16,15 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class NewRankupPlayerFactory implements RankupPlayerFactory {
-    private final @NonNull RanksConfig ranksConfig;
-    private final @NonNull PrestigeConfig prestigeConfig;
-    private final @NonNull ShardsConfig shardsConfig;
+    private final @NonNull ConfigCache<RanksData> ranksConfig;
+    private final @NonNull ConfigCache<PrestigeData> prestigeConfig;
+    private final @NonNull ConfigCache<ShardsData> shardsConfig;
 
     @Override
     public @NonNull RankupPlayer create(@NonNull UUID playerId) {
-        final short rank = ranksConfig.get().getByName(ranksConfig.get().getDefaultRank()).getId();
-        final short prestige = prestigeConfig.get().getDefaulPrestige();
-        final Collection<Shard> shards = shardsConfig.get().getAll().stream()
+        final short rank = ranksConfig.data().getByName(ranksConfig.data().getDefaultRank()).getId();
+        final short prestige = prestigeConfig.data().getDefaulPrestige();
+        final Collection<Shard> shards = shardsConfig.data().getAll().stream()
             .map(configShard -> new Shard(configShard.getId(), 0, configShard.getDefaultLimit()))
             .collect(Collectors.toList());
         return new RankupPlayerImpl(playerId, rank, prestige, shards);

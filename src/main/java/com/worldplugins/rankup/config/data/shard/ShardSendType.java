@@ -1,4 +1,4 @@
-package com.worldplugins.rankup.config.data;
+package com.worldplugins.rankup.config.data.shard;
 
 import lombok.Getter;
 import lombok.NonNull;

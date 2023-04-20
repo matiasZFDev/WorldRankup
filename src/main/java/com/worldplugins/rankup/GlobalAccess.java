@@ -1,33 +1,36 @@
 package com.worldplugins.rankup;
 
-import com.worldplugins.lib.config.cache.impl.EffectsConfig;
-import com.worldplugins.lib.config.cache.impl.MessagesConfig;
-import com.worldplugins.lib.config.cache.impl.SoundsConfig;
+import com.worldplugins.lib.config.cache.ConfigCache;
+import com.worldplugins.lib.config.response.effect.PlayerEffect;
+import com.worldplugins.lib.config.response.message.SubjectMessage;
+import com.worldplugins.lib.config.response.sound.PlayerSound;
 import com.worldplugins.lib.manager.view.ViewManager;
 import lombok.Getter;
 import lombok.NonNull;
 
+import java.util.Map;
+
 public class GlobalAccess {
     @Getter
-    private static MessagesConfig messages;
+    private static ConfigCache<Map<String, SubjectMessage>> messages;
     @Getter
-    private static SoundsConfig sounds;
+    private static ConfigCache<Map<String, PlayerSound>> sounds;
     @Getter
-    private static EffectsConfig effects;
+    private static ConfigCache<Map<String, PlayerEffect>> effects;
     @Getter
     private static ViewManager viewManager;
 
-    public static void setMessages(@NonNull MessagesConfig messagesConfig) {
+    public static void setMessages(@NonNull ConfigCache<Map<String, SubjectMessage>> messagesConfig) {
         assert messages != null;
         messages = messagesConfig;
     }
 
-    public static void setSounds(@NonNull SoundsConfig soundsConfig) {
+    public static void setSounds(@NonNull ConfigCache<Map<String, PlayerSound>> soundsConfig) {
         assert sounds != null;
         sounds = soundsConfig;
     }
 
-    public static void setEffects(@NonNull EffectsConfig effectsConfig) {
+    public static void setEffects(@NonNull ConfigCache<Map<String, PlayerEffect>> effectsConfig) {
         assert effects != null;
         effects = effectsConfig;
     }

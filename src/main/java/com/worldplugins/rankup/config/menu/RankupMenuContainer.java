@@ -1,10 +1,8 @@
 package com.worldplugins.rankup.config.menu;
 
-import com.worldplugins.lib.common.Logger;
-import com.worldplugins.lib.config.bukkit.ConfigContainer;
-import com.worldplugins.lib.config.cache.annotation.MenuContainerOf;
+import com.worldplugins.lib.config.cache.annotation.MenuContainerSpec;
+import com.worldplugins.lib.config.cache.menu.InjectedMenuContainer;
 import com.worldplugins.lib.config.cache.menu.MenuData;
-import com.worldplugins.lib.config.cache.menu.StateMenuContainer;
 import com.worldplugins.lib.extension.bukkit.ItemExtensions;
 import com.worldplugins.lib.util.MenuDataUtils;
 import lombok.NonNull;
@@ -17,13 +15,8 @@ import java.util.HashMap;
     ItemExtensions.class
 })
 
-@MenuContainerOf(name = "rankup")
-public class RankupMenuContainer extends StateMenuContainer {
-    public RankupMenuContainer(Logger logger, @NonNull ConfigContainer configContainer, String section) {
-        super(logger, configContainer, section);
-    }
-
-    @Override
+@MenuContainerSpec(name = "rankup")
+public class RankupMenuContainer implements InjectedMenuContainer {
     public MenuData createData(@NonNull ConfigurationSection section) {
         return MenuDataUtils.fetch(section)
             .modifyItems(items -> {

@@ -1,8 +1,9 @@
 package com.worldplugins.rankup.listener;
 
 import br.com.devpaulo.legendchat.api.events.ChatMessageEvent;
-import com.worldplugins.rankup.config.PrestigeConfig;
-import com.worldplugins.rankup.config.RanksConfig;
+import com.worldplugins.lib.config.cache.ConfigCache;
+import com.worldplugins.rankup.config.data.PrestigeData;
+import com.worldplugins.rankup.config.data.RanksData;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
 import lombok.NonNull;
@@ -13,8 +14,8 @@ import org.bukkit.event.Listener;
 @RequiredArgsConstructor
 public class PlayerTagChatListener implements Listener {
     private final @NonNull PlayerService playerService;
-    private final @NonNull RanksConfig ranksConfig;
-    private final @NonNull PrestigeConfig prestigeConfig;
+    private final @NonNull ConfigCache<RanksData> ranksConfig;
+    private final @NonNull ConfigCache<PrestigeData> prestigeConfig;
 
     @EventHandler
     public void onChat(ChatMessageEvent event) {
@@ -24,10 +25,10 @@ public class PlayerTagChatListener implements Listener {
             return;
         }
 
-        event.setTagValue("rank", ranksConfig.get().getById(playerModel.getRank()).getDisplay());
+        event.setTagValue("rank", ranksConfig.data().getById(playerModel.getRank()).getDisplay());
         event.setTagValue(
             "prestigio",
-            prestigeConfig.get().getPrestiges().getById(playerModel.getPrestige()).getDisplay()
+            prestigeConfig.data().getPrestiges().getById(playerModel.getPrestige()).getDisplay()
         );
     }
 }

@@ -1,5 +1,6 @@
 package com.worldplugins.rankup.view;
 
+import com.worldplugins.lib.config.cache.ConfigCache;
 import com.worldplugins.lib.config.cache.menu.ItemProcessResult;
 import com.worldplugins.lib.config.cache.menu.MenuData;
 import com.worldplugins.lib.config.cache.menu.MenuItem;
@@ -10,9 +11,9 @@ import com.worldplugins.lib.extension.bukkit.ItemExtensions;
 import com.worldplugins.lib.util.MenuItemsUtils;
 import com.worldplugins.lib.view.MenuDataView;
 import com.worldplugins.lib.view.ViewContext;
-import com.worldplugins.lib.view.annotation.ViewOf;
-import com.worldplugins.rankup.config.RanksConfig;
-import com.worldplugins.rankup.config.ShardsConfig;
+import com.worldplugins.lib.view.annotation.ViewSpec;
+import com.worldplugins.rankup.config.data.RanksData;
+import com.worldplugins.rankup.config.data.ShardsData;
 import com.worldplugins.rankup.config.menu.RankupMenuContainer;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
@@ -36,20 +37,20 @@ import java.util.stream.Collectors;
     ResponseExtensions.class
 }, suppressBaseMethods = false)
 
-@ViewOf(menuContainer = RankupMenuContainer.class)
+@ViewSpec(menuContainer = RankupMenuContainer.class)
 @RequiredArgsConstructor
 public class RankupView extends MenuDataView<ViewContext> {
     private final @NonNull PlayerService playerService;
-    private final @NonNull RanksConfig ranksConfig;
-    private final @NonNull ShardsConfig shardsConfig;
+    private final @NonNull ConfigCache<RanksData> ranksConfig;
+    private final @NonNull ConfigCache<ShardsData> shardsConfig;
     private final @NonNull Economy economy;
     private final @NonNull EvolutionManager evolutionManager;
 
     @Override
     public @NonNull ItemProcessResult processItems(@NonNull Player player, ViewContext context, @NonNull MenuData menuData) {
         final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-        final RanksConfig.Config.Rank configRank = ranksConfig.get().getById(playerModel.getRank());
-        final RanksConfig.Config.Rank nextRank = ranksConfig.get().getByName(
+        final RanksData.Rank configRank = ranksConfig.data().getById(playerModel.getRank());
+        final RanksData.Rank nextRank = ranksConfig.data().getByName(
             configRank.getEvolution().getNextRankName()
         );
 
@@ -72,7 +73,7 @@ public class RankupView extends MenuDataView<ViewContext> {
                     .loreListFormat("@@fragmentos",
                         configRank.getEvolution().getRequiredShards().stream()
                             .map(shard -> {
-                                final ShardsConfig.Config.Shard configShard = shardsConfig.get().getByName(
+                                final ShardsData.Shard configShard = shardsConfig.data().getByName(
                                     shard.getName()
                                 );
                                 final String status = playerModel.getShards(configShard.getId()) >= shard.getAmount()
@@ -95,7 +96,7 @@ public class RankupView extends MenuDataView<ViewContext> {
     public void onClick(@NonNull Player player, @NonNull MenuItem item, @NonNull InventoryClickEvent event) {
         if (item.getId().equals("Confirmar")) {
             final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-            final RanksConfig.Config.Rank configRank = ranksConfig.get().getById(playerModel.getRank());
+            final RanksData.Rank configRank = ranksConfig.data().getById(playerModel.getRank());
 
             player.closeInventory();
 
@@ -111,7 +112,7 @@ public class RankupView extends MenuDataView<ViewContext> {
 
             final boolean hasShardRequirements = configRank.getEvolution().getRequiredShards().stream()
                 .allMatch(shard -> {
-                    final byte shardId = shardsConfig.get().getByName(shard.getName()).getId();
+                    final byte shardId = shardsConfig.data().getByName(shard.getName()).getId();
                     return playerModel.getShards(shardId) >= shard.getAmount();
                 });
 
@@ -120,14 +121,14 @@ public class RankupView extends MenuDataView<ViewContext> {
                 return;
             }
 
-            final RanksConfig.Config.Rank nextRank = ranksConfig.get().getByName(
+            final RanksData.Rank nextRank = ranksConfig.data().getByName(
                 configRank.getEvolution().getNextRankName()
             );
 
             evolutionManager.setRank(player, nextRank.getId());
             economy.withdrawPlayer(player, configRank.getEvolution().getCoinsPrice());
             configRank.getEvolution().getRequiredShards().forEach(shard -> {
-                final byte shardId = shardsConfig.get().getByName(shard.getName()).getId();
+                final byte shardId = shardsConfig.data().getByName(shard.getName()).getId();
                 playerModel.setShards(shardId, playerModel.getShards(shardId) - shard.getAmount());
             });
 
