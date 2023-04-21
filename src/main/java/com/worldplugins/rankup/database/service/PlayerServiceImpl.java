@@ -26,7 +26,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public @NonNull CompletableFuture<Boolean> isRegistered(@NonNull UUID playerId) {
-        return playerDao.get(playerId).thenApply(Optional::isPresent);
+        return playerDao.get(playerId).thenApply(Objects::nonNull);
     }
 
     @Override
@@ -39,11 +39,11 @@ public class PlayerServiceImpl implements PlayerService {
     public void load(@NonNull UUID playerId) {
         playerDao.get(playerId)
             .thenAccept(player -> scheduler.newTask(() -> {
-                if (!player.isPresent())
+                if (player == null)
                     return;
 
-                loadedPlayers.set(playerId, player.get());
-                runPlayerPendingTasks(player.get());
+                loadedPlayers.set(playerId, player);
+                runPlayerPendingTasks(player);
             }).run());
     }
 

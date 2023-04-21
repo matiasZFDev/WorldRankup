@@ -36,11 +36,14 @@ public class MainConfig implements InjectedConfigCache<MainData> {
 
     private @NonNull EnumSet<ShardCompensation> fetchShardCompensations(@NonNull ConfigurationSection section) {
         return section.getKeys(false).stream()
-            .map(key ->
-                ShardCompensation.fromConfigName(key).orElseThrow(() ->
-                    new Error("O tipo de compensação de fragmentos '" + key + "não existe.")
-                )
-            )
+            .map(key -> {
+                final ShardCompensation compensation = ShardCompensation.fromConfigName(key);
+
+                if (compensation == null)
+                    throw new Error("O tipo de compensação de fragmentos '" + key + "não existe.");
+
+                return compensation;
+            })
             .filter(compensation -> section.getBoolean(compensation.getConfigName()))
             .collect(Collectors.toSet())
             .use(compensations ->

@@ -10,7 +10,6 @@ import lombok.experimental.ExtensionMethod;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -52,21 +51,21 @@ public class SQLPlayerDAO implements PlayerDAO {
     }
 
     @Override
-    public @NonNull CompletableFuture<Optional<RankupPlayer>> get(@NonNull UUID playerId) {
+    public @NonNull CompletableFuture<RankupPlayer> get(@NonNull UUID playerId) {
         return CompletableFuture
             .supplyAsync(() -> sqlExecutor.executeQuery(
                 "SELECT rank, prestige FROM " + RANK_TABLE + " WHERE player_id=?",
                 statement -> statement.set(1, playerId.getBytes()),
                 result -> result.next()
-                    ? Optional.of(new PlayerData(
+                    ? new PlayerData(
                         result.get("rank", Short.class),
                         result.get("prestige", Short.class)
-                    ))
-                    : Optional.<PlayerData>empty()
+                    )
+                    : null
             ), EXECUTOR)
             .thenApplyAsync(playerData -> {
-                if (!playerData.isPresent())
-                    return Optional.empty();
+                if (playerData == null)
+                    return null;
 
                 return sqlExecutor.executeQuery(
                     "SELECT shard_id, amount, capacity FROM " + SHARDS_TABLE + " WHERE player_id=?",
@@ -83,9 +82,9 @@ public class SQLPlayerDAO implements PlayerDAO {
                             ));
                         }
 
-                        return Optional.of(new RankupPlayerImpl(
-                            playerId, playerData.get().getRank(), playerData.get().getPrestige(), shards
-                        ));
+                        return new RankupPlayerImpl(
+                            playerId, playerData.getRank(), playerData.getPrestige(), shards
+                        );
                     }
                 );
             }, EXECUTOR);

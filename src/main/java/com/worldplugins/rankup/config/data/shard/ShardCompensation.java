@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NonNull;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 public enum ShardCompensation {
     COMMAND("Comando"),
@@ -20,9 +19,10 @@ public enum ShardCompensation {
         this.configName = configName;
     }
 
-    public static @NonNull Optional<ShardCompensation> fromConfigName(@NonNull String configName) {
+    public static ShardCompensation fromConfigName(@NonNull String configName) {
         return Arrays.stream(values())
             .filter(compensation -> compensation.getConfigName().equals(configName))
-            .findFirst();
+            .findFirst()
+            .orElse(null);
     }
 }
