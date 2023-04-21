@@ -1,0 +1,38 @@
+Nome: 'Ranks (@atual/@total)'
+Linhas: 3
+Data:
+  Slots: [11,13,15]
+  Fragmento-formato: ' &8▪ @fragmento &7(@quantia)'
+  Iten-rank: # Iten do rank se o jogador não atingiu ele ainda
+    Id: 1 # Id e data do iten do rank
+    Flags: [HIDE_ATTRIBUTES, HIDE_POTION_EFFECTS]
+    Nome: '@nome'
+    Lore:
+      - '&8Upe e obtenha'
+      - '&8beneficios!'
+      - ''
+      - ' &7▪ &fDinheiro: &2$&a@dinheiro'
+      - '@@fragmentos'
+      - ''
+  Iten-rank-atingido: # Iten de rank se o jogador atingiu o rank
+    Id: 1 # Id e data do iten do rank
+    Flags: [HIDE_ATTRIBUTES, HIDE_POTION_EFFECTS]
+    Nome: '@nome'
+    Lore:
+      - '&8Upe e obtenha'
+      - '&8beneficios!'
+      - ''
+      - '&aRank atingido'
+Conteudo:
+  Pagina-seguinte: # Visivel quando ainda tem procurados para visualizar
+    Slot: 17
+    Id: 351
+    Data: 8
+    Nome: '&7&lS&7eguinte'
+    Lore: ''
+  Pagina-anterior: # Visivel quando existe o número de página é maior a 1
+    Slot: 9
+    Id: 351
+    Data: 8
+    Nome: '&7&lA&7nterior'
+    Lore: ''

@@ -12,3 +12,5 @@ commands:
     description: Shards bag command
   prestigio:
     description: Prestige GUI command
+  ranks:
+    description: Lista de ranks

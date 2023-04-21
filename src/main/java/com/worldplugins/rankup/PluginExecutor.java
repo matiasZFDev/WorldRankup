@@ -16,6 +16,8 @@ import com.worldplugins.rankup.command.rank.RegressRank;
 import com.worldplugins.rankup.command.rank.SetRank;
 import com.worldplugins.rankup.command.shard.*;
 import com.worldplugins.rankup.config.*;
+import com.worldplugins.rankup.config.data.MainData;
+import com.worldplugins.rankup.config.data.ShardsData;
 import com.worldplugins.rankup.database.DatabaseAccessor;
 import com.worldplugins.rankup.factory.NewRankupPlayerFactory;
 import com.worldplugins.rankup.factory.RankupPlayerFactory;
@@ -37,6 +39,7 @@ import com.worldplugins.rankup.listener.earn.EarnExecutor;
 import com.worldplugins.rankup.manager.EvolutionManager;
 import com.worldplugins.rankup.view.BagView;
 import com.worldplugins.rankup.view.PrestigeView;
+import com.worldplugins.rankup.view.RanksView;
 import com.worldplugins.rankup.view.RankupView;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -142,8 +145,8 @@ public class PluginExecutor {
 
     private void registerCommands() {
         final CommandRegistry registry = new CommandRegistry(plugin);
-        final MainConfig mainConfig = configCacheManager.get(MainConfig.class);
-        final ShardsConfig shardsConfig = configCacheManager.get(ShardsConfig.class);
+        final ConfigCache<MainData> mainConfig = configCacheManager.get(MainConfig.class);
+        final ConfigCache<ShardsData> shardsConfig = configCacheManager.get(ShardsConfig.class);
 
         registry.command(
             new Help(),
@@ -162,7 +165,8 @@ public class PluginExecutor {
             new RegressPrestige(databaseAccessor.getPlayerService(), evolutionManager, config(PrestigeConfig.class)),
             new Rankup(databaseAccessor.getPlayerService(), config(RanksConfig.class)),
             new Prestige(databaseAccessor.getPlayerService()),
-            new Reload(configManager, configCacheManager, menuContainerManager)
+            new Reload(configManager, configCacheManager, menuContainerManager),
+            new Ranks()
         );
         registry.autoTabCompleter("rankup");
         registry.registerAll();
@@ -184,7 +188,8 @@ public class PluginExecutor {
             new PrestigeView(
                 databaseAccessor.getPlayerService(), config(RanksConfig.class), config(PrestigeConfig.class),
                 evolutionManager
-            )
+            ),
+            new RanksView(config(RanksConfig.class), config(ShardsConfig.class), databaseAccessor.getPlayerService())
         );
     }
 

@@ -1,14 +1,21 @@
 package com.worldplugins.rankup.config.data;
 
+import com.worldplugins.lib.extension.CollectionExtensions;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.ExtensionMethod;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+@ExtensionMethod({
+    CollectionExtensions.class
+})
 
 @RequiredArgsConstructor
 public class RanksData {
@@ -46,7 +53,9 @@ public class RanksData {
 
     public RanksData(@NonNull String defaultRank, @NonNull Collection<Rank> ranks) {
         this.defaultRank = defaultRank;
-        this.ranksById = ranks.stream().collect(Collectors.toMap(Rank::getId, Function.identity(), (r1, r2) -> r1));
+        this.ranksById = ranks.stream()
+                .sorted(Comparator.comparingInt(Rank::getId))
+                .collect(Collectors.toMap(Rank::getId, Function.identity(), (r1, r2) -> r1));
         this.ranksByName = ranks.stream().collect(Collectors.toMap(Rank::getName, Function.identity(), (r1, r2) -> r1));
     }
 
@@ -67,5 +76,9 @@ public class RanksData {
 
     public Rank getByName(@NonNull String name) {
         return ranksByName.get(name);
+    }
+
+    public @NonNull Collection<Rank> all() {
+        return ranksById.values().immutable();
     }
 }
