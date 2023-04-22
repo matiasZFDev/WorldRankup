@@ -1,5 +1,6 @@
 package com.worldplugins.rankup.database.cache;
 
+import com.worldplugins.lib.util.cache.Cache;
 import com.worldplugins.rankup.database.dao.PlayerDAO;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import lombok.NonNull;

@@ -2,10 +2,10 @@ package com.worldplugins.rankup.database;
 
 import com.worldplugins.lib.manager.config.ConfigManager;
 import com.worldplugins.lib.util.SchedulerBuilder;
-import com.worldplugins.rankup.database.cache.Cache;
+import com.worldplugins.lib.util.cache.Cache;
+import com.worldplugins.lib.util.cache.SimpleCache;
 import com.worldplugins.rankup.database.cache.CacheUnloadTimer;
 import com.worldplugins.rankup.database.cache.PlayerCacheUnloadImpl;
-import com.worldplugins.rankup.database.cache.SimpleCache;
 import com.worldplugins.rankup.database.dao.PlayerDAO;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerServiceImpl;

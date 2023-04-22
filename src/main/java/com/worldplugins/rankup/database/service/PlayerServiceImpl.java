@@ -2,8 +2,8 @@ package com.worldplugins.rankup.database.service;
 
 import com.worldplugins.lib.extension.UUIDExtensions;
 import com.worldplugins.lib.util.SchedulerBuilder;
+import com.worldplugins.lib.util.cache.Cache;
 import com.worldplugins.rankup.database.model.RankupPlayer;
-import com.worldplugins.rankup.database.cache.Cache;
 import com.worldplugins.rankup.database.dao.PlayerDAO;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
