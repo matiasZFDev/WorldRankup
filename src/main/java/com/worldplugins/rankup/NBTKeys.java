@@ -1,12 +1,10 @@
 package com.worldplugins.rankup;
 
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 public class NBTKeys {
-    public static final @NonNull String BAG_SHARD = "wrankup_bag_shard_id";
-    public static final @NonNull String PHYISIC_SHARD_ID = "wrankup_physic_shard_id";
-    public static final @NonNull String PHYISIC_SHARD_AMOUNT = "wrankup_physic_shard_amount";
-    public static final @NonNull String PHYISIC_LIMIT_ID = "wrankup_physic_limit_id";
-    public static final @NonNull String PHYISIC_LIMIT_AMOUNT = "wrankup_physic_limit_amount";
-    public static final @NonNull String PRESTIGE_ENABLED = "wrankup_prestigio";
+    public static final @NotNull String PHYISIC_SHARD_ID = "wrankup_physic_shard_id";
+    public static final @NotNull String PHYISIC_SHARD_AMOUNT = "wrankup_physic_shard_amount";
+    public static final @NotNull String PHYISIC_LIMIT_ID = "wrankup_physic_limit_id";
+    public static final @NotNull String PHYISIC_LIMIT_AMOUNT = "wrankup_physic_limit_amount";
 }

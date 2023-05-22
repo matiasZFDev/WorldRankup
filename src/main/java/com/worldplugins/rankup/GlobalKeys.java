@@ -1,8 +1,8 @@
 package com.worldplugins.rankup;
 
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 public class GlobalKeys {
-    public static final @NonNull String PHYISIC_SEND = "fisico";
-    public static final @NonNull String VIRTUAL_SEND = "virtual";
+    public static final @NotNull String PHYISIC_SEND = "fisico";
+    public static final @NotNull String VIRTUAL_SEND = "virtual";
 }

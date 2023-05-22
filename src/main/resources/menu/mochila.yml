@@ -10,7 +10,7 @@ Data:
       - '&7ou retire para mais!'
       - ''
       - ' &fQuantia: &e@quantia'
-      - ' &fLimite: &e@limite (Max. @limite-max)'
+      - ' &fLimite: &e@limite (Max. @max-limite)'
       - ' &fBonus de venda: @bonus-tag'
       - ' &fPreço: &2$&a@preco &e(+@bonus-venda%)'
       - ''

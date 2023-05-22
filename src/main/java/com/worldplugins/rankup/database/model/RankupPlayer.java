@@ -1,22 +1,22 @@
 package com.worldplugins.rankup.database.model;
 
-import lombok.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.UUID;
 
 public interface RankupPlayer {
-    @NonNull UUID getId();
+    @NotNull UUID id();
 
-    short getRank();
+    short rank();
 
     void setRank(short rank);
 
-    short getPrestige();
+    short prestige();
 
     void setPrestige(short prestige);
 
-    @NonNull Collection<Shard> getAllShards();
+    @NotNull Collection<Shard> getAllShards();
 
     int getShards(byte shardId);
 

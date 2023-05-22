@@ -1,29 +1,19 @@
 package com.worldplugins.rankup.database.model;
 
 import com.google.common.collect.ImmutableList;
-import com.worldplugins.lib.extension.CollectionExtensions;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.experimental.ExtensionMethod;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.UUID;
 
-@ExtensionMethod({
-    CollectionExtensions.class
-})
-
 public class RankupPlayerImpl implements RankupPlayer {
-    @Getter
-    private final @NonNull UUID id;
-    @Getter
+    private final @NotNull UUID id;
     private short rank;
-    @Getter
     private short prestige;
-    private final @NonNull Collection<Shard> shards;
+    private final @NotNull Collection<Shard> shards;
     private boolean updated;
 
-    public RankupPlayerImpl(@NonNull UUID id, short rank, short prestige, @NonNull Collection<Shard> shards) {
+    public RankupPlayerImpl(@NotNull UUID id, short rank, short prestige, @NotNull Collection<Shard> shards) {
         this.id = id;
         this.rank = rank;
         this.prestige = prestige;
@@ -31,8 +21,20 @@ public class RankupPlayerImpl implements RankupPlayer {
         this.updated = false;
     }
 
+    public @NotNull UUID id() {
+        return id;
+    }
+
+    public short rank() {
+        return rank;
+    }
+
+    public short prestige() {
+        return prestige;
+    }
+
     @Override
-    public @NonNull Collection<Shard> getAllShards() {
+    public @NotNull Collection<Shard> getAllShards() {
         return ImmutableList.copyOf(shards);
     }
 
@@ -48,19 +50,34 @@ public class RankupPlayerImpl implements RankupPlayer {
         updated = true;
     }
 
+    private @NotNull Shard findShardById(byte id) {
+        final Shard shard = shards.stream()
+            .filter(it -> it.id() == id)
+            .findFirst()
+            .orElse(null);
+
+        if (shard != null) {
+            return shard;
+        }
+
+        final Shard newShard = new Shard(id, 0, 0);
+        shards.add(newShard);
+        return newShard;
+    }
+
     @Override
     public int getShards(byte shardId) {
-        return shards.find(shard -> shard.getId() == shardId).getAmount();
+        return findShardById(shardId).amount();
     }
 
     @Override
     public int setShards(byte shardId, int amount) {
-        final Shard shard = shards.find(current -> current.getId() == shardId);
+        final Shard shard = findShardById(shardId);
         updated = true;
 
-        if (amount > shard.getLimit()) {
-            shard.setAmount(shard.getLimit());
-            return shard.getLimit();
+        if (amount > shard.limit()) {
+            shard.setAmount(shard.limit());
+            return shard.limit();
         }
 
         shard.setAmount(amount);
@@ -69,12 +86,12 @@ public class RankupPlayerImpl implements RankupPlayer {
 
     @Override
     public int getShardLimit(byte shardId) {
-        return shards.find(shard -> shard.getId() == shardId).getLimit();
+        return findShardById(shardId).limit();
     }
 
     @Override
     public void setShardLimit(byte shardId, int amount) {
-        shards.find(shard -> shard.getId() == shardId).setLimit(amount);
+        findShardById(shardId).setLimit(amount);
         updated = true;
     }
 

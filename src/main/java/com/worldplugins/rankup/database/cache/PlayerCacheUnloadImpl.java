@@ -1,26 +1,29 @@
 package com.worldplugins.rankup.database.cache;
 
-import com.worldplugins.lib.util.cache.Cache;
 import com.worldplugins.rankup.database.dao.PlayerDAO;
 import com.worldplugins.rankup.database.model.RankupPlayer;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import me.post.lib.database.cache.Cache;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 public class PlayerCacheUnloadImpl implements CacheUnloadTimer<UUID> {
-    private final @NonNull Cache<UUID, RankupPlayer> cache;
-    private final @NonNull Set<UUID> unloadCountdown = new HashSet<>();
-    private final @NonNull PlayerDAO playerDao;
+    private final @NotNull Cache<UUID, RankupPlayer> cache;
+    private final @NotNull Set<UUID> unloadCountdown = new HashSet<>();
+    private final @NotNull PlayerDAO playerDao;
+
+    public PlayerCacheUnloadImpl(@NotNull Cache<UUID, RankupPlayer> cache, @NotNull PlayerDAO playerDao) {
+        this.cache = cache;
+        this.playerDao = playerDao;
+    }
 
     @Override
-    public void prepareUnload(@NonNull UUID playerId) {
+    public void prepareUnload(@NotNull UUID playerId) {
         unloadCountdown.add(playerId);
     }
 
-    public void cancel(@NonNull UUID playerId) {
+    public void cancel(@NotNull UUID playerId) {
         unloadCountdown.remove(playerId);
     }
 
@@ -30,6 +33,7 @@ public class PlayerCacheUnloadImpl implements CacheUnloadTimer<UUID> {
                 .map(cache::get)
                 .filter(RankupPlayer::checkUpdateAndReset)
                 .collect(Collectors.toList());
+
         unloadCountdown.forEach(cache::remove);
         unloadCountdown.clear();
         playerDao.updateAll(updatablePlayers);

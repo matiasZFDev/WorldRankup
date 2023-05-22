@@ -1,9 +1,9 @@
 package com.worldplugins.rankup.manager;
 
-import lombok.NonNull;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public interface PermissionManager {
-    void addGroup(@NonNull Player player, @NonNull String group);
-    void removeGroup(@NonNull Player player, @NonNull String group);
+    void addGroup(@NotNull Player player, @NotNull String group);
+    void removeGroup(@NotNull Player player, @NotNull String group);
 }

@@ -1,83 +1,133 @@
 package com.worldplugins.rankup.config.data;
 
-import com.worldplugins.lib.config.data.ItemDisplay;
+import com.worldplugins.lib.config.common.ItemDisplay;
 import com.worldplugins.rankup.config.data.shard.ShardCompensation;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 public class MainData {
+
+
     public static class ShardSellOptions {
-        @RequiredArgsConstructor
-        @Getter
         public static class SellBonus {
-            private final @NonNull String group;
+            private final @NotNull String group;
             private final byte priority;
             private final double bonus;
-            private final String tag;
+            private final @Nullable String tag;
+
+            public SellBonus(@NotNull String group, byte priority, double bonus, @Nullable String tag) {
+                this.group = group;
+                this.priority = priority;
+                this.bonus = bonus;
+                this.tag = tag;
+            }
+
+            public @NotNull String group() {
+                return group;
+            }
+
+            public byte priority() {
+                return priority;
+            }
+
+            public double bonus() {
+                return bonus;
+            }
+
+            public @Nullable String tag() {
+                return tag;
+            }
         }
 
-        @Getter
-        @Accessors(fluent = true)
         private final boolean useTag;
 
-        @Getter
-        private final String noGroupTag;
+        private final @NotNull String noGroupTag;
 
-        private final @NonNull Collection<SellBonus> sellBonusList;
+        private final @NotNull Collection<SellBonus> sellBonusList;
 
         public ShardSellOptions(
             boolean useTag,
-            String noGroupTag,
-            @NonNull Collection<SellBonus> sellBonusList
+            @NotNull String noGroupTag,
+            @NotNull Collection<SellBonus> sellBonusList
         ) {
             this.useTag = useTag;
             this.noGroupTag = noGroupTag;
             this.sellBonusList = sellBonusList.stream()
-                .sorted(Comparator.comparingInt(SellBonus::getPriority).reversed())
+                .sorted(Comparator.comparingInt(SellBonus::priority).reversed())
                 .collect(Collectors.toList());
         }
 
-        /**
-         * @return a positive value if present, -1 if not
-         * */
-        public SellBonus getBonus(@NonNull Player player) {
+        public boolean useTag() {
+            return useTag;
+        }
+
+        public @NotNull String noGroupTag() {
+            return noGroupTag;
+        }
+
+        public @Nullable SellBonus getBonus(@NotNull Player player) {
             return sellBonusList.stream()
-                .filter(bonus -> player.hasPermission("group." + bonus.getGroup()))
+                .filter(bonus -> player.hasPermission("group." + bonus.group()))
                 .findFirst()
                 .orElse(null);
         }
     }
 
-    @Getter
-    private final @NonNull ItemDisplay shardDisplay;
+    private final @NotNull ItemDisplay shardDisplay;
 
-    @Getter
-    private final @NonNull ItemDisplay limitDisplay;
+    private final @NotNull ItemDisplay limitDisplay;
 
-    private final @NonNull EnumSet<ShardCompensation> shardCompensations;
+    private final @NotNull EnumSet<ShardCompensation> shardCompensations;
 
-    private final @NonNull EnumSet<ShardCompensation> limitCompensations;
+    private final @NotNull EnumSet<ShardCompensation> limitCompensations;
 
-    @Getter
     private final boolean shardWithdrawEnabled;
 
-    @Getter
     private final ShardSellOptions shardSellOptions;
 
-    public boolean hasShardCompensation(@NonNull ShardCompensation compensation) {
+    public MainData(
+        @NotNull ItemDisplay shardDisplay,
+        @NotNull ItemDisplay limitDisplay,
+        @NotNull EnumSet<ShardCompensation> shardCompensations,
+        @NotNull EnumSet<ShardCompensation> limitCompensations,
+        boolean shardWithdrawEnabled,
+        @Nullable ShardSellOptions shardSellOptions
+    ) {
+        this.shardDisplay = shardDisplay;
+        this.limitDisplay = limitDisplay;
+        this.shardCompensations = shardCompensations;
+        this.limitCompensations = limitCompensations;
+        this.shardWithdrawEnabled = shardWithdrawEnabled;
+        this.shardSellOptions = shardSellOptions;
+    }
+
+    public @NotNull ItemDisplay shardDisplay() {
+        return shardDisplay;
+    }
+
+    public @NotNull ItemDisplay limitDisplay() {
+        return limitDisplay;
+    }
+
+    public boolean isShardWithdrawEnabled() {
+        return shardWithdrawEnabled;
+    }
+
+    public @Nullable ShardSellOptions shardSellOptions() {
+        return shardSellOptions;
+    }
+
+    public boolean hasShardCompensation(@NotNull ShardCompensation compensation) {
         return shardCompensations.contains(compensation);
     }
 
-    public boolean hasLimitCompensation(@NonNull ShardCompensation compensation) {
+    public boolean hasLimitCompensation(@NotNull ShardCompensation compensation) {
         return limitCompensations.contains(compensation);
     }
 }

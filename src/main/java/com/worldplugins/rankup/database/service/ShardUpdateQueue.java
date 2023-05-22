@@ -1,24 +1,21 @@
 package com.worldplugins.rankup.database.service;
 
-import com.worldplugins.lib.extension.UUIDExtensions;
-import com.worldplugins.lib.util.cache.Cache;
 import com.worldplugins.rankup.database.dao.PlayerDAO;
 import com.worldplugins.rankup.database.model.RankupPlayer;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.ExtensionMethod;
+import me.post.lib.database.cache.Cache;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@ExtensionMethod({
-    UUIDExtensions.class
-})
-
-@RequiredArgsConstructor
 public class ShardUpdateQueue implements ShardBulkUpdater {
-    private final @NonNull Cache<UUID, RankupPlayer> cache;
-    private final @NonNull PlayerDAO playerDAO;
+    private final @NotNull Cache<UUID, RankupPlayer> cache;
+    private final @NotNull PlayerDAO playerDAO;
+
+    public ShardUpdateQueue(@NotNull Cache<UUID, RankupPlayer> cache, @NotNull PlayerDAO playerDAO) {
+        this.cache = cache;
+        this.playerDAO = playerDAO;
+    }
 
     @Override
     public void update() {

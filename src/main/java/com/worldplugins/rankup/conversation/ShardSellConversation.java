@@ -1,48 +1,52 @@
 package com.worldplugins.rankup.conversation;
 
-import com.worldplugins.lib.config.cache.ConfigCache;
-import com.worldplugins.lib.extension.GenericExtensions;
-import com.worldplugins.lib.extension.NumberExtensions;
-import com.worldplugins.lib.extension.NumberFormatExtensions;
 import com.worldplugins.rankup.config.data.MainData;
 import com.worldplugins.rankup.config.data.ShardsData;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
-import com.worldplugins.rankup.extension.ResponseExtensions;
-import com.worldplugins.rankup.extension.ViewExtensions;
 import com.worldplugins.rankup.view.BagView;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.ExtensionMethod;
+import me.post.lib.config.model.ConfigModel;
+import me.post.lib.util.NumberFormats;
+import me.post.lib.util.Numbers;
+import me.post.lib.view.Views;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-@ExtensionMethod({
-    ResponseExtensions.class,
-    NumberFormatExtensions.class,
-    GenericExtensions.class,
-    ViewExtensions.class,
-    NumberExtensions.class
-})
+import static com.worldplugins.rankup.Response.respond;
+import static me.post.lib.util.Pairs.to;
 
-@RequiredArgsConstructor
 public class ShardSellConversation extends StringPrompt {
     private final byte shardId;
-    private final @NonNull PlayerService playerService;
-    private final @NonNull ConfigCache<MainData> mainConfig;
-    private final @NonNull ConfigCache<ShardsData> shardsConfig;
-    private final @NonNull Economy economy;
+    private final @NotNull PlayerService playerService;
+    private final @NotNull ConfigModel<MainData> mainConfig;
+    private final @NotNull ConfigModel<ShardsData> shardsConfig;
+    private final @NotNull Economy economy;
+
+    public ShardSellConversation(
+        byte shardId,
+        @NotNull PlayerService playerService,
+        @NotNull ConfigModel<MainData> mainConfig,
+        @NotNull ConfigModel<ShardsData> shardsConfig,
+        @NotNull Economy economy
+    ) {
+        this.shardId = shardId;
+        this.playerService = playerService;
+        this.mainConfig = mainConfig;
+        this.shardsConfig = shardsConfig;
+        this.economy = economy;
+    }
 
     @Override
     public String getPromptText(ConversationContext context) {
         final ShardsData.Shard configShard = shardsConfig.data().getById(shardId);
 
-        ((Player) context.getForWhom()).respond("Vender-fragmentos", message -> message.replace(
-            "@fragmento".to(configShard.getDisplay()),
-            "@valor".to(((Double) configShard.getPrice()).suffixed())
+        respond(((Player) context.getForWhom()), "Vender-fragmentos", message -> message.replace(
+            to("@fragmento", configShard.display()),
+            to("@valor", NumberFormats.suffixed(configShard.price()))
         ));
         return "";
     }
@@ -52,56 +56,57 @@ public class ShardSellConversation extends StringPrompt {
         final Player player = (Player) context.getForWhom();
 
         if (value.equalsIgnoreCase("cancelar")) {
-            player.respond("Venda-cancelada");
-            player.openView(BagView.class);
+            respond(player, "Venda-cancelada");
+            Views.get().open(player, BagView.class);
             return null;
         }
 
-        if (mainConfig.data().getShardSellOptions() == null) {
-            player.respond("Venda-desabilitada");
+        if (mainConfig.data().shardSellOptions() == null) {
+            respond(player, "Venda-desabilitada");
             return null;
         }
 
-        if (!value.isValidValue()) {
-            player.respond("Quantia-invalida");
+        if (!NumberFormats.isValidValue(value)) {
+            respond(player, "Quantia-invalida");
             return null;
         }
 
-        final Integer amount = value.numerify().toIntOrNull();
+        final Integer amount = Numbers.toIntOrNull(NumberFormats.numerify(value));
 
         if (amount == null) {
-            player.respond("Quantia-invalida");
+            respond(player, "Quantia-invalida");
             return null;
         }
 
         final ShardsData.Shard configShard = shardsConfig.data().getById(shardId);
 
         if (configShard == null) {
-            player.respond("Fragmento-invalido");
+            respond(player, "Fragmento-invalido");
             return null;
         }
 
-        final @NonNull RankupPlayer playerModel = playerService.getById(player.getUniqueId());
+        final @NotNull RankupPlayer playerModel = playerService.getById(player.getUniqueId());
 
         if (playerModel.getShards(shardId) < amount) {
-            player.respond("Vender-quantia-insuficiente");
+            respond(player, "Vender-quantia-insuficiente");
             return null;
         }
 
         final MainData.ShardSellOptions.SellBonus sellBonus = mainConfig.data()
-            .getShardSellOptions()
+            .shardSellOptions()
             .getBonus(player);
-        final Double shardsValue = amount * configShard.getPrice();
-        final Double shardsMoney = shardsValue.applyPercentage(
-            sellBonus == null ? 0d : sellBonus.getBonus(), NumberExtensions.ApplyType.INCREMENT
+        final Double shardsValue = amount * configShard.price();
+        final Double shardsMoney = Numbers.applyPercentage(
+            shardsValue,
+            sellBonus == null ? 0d : sellBonus.bonus(), Numbers.ApplyType.INCREMENT
         );
 
         playerModel.setShards(shardId, playerModel.getShards(shardId) - amount);
         economy.depositPlayer(player, shardsMoney);
-        player.respond("Fragmentos-vendidos", message -> message.replace(
-            "@quantia".to(amount.suffixed()),
-            "@dinheiro".to(shardsMoney.suffixed()),
-            "@fragmento".to(configShard.getDisplay())
+        respond(player, "Fragmentos-vendidos", message -> message.replace(
+            to("@quantia", NumberFormats.suffixed(amount)),
+            to("@dinheiro", NumberFormats.suffixed(shardsMoney)),
+            to("@fragmento", configShard.display())
         ));
         return null;
     }

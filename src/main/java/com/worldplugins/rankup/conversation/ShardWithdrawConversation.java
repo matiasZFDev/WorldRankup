@@ -1,48 +1,52 @@
 package com.worldplugins.rankup.conversation;
 
-import com.worldplugins.lib.config.cache.ConfigCache;
-import com.worldplugins.lib.extension.GenericExtensions;
-import com.worldplugins.lib.extension.NumberFormatExtensions;
-import com.worldplugins.lib.extension.bukkit.PlayerExtensions;
 import com.worldplugins.rankup.config.data.MainData;
 import com.worldplugins.rankup.config.data.ShardsData;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
-import com.worldplugins.rankup.extension.ResponseExtensions;
-import com.worldplugins.rankup.extension.ViewExtensions;
 import com.worldplugins.rankup.factory.ShardFactory;
 import com.worldplugins.rankup.view.BagView;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.ExtensionMethod;
-import org.apache.commons.lang.math.NumberUtils;
+import me.post.lib.config.model.ConfigModel;
+import me.post.lib.util.NumberFormats;
+import me.post.lib.util.Numbers;
+import me.post.lib.util.Players;
+import me.post.lib.view.Views;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-@ExtensionMethod({
-    ResponseExtensions.class,
-    NumberFormatExtensions.class,
-    GenericExtensions.class,
-    PlayerExtensions.class,
-    ViewExtensions.class
-})
+import static com.worldplugins.rankup.Response.respond;
+import static me.post.lib.util.Pairs.to;
 
-@RequiredArgsConstructor
 public class ShardWithdrawConversation extends StringPrompt {
     private final byte shardId;
-    private final @NonNull PlayerService playerService;
-    private final @NonNull ConfigCache<MainData> mainConfig;
-    private final @NonNull ConfigCache<ShardsData> shardsConfig;
-    private final @NonNull ShardFactory shardFactory;
+    private final @NotNull PlayerService playerService;
+    private final @NotNull ConfigModel<MainData> mainConfig;
+    private final @NotNull ConfigModel<ShardsData> shardsConfig;
+    private final @NotNull ShardFactory shardFactory;
+
+    public ShardWithdrawConversation(
+        byte shardId,
+        @NotNull PlayerService playerService,
+        @NotNull ConfigModel<MainData> mainConfig,
+        @NotNull ConfigModel<ShardsData> shardsConfig,
+        @NotNull ShardFactory shardFactory
+    ) {
+        this.shardId = shardId;
+        this.playerService = playerService;
+        this.mainConfig = mainConfig;
+        this.shardsConfig = shardsConfig;
+        this.shardFactory = shardFactory;
+    }
 
     @Override
     public String getPromptText(ConversationContext context) {
         final ShardsData.Shard configShard = shardsConfig.data().getById(shardId);
 
-        ((Player) context.getForWhom()).respond("Retirar-fragmentos", message -> message.replace(
-            "@fragmento".to(configShard.getDisplay())
+        respond(((Player) context.getForWhom()), "Retirar-fragmentos", message -> message.replace(
+            to("@fragmento", configShard.display())
         ));
         return "";
     }
@@ -52,47 +56,47 @@ public class ShardWithdrawConversation extends StringPrompt {
         final Player player = (Player) context.getForWhom();
 
         if (value.equalsIgnoreCase("cancelar")) {
-            player.respond("Retiro-cancelado");
-            player.openView(BagView.class);
+            respond(player, "Retiro-cancelado");
+            Views.get().open(player, BagView.class);
             return null;
         }
 
         if (!mainConfig.data().isShardWithdrawEnabled()) {
-            player.respond("Retiro-desabilitado");
+            respond(player, "Retiro-desabilitado");
             return null;
         }
 
-        if (!value.isValidValue()) {
-            player.respond("Quantia-invalida");
+        if (!NumberFormats.isValidValue(value)) {
+            respond(player, "Quantia-invalida");
             return null;
         }
 
-        final Integer amount = NumberUtils.toInt(value.numerify(), -1);
+        final Integer amount = Numbers.toIntOrNull(NumberFormats.numerify(value));
 
-        if (amount == -1) {
-            player.respond("Quantia-invalida");
+        if (amount == null) {
+            respond(player, "Quantia-invalida");
             return null;
         }
 
         final ShardsData.Shard configShard = shardsConfig.data().getById(shardId);
 
         if (configShard == null) {
-            player.respond("Fragmento-invalido");
+            respond(player, "Fragmento-invalido");
             return null;
         }
 
-        final @NonNull RankupPlayer playerModel = playerService.getById(player.getUniqueId());
+        final @NotNull RankupPlayer playerModel = playerService.getById(player.getUniqueId());
 
         if (playerModel.getShards(shardId) < amount) {
-            player.respond("Retirar-quantia-insuficiente");
+            respond(player, "Retirar-quantia-insuficiente");
             return null;
         }
 
         playerModel.setShards(shardId, playerModel.getShards(shardId) - amount);
-        player.giveItems(shardFactory.createShard(shardId, amount));
-        player.respond("Fragmentos-retirados", message -> message.replace(
-            "@quantia".to(amount.suffixed()),
-            "@fragmento".to(configShard.getDisplay())
+        Players.giveItems(player, shardFactory.createShard(shardId, amount));
+        respond(player, "Fragmentos-retirados", message -> message.replace(
+            to("@quantia", NumberFormats.suffixed(amount)),
+            to("@fragmento", configShard.display())
         ));
         return null;
     }

@@ -1,36 +1,39 @@
 package com.worldplugins.rankup.config;
 
-import com.worldplugins.lib.config.cache.InjectedConfigCache;
-import com.worldplugins.lib.config.cache.annotation.ConfigSpec;
-import com.worldplugins.lib.extension.bukkit.ConfigurationExtensions;
+import com.worldplugins.lib.util.ConfigSections;
 import com.worldplugins.rankup.config.data.RanksData;
-import lombok.NonNull;
-import lombok.experimental.ExtensionMethod;
+import me.post.lib.config.model.ConfigModel;
+import me.post.lib.config.wrapper.ConfigWrapper;
+import me.post.lib.util.NumberFormats;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-@ExtensionMethod(value = {
-    ConfigurationExtensions.class
-}, suppressBaseMethods = false)
+public class RanksConfig implements ConfigModel<RanksData> {
+    private @UnknownNullability RanksData data;
+    private final @NotNull ConfigWrapper configWrapper;
 
-public class RanksConfig implements InjectedConfigCache<RanksData> {
-    @ConfigSpec(path = "ranks")
-    public @NonNull RanksData transform(@NonNull FileConfiguration config) {
-        return new RanksData(
+    public RanksConfig(@NotNull ConfigWrapper configWrapper) {
+        this.configWrapper = configWrapper;
+    }
+
+    public void update() {
+        final FileConfiguration config = configWrapper.unwrap();
+        data = new RanksData(
             config.getString("Rank-padrao"),
-            config.section("Ranks").map(section -> new RanksData.Rank(
-                section.getByte("Id"),
+            ConfigSections.map(config.getConfigurationSection("Ranks"), section -> new RanksData.Rank(
+                (byte) section.getInt("Id"),
                 section.getString("Nome"),
                 section.getString("Display"),
                 section.getString("Grupo"),
-                section.getItem("Iten", false),
-                section.notExistingOrFalse("Evolucao")
+                ConfigSections.getItem(section.getConfigurationSection("Iten")),
+                ConfigSections.notExistingOrFalse(section, "Evolucao")
                     ? null
                     : new RanksData.Rank.Evolution(
-                        section.numberFormat("Evolucao.Dinheiro"),
-                    ((Stream<String>) section.getStringList("Evolucao.Fragmentos").stream())
+                        Double.parseDouble(NumberFormats.numerify(section.getString("Evolucao.Dinheiro"))),
+                        section.getStringList("Evolucao.Fragmentos").stream()
                             .map(shardEntry -> {
                                 final String[] shardData = shardEntry.split(":");
                                 final String name = shardData[0];
@@ -39,11 +42,20 @@ public class RanksConfig implements InjectedConfigCache<RanksData> {
                             })
                             .collect(Collectors.toList()),
                         section.getString("Evolucao.Seguinte"),
-                        section.notExistingOrFalse("Evolucao.Comando-console")
+                        ConfigSections.notExistingOrFalse(section, "Evolucao.Comando-console")
                             ? null
                             : section.getString("Evolucao.Comando-console")
                     )
             ))
         );
+    }
+
+    @Override
+    public @NotNull RanksData data() {
+        return data;
+    }
+
+    public @NotNull ConfigWrapper wrapper() {
+        return configWrapper;
     }
 }

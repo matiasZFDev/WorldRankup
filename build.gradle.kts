@@ -10,20 +10,18 @@ version = "1.0.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    maven { url = uri("https://jitpack.io") }
-    maven { url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/") }
+    mavenLocal()
+    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    maven("https://oss.sonatype.org/content/repositories/snapshots")
+    maven("https://oss.sonatype.org/content/repositories/central")
+    maven("https://jitpack.io")
+    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
 }
 
-val projectFullName = "${project.name}-${project.version}.jar";
+val projectFullName = "${project.name}-LATEST.jar";
 
 dependencies {
-    implementation("org.projectlombok:lombok:1.18.26")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
-    compileOnly("org.projectlombok:lombok:1.18.26")
-    annotationProcessor("org.projectlombok:lombok:1.18.26")
-    compileOnly(files("/home/post/dev/bukkit-libs/spigot.jar"))
-    compileOnly(files("/home/post/dev/bukkit-libs/GrandeOWRankup.jar"))
+    compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")
     compileOnly(files("/home/post/dev/bukkit-libs/worldplugins/WorldLib/WorldLib-LATEST.jar"))
     compileOnly(files("/home/post/dev/bukkit-libs/LegendChat.jar"))
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
@@ -41,39 +39,34 @@ tasks.withType<ShadowJar> {
     archiveFileName.set(projectFullName);
 }
 
+
 task("shadowAndCopy") {
     group = "Build"
     description = "Copies the jar into the location of the OUTPUT_PATH variable"
     dependsOn("shadowJar")
 
-    val copyTask: (String) -> Copy = {
-        tasks.create("copyTaskExec_$it", Copy::class) {
-            val dest = System.getenv(it) ?: throw GradleException(
-                    "Output path environment variable not set"
-            )
-
+    val copyTask: (String, Int) -> Copy = { dest, id ->
+        tasks.create("copyTaskExec_$id", Copy::class) {
             from(layout.buildDirectory.dir("libs"))
             into(dest)
         }
     }
 
-    val deleteTask: (String) -> Delete = {
-        tasks.create("deleteTaskExec_$it", Delete::class) {
-            val fileDir = System.getenv(it) ?: throw GradleException(
-                    "path environment variable not set"
-            )
-            val filePath = "$fileDir/$projectFullName"
-
+    val deleteTask: (String, Int) -> Delete = { dir, id ->
+        tasks.create("deleteTaskExec_$id", Delete::class) {
+            val filePath = "$dir/$projectFullName"
             delete(filePath)
         }
     }
 
-    fun build(pathEnvVar: String) {
-        deleteTask(pathEnvVar).run { actions[0].execute(this) }
-        copyTask(pathEnvVar).run { actions[0].execute(this) }
+    fun build(dirsRaw: String) {
+        System.getenv(dirsRaw).split(",").forEachIndexed { idx, dest ->
+            deleteTask(dest, idx).run { actions[0].execute(this) }
+            copyTask(dest, idx).run { actions[0].execute(this) }
+        }
     }
 
     doLast {
-        build("path")
+        build("paths")
     }
 }

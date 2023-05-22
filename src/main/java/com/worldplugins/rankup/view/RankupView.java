@@ -1,159 +1,173 @@
 package com.worldplugins.rankup.view;
 
-import com.worldplugins.lib.config.cache.ConfigCache;
-import com.worldplugins.lib.config.cache.menu.ItemProcessResult;
-import com.worldplugins.lib.config.cache.menu.MenuData;
-import com.worldplugins.lib.config.cache.menu.MenuItem;
-import com.worldplugins.lib.extension.GenericExtensions;
-import com.worldplugins.lib.extension.NumberFormatExtensions;
-import com.worldplugins.lib.extension.ReplaceExtensions;
-import com.worldplugins.lib.extension.bukkit.ItemExtensions;
-import com.worldplugins.lib.util.MenuItemsUtils;
-import com.worldplugins.lib.view.MenuDataView;
-import com.worldplugins.lib.view.ViewContext;
-import com.worldplugins.lib.view.annotation.ViewSpec;
+import com.worldplugins.lib.config.model.MenuModel;
+import com.worldplugins.lib.util.ItemTransformer;
+import com.worldplugins.lib.util.Strings;
+import com.worldplugins.lib.view.ConfigContextBuilder;
 import com.worldplugins.rankup.config.data.RanksData;
 import com.worldplugins.rankup.config.data.ShardsData;
-import com.worldplugins.rankup.config.menu.RankupMenuContainer;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
-import com.worldplugins.rankup.extension.ResponseExtensions;
 import com.worldplugins.rankup.manager.EvolutionManager;
-import com.worldplugins.rankup.util.BukkitUtils;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.ExtensionMethod;
+import me.post.lib.config.model.ConfigModel;
+import me.post.lib.util.NumberFormats;
+import me.post.lib.view.View;
+import me.post.lib.view.action.ViewClick;
+import me.post.lib.view.action.ViewClose;
+import me.post.lib.view.helper.ClickHandler;
+import me.post.lib.view.helper.ViewContext;
+import me.post.lib.view.helper.impl.MapViewContext;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.stream.Collectors;
 
-@ExtensionMethod(value = {
-    ItemExtensions.class,
-    GenericExtensions.class,
-    NumberFormatExtensions.class,
-    ReplaceExtensions.class,
-    ResponseExtensions.class
-}, suppressBaseMethods = false)
+import static com.worldplugins.rankup.Response.respond;
+import static me.post.lib.util.Pairs.to;
 
-@ViewSpec(menuContainer = RankupMenuContainer.class)
-@RequiredArgsConstructor
-public class RankupView extends MenuDataView<ViewContext> {
-    private final @NonNull PlayerService playerService;
-    private final @NonNull ConfigCache<RanksData> ranksConfig;
-    private final @NonNull ConfigCache<ShardsData> shardsConfig;
-    private final @NonNull Economy economy;
-    private final @NonNull EvolutionManager evolutionManager;
+public class RankupView implements View {
+    private final @NotNull MenuModel menuModel;
+    private final @NotNull ViewContext viewContext;
+    private final @NotNull PlayerService playerService;
+    private final @NotNull ConfigModel<RanksData> ranksConfig;
+    private final @NotNull ConfigModel<ShardsData> shardsConfig;
+    private final @NotNull Economy economy;
+    private final @NotNull EvolutionManager evolutionManager;
+
+    public RankupView(
+        @NotNull MenuModel menuModel,
+        @NotNull PlayerService playerService,
+        @NotNull ConfigModel<RanksData> ranksConfig,
+        @NotNull ConfigModel<ShardsData> shardsConfig,
+        @NotNull Economy economy,
+        @NotNull EvolutionManager evolutionManager
+    ) {
+        this.menuModel = menuModel;
+        this.viewContext = new MapViewContext();
+        this.playerService = playerService;
+        this.ranksConfig = ranksConfig;
+        this.shardsConfig = shardsConfig;
+        this.economy = economy;
+        this.evolutionManager = evolutionManager;
+    }
 
     @Override
-    public @NonNull ItemProcessResult processItems(@NonNull Player player, ViewContext context, @NonNull MenuData menuData) {
+    public void open(@NotNull Player player, @Nullable Object data) {
         final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-        final RanksData.Rank configRank = ranksConfig.data().getById(playerModel.getRank());
-        final RanksData.Rank nextRank = ranksConfig.data().getByName(
-            configRank.getEvolution().getNextRankName()
-        );
+        final RanksData.Rank configRank = ranksConfig.data().getById(playerModel.rank());
+        final RanksData.Rank nextRank = ranksConfig.data().getByName(configRank.evolution().nextRankName());
 
-        final String sufficientStatus = menuData.getData("Status-suficiente");
-        final String insufficientStatus = menuData.getData("Status-insuficiente");
-        final String shardFormat = menuData.getData("Formato-fragmento");
-        final String coinsStatus = economy.has(player, configRank.getEvolution().getCoinsPrice())
+        final String sufficientStatus = menuModel.data().getData("Status-suficiente");
+        final String insufficientStatus = menuModel.data().getData("Status-insuficiente");
+        final String shardFormat = menuModel.data().getData("Formato-fragmento");
+        final String coinsStatus = economy.has(player, configRank.evolution().coinsPrice())
             ? sufficientStatus
             : insufficientStatus;
 
-        return MenuItemsUtils.newSession(menuData.getItems(), session -> {
-            session.modify("Info", item ->
-                nextRank.getItem().display(item)
-                    .nameFormat("@rank".to(nextRank.getDisplay()))
+        ConfigContextBuilder.withModel(menuModel)
+            .handleMenuItemClick("Cancelar", click -> {
+                player.closeInventory();
+                respond(player, "Operacao-cancelada");
+            })
+            .handleMenuItemClick("Confirmar", this::handleRankEvolution)
+            .replaceMenuItem("Info", item -> ItemTransformer.of(nextRank.item().clone())
+                    .display(item.getItemMeta())
+                    .nameFormat(to("@rank", nextRank.display()))
                     .loreFormat(
-                        "@coins-totais".to(((Double) economy.getBalance(player)).suffixed()),
-                        "@coins-precisas".to(((Double) configRank.getEvolution().getCoinsPrice()).suffixed()),
-                        "@coins-status".to(coinsStatus)
+                        to("@coins-totais", NumberFormats.suffixed(economy.getBalance(player))),
+                        to("@coins-precisas", NumberFormats.suffixed(configRank.evolution().coinsPrice())),
+                        to("@coins-status", coinsStatus)
                     )
-                    .loreListFormat("@@fragmentos",
-                        configRank.getEvolution().getRequiredShards().stream()
+                    .loreListFormat(
+                        "@@fragmentos",
+                        configRank.evolution().requiredShards().stream()
                             .map(shard -> {
                                 final ShardsData.Shard configShard = shardsConfig.data().getByName(
-                                    shard.getName()
+                                    shard.name()
                                 );
-                                final String status = playerModel.getShards(configShard.getId()) >= shard.getAmount()
+                                final String status = playerModel.getShards(configShard.id()) >= shard.amount()
                                     ? sufficientStatus
                                     : insufficientStatus;
-                                return shardFormat.formatReplace(
-                                    "@fragmento".to(configShard.getDisplay()),
-                                    "@quantia".to(((Integer) shard.getAmount()).suffixed()),
-                                    "@status".to(status)
+                                return Strings.replace(shardFormat,
+                                    to("@fragmento", configShard.display()),
+                                    to("@quantia", NumberFormats.suffixed(shard.amount())),
+                                    to("@status", status)
                                 );
                             })
                             .collect(Collectors.toList())
                     )
                     .colorMeta()
+                    .transform()
+            )
+            .build(viewContext, player, data);
+    }
+
+    private void handleRankEvolution(@NotNull ViewClick click) {
+        final Player player = click.whoClicked();
+        final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
+        final RanksData.Rank configRank = ranksConfig.data().getById(playerModel.rank());
+
+        player.closeInventory();
+
+        if (configRank.evolution() == null) {
+            respond(player, "Rank-ultimo-error");
+            return;
+        }
+
+        if (!economy.has(player, configRank.evolution().coinsPrice())) {
+            respond(player, "Rank-evoluir-dinheiro-insuficiente");
+            return;
+        }
+
+        final boolean hasShardRequirements = configRank.evolution().requiredShards().stream()
+            .allMatch(shard -> {
+                final byte shardId = shardsConfig.data().getByName(shard.name()).id();
+                return playerModel.getShards(shardId) >= shard.amount();
+            });
+
+        if (!hasShardRequirements) {
+            respond(player, "Rank-evoluir-fragmentos-insuficientes");
+            return;
+        }
+
+        final RanksData.Rank nextRank = ranksConfig.data().getByName(configRank.evolution().nextRankName());
+
+        evolutionManager.setRank(player, nextRank.id());
+        economy.withdrawPlayer(player, configRank.evolution().coinsPrice());
+        configRank.evolution().requiredShards().forEach(shard -> {
+            final byte shardId = shardsConfig.data().getByName(shard.name()).id();
+            playerModel.setShards(shardId, playerModel.getShards(shardId) - shard.amount());
+        });
+
+        if (configRank.evolution().consoleCommand() != null)
+            Bukkit.dispatchCommand(
+                Bukkit.getConsoleSender(),
+                configRank.evolution().consoleCommand().replace("@jogador", player.getName())
             );
-        }).build();
+
+        if (nextRank.evolution() != null) {
+            respond(player, "Rank-evoluido", message -> message.replace(
+                to("@jogador", player.getName()),
+                to("@rank", nextRank.display())
+            ));
+        } else {
+            respond(player, "Rank-evoluido-ultimo", message -> message.replace(
+                to("@jogador", player.getName()),
+                to("@rank", nextRank.display())
+            ));
+        }
     }
 
     @Override
-    public void onClick(@NonNull Player player, @NonNull MenuItem item, @NonNull InventoryClickEvent event) {
-        if (item.getId().equals("Confirmar")) {
-            final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-            final RanksData.Rank configRank = ranksConfig.data().getById(playerModel.getRank());
+    public void onClick(@NotNull ViewClick click) {
+        ClickHandler.handleTopNonNull(viewContext, click);
+    }
 
-            player.closeInventory();
-
-            if (configRank.getEvolution() == null) {
-                player.respond("Rank-ultimo-error");
-                return;
-            }
-
-            if (!economy.has(player, configRank.getEvolution().getCoinsPrice())) {
-                player.respond("Rank-evoluir-dinheiro-insuficiente");
-                return;
-            }
-
-            final boolean hasShardRequirements = configRank.getEvolution().getRequiredShards().stream()
-                .allMatch(shard -> {
-                    final byte shardId = shardsConfig.data().getByName(shard.getName()).getId();
-                    return playerModel.getShards(shardId) >= shard.getAmount();
-                });
-
-            if (!hasShardRequirements) {
-                player.respond("Rank-evoluir-fragmentos-insuficientes");
-                return;
-            }
-
-            final RanksData.Rank nextRank = ranksConfig.data().getByName(
-                configRank.getEvolution().getNextRankName()
-            );
-
-            evolutionManager.setRank(player, nextRank.getId());
-            economy.withdrawPlayer(player, configRank.getEvolution().getCoinsPrice());
-            configRank.getEvolution().getRequiredShards().forEach(shard -> {
-                final byte shardId = shardsConfig.data().getByName(shard.getName()).getId();
-                playerModel.setShards(shardId, playerModel.getShards(shardId) - shard.getAmount());
-            });
-
-            if (configRank.getEvolution().getConsoleCommand() != null)
-                BukkitUtils.consoleCommand(
-                    configRank.getEvolution().getConsoleCommand().replace("@jogador", player.getName())
-                );
-
-            if (nextRank.getEvolution() != null)
-                player.respond("Rank-evoluido", message -> message.replace(
-                    "@jogador".to(player.getName()),
-                    "@rank".to(nextRank.getDisplay())
-                ));
-            else
-                player.respond("Rank-evoluido-ultimo", message -> message.replace(
-                    "@jogador".to(player.getName()),
-                    "@rank".to(nextRank.getDisplay())
-                ));
-            return;
-        }
-
-        if (item.getId().equals("Cancelar")) {
-            player.closeInventory();
-            player.respond("Operacao-cancelada");
-            return;
-        }
+    @Override
+    public void onClose(@NotNull ViewClose close) {
+        viewContext.removeViewer(close.whoCloses().getUniqueId());
     }
 }

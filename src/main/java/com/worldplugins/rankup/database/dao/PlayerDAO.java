@@ -1,14 +1,14 @@
 package com.worldplugins.rankup.database.dao;
 
 import com.worldplugins.rankup.database.model.RankupPlayer;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public interface PlayerDAO {
-    @NonNull CompletableFuture<RankupPlayer> get(@NonNull UUID playerId);
-    void save(@NonNull RankupPlayer player);
-    void updateAll(@NonNull Collection<RankupPlayer> players);
+    @NotNull CompletableFuture<RankupPlayer> get(@NotNull UUID playerId);
+    void save(@NotNull RankupPlayer player);
+    void updateAll(@NotNull Collection<RankupPlayer> players);
 }

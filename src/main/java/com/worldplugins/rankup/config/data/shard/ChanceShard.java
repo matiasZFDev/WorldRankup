@@ -1,12 +1,27 @@
 package com.worldplugins.rankup.config.data.shard;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
-@RequiredArgsConstructor
-@Getter
 public class ChanceShard {
-    private final String name;
+    private final @NotNull String name;
     private final double chance;
     private final int amount;
+
+    public ChanceShard(@NotNull String name, double chance, int amount) {
+        this.name = name;
+        this.chance = chance;
+        this.amount = amount;
+    }
+
+    public @NotNull String name() {
+        return name;
+    }
+
+    public double chance() {
+        return chance;
+    }
+
+    public int amount() {
+        return amount;
+    }
 }

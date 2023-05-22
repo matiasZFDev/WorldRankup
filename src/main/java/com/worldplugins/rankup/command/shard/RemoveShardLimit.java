@@ -1,47 +1,49 @@
 package com.worldplugins.rankup.command.shard;
 
-import com.worldplugins.lib.command.CommandModule;
-import com.worldplugins.lib.command.annotation.ArgsChecker;
-import com.worldplugins.lib.command.annotation.Command;
-import com.worldplugins.lib.config.cache.ConfigCache;
-import com.worldplugins.lib.extension.GenericExtensions;
-import com.worldplugins.lib.extension.NumberFormatExtensions;
 import com.worldplugins.rankup.config.data.ShardsData;
 import com.worldplugins.rankup.database.service.PlayerService;
-import com.worldplugins.rankup.extension.ResponseExtensions;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.ExtensionMethod;
+import me.post.lib.command.CommandModule;
+import me.post.lib.command.annotation.Command;
+import me.post.lib.config.model.ConfigModel;
+import me.post.lib.util.NumberFormats;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@ExtensionMethod({
-    ResponseExtensions.class,
-    GenericExtensions.class,
-    NumberFormatExtensions.class
-})
+import static com.worldplugins.rankup.Response.respond;
+import static me.post.lib.util.Pairs.to;
 
-@RequiredArgsConstructor
 public class RemoveShardLimit implements CommandModule {
-    private final @NonNull ConfigCache<ShardsData> shardsConfig;
-    private final @NonNull PlayerService playerService;
+    private final @NotNull ConfigModel<ShardsData> shardsConfig;
+    private final @NotNull PlayerService playerService;
 
-    @Command(
-        name = "rankup removerlimite",
-        permission = "worldrankup.removerlimite",
-        argsChecks = {@ArgsChecker(size = 3)},
-        usage = "&cArgumentos invalidos. Digite /rankup removerlimite <jogador> <fragmento> <quantia>"
-    )
+    public RemoveShardLimit(@NotNull ConfigModel<ShardsData> shardsConfig, @NotNull PlayerService playerService) {
+        this.shardsConfig = shardsConfig;
+        this.playerService = playerService;
+    }
+
+    //usage = "&cArgumentos invalidos. Digite /rankup removerlimite <jogador> <fragmento> <quantia>"
+    @Command(name = "rankup removerlimite")
     @Override
-    public void execute(@NonNull CommandSender sender, @NonNull String[] args) {
+    public void execute(@NotNull CommandSender sender, @NotNull String[] args) {
+        if (!sender.hasPermission("worldrankup.removerlimite")) {
+            respond(sender, "Remover-limite-permissoes");
+            return;
+        }
+
+        if (args.length != 3) {
+            respond(sender, "Remover-limite-uso");
+            return;
+        }
+
         final Player player = Bukkit.getPlayer(args[0]);
 
         if (player == null) {
-            sender.respond("Jogador-offline");
+            respond(sender, "Jogador-offline");
             return;
         }
 
@@ -49,32 +51,32 @@ public class RemoveShardLimit implements CommandModule {
 
         if (configShard == null) {
             final List<String> existingShards = shardsConfig.data().getAll()
-                .stream().map(ShardsData.Shard::getName)
+                .stream().map(ShardsData.Shard::name)
                 .collect(Collectors.toList());
-            sender.respond("Fragmento-inexistente", message -> message.replace(
-                "@fragmento".to(args[1]),
-                "@existentes".to(existingShards.toString())
+            respond(sender, "Fragmento-inexistente", message -> message.replace(
+                to("@fragmento", args[1]),
+                to("@existentes", existingShards.toString())
             ));
             return;
         }
 
-        if (!args[2].isValidValue()) {
-            sender.respond("Quantia-invalida");
+        if (!NumberFormats.isValidValue(args[2])) {
+            respond(sender, "Quantia-invalida");
             return;
         }
         playerService.consumePlayer(player.getUniqueId(), playerModel -> {
-            final byte shardId = configShard.getId();
-            final int amount = Integer.parseInt(args[2].numerify());
+            final byte shardId = configShard.id();
+            final int amount = Integer.parseInt(NumberFormats.numerify(args[2]));
             final int playerLimit = playerModel.getShardLimit(shardId);
-            final Integer removedAmount = Math.min(playerLimit, amount);
+            final int removedAmount = Math.min(playerLimit, amount);
 
             playerModel.setShardLimit(shardId, playerLimit - removedAmount);
-            sender.respond("Limite-removido", message -> message.replace(
-                "@jogador".to(player.getName()),
-                "@quantia-removida".to(removedAmount.suffixed()),
-                "@fragmento".to(configShard.getDisplay()),
-                "@limite-atual".to(((Integer) playerModel.getShardLimit(shardId)).suffixed()),
-                "@limite-max".to(((Integer) configShard.getLimit()).suffixed())
+            respond(sender, "Limite-removido", message -> message.replace(
+                to("@jogador", player.getName()),
+                to("@quantia-removida", NumberFormats.suffixed(removedAmount)),
+                to("@fragmento", configShard.display()),
+                to("@limite-atual", NumberFormats.suffixed(playerModel.getShardLimit(shardId))),
+                to("@limite-max", NumberFormats.suffixed(configShard.limit()))
             ));
         });
     }

@@ -3,18 +3,48 @@ package com.worldplugins.rankup.config.data.earn;
 import com.worldplugins.rankup.config.data.shard.ChanceShard;
 import com.worldplugins.rankup.config.data.shard.ShardCompensation;
 import com.worldplugins.rankup.config.data.shard.ShardSendType;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-@RequiredArgsConstructor
-@Getter
 public abstract class ShardEarn {
-    private final @NonNull Collection<String> ranks;
-    private final @NonNull Collection<String> worlds;
-    private final @NonNull Collection<ChanceShard> shards;
-    private final @NonNull ShardSendType sendType;
-    private final @NonNull ShardCompensation compensation;
+    private final @NotNull Collection<String> ranks;
+    private final @NotNull Collection<String> worlds;
+    private final @NotNull Collection<ChanceShard> shards;
+    private final @NotNull ShardSendType sendType;
+    private final @NotNull ShardCompensation compensation;
+
+    protected ShardEarn(
+        @NotNull Collection<String> ranks,
+        @NotNull Collection<String> worlds,
+        @NotNull Collection<ChanceShard> shards,
+        @NotNull ShardSendType sendType,
+        @NotNull ShardCompensation compensation
+    ) {
+        this.ranks = ranks;
+        this.worlds = worlds;
+        this.shards = shards;
+        this.sendType = sendType;
+        this.compensation = compensation;
+    }
+
+    public @NotNull Collection<String> ranks() {
+        return ranks;
+    }
+
+    public @NotNull Collection<String> worlds() {
+        return worlds;
+    }
+
+    public @NotNull Collection<ChanceShard> shards() {
+        return shards;
+    }
+
+    public @NotNull ShardSendType sendType() {
+        return sendType;
+    }
+
+    public @NotNull ShardCompensation compensation() {
+        return compensation;
+    }
 }

@@ -124,20 +124,38 @@ Tipo-envio-invalido: '&cO tipo de envio &n@tipo&c não existe. Escolha entre &nf
 Fragmentos-compensacao: '&bVocê recêbeu &f@quantiax &bfragmentos fisicos de @fragmento&b!'
 Limite-compensacao: '&bVocê recêbeu &f@quantiax &blimite fisico de @fragmento&b!'
 Operacao-cancelada: '&cVocê cancelou essa operação.'
+
+Reload-permissoes: '&cVocê não tem permissões para recarregar a configuração.'
 Configuracao-recarregada: '&aConfiguração recarregada com sucesso.'
 
+Dar-fragmentos-permissoes: '&cVocê não tem permissões para enviar fragmentos.'
+Dar-fragmentos-uso: '&cArgumentos invalidos. Digite /rankup darfragmentos <jogador> <fragmento> <quantia>'
 Fragmentos-fisicos-enviados: '&bForam enviados &f@quantiax &bfragmentos de @fragmento&b pro jogador &f@jogador&b!'
 Fragmentos-fisicos-recebidos: '&bVocê recêbeu &f@quantiax &bfragmentos fisicos de @fragmento&b!'
 Fragmentos-virtuais-enviados: '&bForam adicionados &f@quantia-adicionadax &bfragmentos de @fragmento&b pro jogador &f@jogador &7(@quantia-atual/@limite)'
 Fragmentos-virtuais-recebidos: '&bVocê recêbeu &f@quantiax &bfragmentos de @fragmento&b!'
+
+Remover-fragmentos-permissoes: '&cVocê não tem permissões para remover fragmentos.'
+Remover-fragmentos-uso: '&cArgumentos invalidos. Digite /rankup removerfragmentos <jogador> <fragmento> <quantia>'
 Fragmentos-removidos: '&bForam removidos &f@quantia-removidax &bfragmentos de @fragmento&b do jogador &f@jogador &7(@quantia-atual/@limite)'
+
+Setar-fragmentos-permissoes: '&cVocê não tem permissões para setar fragmentos.'
+Setar-fragmentos-uso: '&cArgumentos invalidos. Digite /rankup setarfragmentos <jogador> <fragmento> <quantia>'
 Fragmentos-setados: '&bForam setados para &f@quantia-setada &bos fragmentos @fragmento&b do jogador &f@jogador &7(@quantia-atual/@limite)'
 
+Limite-enviar-permissoes: '&cVocê não tem permissões para enviar limite.'
+Limite-enviar-uso: '&cArgumentos invalidos. Digite /rankup darlimite <jogador> <fragmento> <quantia>'
 Limite-fisico-enviado: '&bForam enviados &f@quantiax &blimite de @fragmento&b pro jogador &f@jogador&b!'
 Limite-fisico-recebido: '&bVocê recêbeu &f@quantiax &blimite fisico de @fragmento&b!'
 Limite-virtual-enviado: '&bForam adicionados &f@quantia-adicionadax &blimite de @fragmento&b pro jogador &f@jogador &7(@limite-atual/@limite-max)'
 Limite-virtual-recebido: '&bVocê recêbeu &f@quantiax &blimite de @fragmento&b!'
+
+Remover-limite-permissoes: '&cVocê não tem permissões para remover limite.'
+Remover-limite-uso: '&cArgumentos invalidos. Digite /rankup removerlimite <jogador> <fragmento> <quantia>'
 Limite-removido: '&bForam removidos &f@quantia-removidax &blimite de @fragmento&b do jogador &f@jogador &7(@limite-atual/@limite-max)'
+
+Setar-limite-permissoes: '&cVocê não tem permissões para setar limite.'
+Setar-limite-uso: '&cArgumentos invalidos. Digite /rankup setarlimite <jogador> <fragmento> <quantia>'
 Limite-setado: '&bForam setados para &f@quantia-setada &bo limite de @fragmento&b do jogador &f@jogador &7(Max. @limite-max)'
 
 Fragmento-invalido: '&cEsse fragmento não é válido. Contate com algum staff.'
@@ -160,17 +178,34 @@ Fragmento-virtual-ganho: '&bVocê achou &f@quantiax &bfragmentos de @fragmento&b
 Limite-fisico-ganho: '&bVocê achou &f@quantiax &blimite fisico de @fragmento&b!'
 Limite-virtual-ganho: '&bVocê achou &f@quantiax &blimite de @fragmento&b!'
 
+Setar-rank-permissoes: '&cVocê não tem permissões para setar rank.'
+Setar-rank-uso: '&cArgumentos invalidos. Digite /rankup setrank <jogador> <rank>.'
 Setar-rank-invalido: "&cO rank '@rank' não existe."
 Rank-setado: '&bO rank do jogador &f@jogador &bfoi setado para @rank&b.'
+
+Evoluir-rank-permissoes: '&cVocê não tem permissões para evoluir rank.'
+Evoluir-rank-uso: '&cArgumentos invalidos. Digite /rankup evoluir <jogador>.'
 Evoluir-rank-ultimo: '&eO jogador &f@jogador &ese encontra no último rank!'
 Rank-evoluido-comando: '&bO jogador &f@jogador &bevoluiu pro rank @rank&b!'
+
+Regredir-rank-permissoes: '&cVocê não tem permissões para regredir rank.'
+Regredir-rank-uso: '&cArgumentos invalidos. Digite /rankup regredir <jogador>.'
 Regredir-rank-primeiro: '&eO jogador &f@jogador &ese encontra no primeiro rank'
 Rank-regredido: '&bO jogador &f@jogador &bregrediu pro rank @rank&b.'
 
 Prestigio-invalido: "&cO prestigio '@prestigio' não existe."
+
+Setar-prestigio-permissoes: '&cVocê não tem permissões para setar prestigio.'
+Setar-prestigio-uso: '&cArgumentos invalidos. Digite /rankup setarprestigio <jogador>.'
 Prestigio-setado: '&bO prestigio do jogador &f@jogador &bfoi setado para @prestigio&b.'
+
+Evoluir-prestigio-permissoes: '&cVocê não tem permissões para evoluir prestigio.'
+Evoluir-prestigio-uso: '&cArgumentos invalidos. Digite /rankup evoluirprestigio <jogador>.'
 Evoluir-prestigio-ultimo: '&eO jogador &f@jogador &ese encontra no último prestigio!'
 Prestigio-evoluido-comando: '&bO jogador &f@jogador &bevoluiu pro prestigio @prestigio&b!'
+
+Regredir-prestigio-permissoes: '&cVocê não tem permissões para regredir prestigio.'
+Regredir-prestigio-uso: '&cArgumentos invalidos. Digite /rankup regredirprestigio <jogador>.'
 Regredir-prestigio-primeiro: '&eO jogador &f@jogador &ese encontra no primeiro prestigio'
 Prestigio-regredido: '&bO jogador &f@jogador &bregrediu pro prestigio @prestigio&b.'
 

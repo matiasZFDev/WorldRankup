@@ -1,12 +1,11 @@
 package com.worldplugins.rankup.database.dao;
 
 import com.worldplugins.lib.database.sql.SQLExecutor;
-import com.worldplugins.lib.extension.UUIDExtensions;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.model.Shard;
 import com.worldplugins.rankup.database.model.RankupPlayerImpl;
-import lombok.NonNull;
-import lombok.experimental.ExtensionMethod;
+import me.post.lib.util.UUIDs;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,18 +14,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-@ExtensionMethod({
-    UUIDExtensions.class
-})
-
 public class SQLPlayerDAO implements PlayerDAO {
-    private final @NonNull SQLExecutor sqlExecutor;
+    private final @NotNull SQLExecutor sqlExecutor;
 
-    private static final @NonNull String RANK_TABLE = "worldrankup_rank";
-    private static final @NonNull String SHARDS_TABLE = "worldrankup_fragmentos";
-    private static final @NonNull Executor EXECUTOR = Executors.newSingleThreadExecutor();
+    private static final @NotNull String RANK_TABLE = "worldrankup_rank";
+    private static final @NotNull String SHARDS_TABLE = "worldrankup_fragmentos";
+    private static final @NotNull Executor EXECUTOR = Executors.newSingleThreadExecutor();
 
-    public SQLPlayerDAO(@NonNull SQLExecutor sqlExecutor) {
+    public SQLPlayerDAO(@NotNull SQLExecutor sqlExecutor) {
         this.sqlExecutor = sqlExecutor;
         createTables();
     }
@@ -51,11 +46,11 @@ public class SQLPlayerDAO implements PlayerDAO {
     }
 
     @Override
-    public @NonNull CompletableFuture<RankupPlayer> get(@NonNull UUID playerId) {
+    public @NotNull CompletableFuture<RankupPlayer> get(@NotNull UUID playerId) {
         return CompletableFuture
             .supplyAsync(() -> sqlExecutor.executeQuery(
                 "SELECT rank, prestige FROM " + RANK_TABLE + " WHERE player_id=?",
-                statement -> statement.set(1, playerId.getBytes()),
+                statement -> statement.set(1, UUIDs.getBytes(playerId)),
                 result -> result.next()
                     ? new PlayerData(
                         result.get("rank", Short.class),
@@ -69,7 +64,7 @@ public class SQLPlayerDAO implements PlayerDAO {
 
                 return sqlExecutor.executeQuery(
                     "SELECT shard_id, amount, capacity FROM " + SHARDS_TABLE + " WHERE player_id=?",
-                    statement -> statement.set(1, playerId.getBytes()),
+                    statement -> statement.set(1, UUIDs.getBytes(playerId)),
                     result -> {
 
                         final Collection<Shard> shards = new ArrayList<>(10);
@@ -83,7 +78,7 @@ public class SQLPlayerDAO implements PlayerDAO {
                         }
 
                         return new RankupPlayerImpl(
-                            playerId, playerData.getRank(), playerData.getPrestige(), shards
+                            playerId, playerData.rank(), playerData.prestige(), shards
                         );
                     }
                 );
@@ -91,14 +86,14 @@ public class SQLPlayerDAO implements PlayerDAO {
     }
 
     @Override
-    public void save(@NonNull RankupPlayer player) {
+    public void save(@NotNull RankupPlayer player) {
         CompletableFuture.runAsync(() -> {
             sqlExecutor.update(
                 "INSERT INTO " + RANK_TABLE + "(player_id, rank, prestige) VALUES (?, ?, ?)",
                 statement -> {
-                    statement.set(1, player.getId().getBytes());
-                    statement.set(2, player.getRank());
-                    statement.set(3, player.getPrestige());
+                    statement.set(1, UUIDs.getBytes(player.id()));
+                    statement.set(2, player.rank());
+                    statement.set(3, player.prestige());
                 }
             );
 
@@ -111,10 +106,10 @@ public class SQLPlayerDAO implements PlayerDAO {
                 "INSERT INTO " + SHARDS_TABLE + "(player_id, shard_id, amount, capacity) VALUES (?, ?, ?, ?)",
                 statement ->
                     shards.forEach(shard -> {
-                        statement.set(1, player.getId().getBytes());
-                        statement.set(2, shard.getId());
-                        statement.set(3, shard.getAmount());
-                        statement.set(4, shard.getLimit());
+                        statement.set(1, UUIDs.getBytes(player.id()));
+                        statement.set(2, shard.id());
+                        statement.set(3, shard.amount());
+                        statement.set(4, shard.limit());
                         statement.addBatch();
                     })
             );
@@ -122,30 +117,24 @@ public class SQLPlayerDAO implements PlayerDAO {
     }
 
     @Override
-    public void updateAll(@NonNull Collection<RankupPlayer> players) {
+    public void updateAll(@NotNull Collection<RankupPlayer> players) {
         CompletableFuture.runAsync(() -> {
             sqlExecutor.update(
                 "UPDATE " + RANK_TABLE + " SET rank=?, prestige=? WHERE player_id=?",
-                statement -> {
-                    players.forEach(player -> {
-                        statement.set(1, player.getRank());
-                        statement.set(2, player.getPrestige());
-                        statement.set(3, player.getId().getBytes());
-                    });
-                }
+                statement -> players.forEach(player -> {
+                    statement.set(1, player.rank());
+                    statement.set(2, player.prestige());
+                    statement.set(3, UUIDs.getBytes(player.id()));
+                })
             );
             sqlExecutor.update(
                 "UPDATE " + SHARDS_TABLE + " SET amount=?, capacity=? WHERE player_id=? AND shard_id=?",
-                statement -> {
-                    players.forEach(player -> {
-                        player.getAllShards().forEach(shard -> {
-                            statement.set(1, shard.getAmount());
-                            statement.set(2, shard.getLimit());
-                            statement.set(3, player.getId().getBytes());
-                            statement.set(4, shard.getId());
-                        });
-                    });
-                }
+                statement -> players.forEach(player -> player.getAllShards().forEach(shard -> {
+                    statement.set(1, shard.amount());
+                    statement.set(2, shard.limit());
+                    statement.set(3, UUIDs.getBytes(player.id()));
+                    statement.set(4, shard.id());
+                }))
             );
         }, EXECUTOR);
     }

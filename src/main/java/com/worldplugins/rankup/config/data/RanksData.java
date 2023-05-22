@@ -1,62 +1,130 @@
 package com.worldplugins.rankup.config.data;
 
-import com.worldplugins.lib.extension.CollectionExtensions;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.ExtensionMethod;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@ExtensionMethod({
-    CollectionExtensions.class
-})
-
-@RequiredArgsConstructor
 public class RanksData {
-    @RequiredArgsConstructor
-    @Getter
     public static class Rank {
-        @RequiredArgsConstructor
-        @Getter
         public static class Evolution {
-            @RequiredArgsConstructor
-            @Getter
             public static class ShardRequirement {
-                private final @NonNull String name;
+                private final @NotNull String name;
                 private final int amount;
+
+                public ShardRequirement(@NotNull String name, int amount) {
+                    this.name = name;
+                    this.amount = amount;
+                }
+
+                public @NotNull String name() {
+                    return name;
+                }
+
+                public int amount() {
+                    return amount;
+                }
             }
 
             private final double coinsPrice;
-            private final @NonNull Collection<ShardRequirement> requiredShards;
-            private final @NonNull String nextRankName;
-            private final String consoleCommand;
+            private final @NotNull Collection<ShardRequirement> requiredShards;
+            private final @NotNull String nextRankName;
+            private final @Nullable String consoleCommand;
+
+            public Evolution(
+                double coinsPrice,
+                @NotNull Collection<ShardRequirement> requiredShards,
+                @NotNull String nextRankName,
+                @Nullable String consoleCommand
+            ) {
+                this.coinsPrice = coinsPrice;
+                this.requiredShards = requiredShards;
+                this.nextRankName = nextRankName;
+                this.consoleCommand = consoleCommand;
+            }
+
+            public double coinsPrice() {
+                return coinsPrice;
+            }
+
+            public @NotNull Collection<ShardRequirement> requiredShards() {
+                return requiredShards;
+            }
+
+            public @NotNull String nextRankName() {
+                return nextRankName;
+            }
+
+            public @Nullable  String consoleCommand() {
+                return consoleCommand;
+            }
         }
 
         private final short id;
-        private final @NonNull String name;
-        private final @NonNull String display;
-        private final @NonNull String group;
-        private final @NonNull ItemStack item;
-        private final Evolution evolution;
+        private final @NotNull String name;
+        private final @NotNull String display;
+        private final @NotNull String group;
+        private final @NotNull ItemStack item;
+        private final @Nullable Evolution evolution;
+
+        public Rank(
+            short id,
+            @NotNull String name,
+            @NotNull String display,
+            @NotNull String group,
+            @NotNull ItemStack item,
+            @Nullable Evolution evolution
+        ) {
+            this.id = id;
+            this.name = name;
+            this.display = display;
+            this.group = group;
+            this.item = item;
+            this.evolution = evolution;
+        }
+
+        public short id() {
+            return id;
+        }
+
+        public @NotNull String name() {
+            return name;
+        }
+
+        public @NotNull String display() {
+            return display;
+        }
+
+        public @NotNull String group() {
+            return group;
+        }
+
+        public @NotNull ItemStack item() {
+            return item;
+        }
+
+        public @Nullable Evolution evolution() {
+            return evolution;
+        }
     }
 
-    @Getter
-    private final @NonNull String defaultRank;
-    private final @NonNull Map<Short, Rank> ranksById;
-    private final @NonNull Map<String, Rank> ranksByName;
+    private final @NotNull String defaultRank;
+    private final @NotNull Map<Short, Rank> ranksById;
+    private final @NotNull Map<String, Rank> ranksByName;
 
-    public RanksData(@NonNull String defaultRank, @NonNull Collection<Rank> ranks) {
+    public RanksData(@NotNull String defaultRank, @NotNull Collection<Rank> ranks) {
         this.defaultRank = defaultRank;
         this.ranksById = ranks.stream()
-                .sorted(Comparator.comparingInt(Rank::getId))
-                .collect(Collectors.toMap(Rank::getId, Function.identity(), (r1, r2) -> r1));
-        this.ranksByName = ranks.stream().collect(Collectors.toMap(Rank::getName, Function.identity(), (r1, r2) -> r1));
+                .sorted(Comparator.comparingInt(Rank::id))
+                .collect(Collectors.toMap(Rank::id, Function.identity(), (r1, r2) -> r1));
+        this.ranksByName = ranks.stream().collect(Collectors.toMap(Rank::name, Function.identity(), (r1, r2) -> r1));
+    }
+
+    public @NotNull String defaultRank() {
+        return defaultRank;
     }
 
     public Rank getById(short id) {
@@ -66,19 +134,19 @@ public class RanksData {
     public Rank getPrevious(short id) {
         return ranksById.entrySet().stream()
             .filter(rankEntry ->
-                rankEntry.getValue().getEvolution() != null &&
-                    rankEntry.getValue().getEvolution().nextRankName.equals(getById(id).name)
+                rankEntry.getValue().evolution() != null &&
+                rankEntry.getValue().evolution().nextRankName.equals(getById(id).name)
             )
             .findFirst()
             .map(Map.Entry::getValue)
             .orElse(null);
     }
 
-    public Rank getByName(@NonNull String name) {
+    public Rank getByName(@NotNull String name) {
         return ranksByName.get(name);
     }
 
-    public @NonNull Collection<Rank> all() {
-        return ranksById.values().immutable();
+    public @NotNull List<Rank> all() {
+        return new ArrayList<>(ranksById.values());
     }
 }

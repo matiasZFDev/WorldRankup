@@ -1,105 +1,114 @@
 package com.worldplugins.rankup.listener;
 
-import com.worldplugins.lib.common.SlotItem;
-import com.worldplugins.lib.config.cache.ConfigCache;
-import com.worldplugins.lib.extension.GenericExtensions;
-import com.worldplugins.lib.extension.NumberFormatExtensions;
-import com.worldplugins.lib.extension.bukkit.InventoryExtensions;
-import com.worldplugins.lib.extension.bukkit.NBTExtensions;
-import com.worldplugins.lib.extension.bukkit.PlayerExtensions;
 import com.worldplugins.rankup.NBTKeys;
 import com.worldplugins.rankup.WorldRankup;
 import com.worldplugins.rankup.config.data.ShardsData;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
-import com.worldplugins.rankup.extension.ResponseExtensions;
 import com.worldplugins.rankup.factory.ShardFactory;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.ExtensionMethod;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
+import me.post.deps.nbt_api.nbtapi.NBTCompound;
+import me.post.lib.common.Pair;
+import me.post.lib.config.model.ConfigModel;
+import me.post.lib.util.Inventories;
+import me.post.lib.util.NBTs;
+import me.post.lib.util.NumberFormats;
+import me.post.lib.util.Players;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-@ExtensionMethod({
-    NBTExtensions.class,
-    ResponseExtensions.class,
-    GenericExtensions.class,
-    NumberFormatExtensions.class,
-    PlayerExtensions.class,
-    InventoryExtensions.class
-})
+import static com.worldplugins.rankup.Response.respond;
+import static me.post.lib.util.Pairs.to;
 
-@RequiredArgsConstructor
 public class ShardLimitInteractListener implements Listener {
-    private final @NonNull ConfigCache<ShardsData> shardsConfig;
-    private final @NonNull PlayerService playerService;
-    private final @NonNull ShardFactory shardFactory;
+    private final @NotNull ConfigModel<ShardsData> shardsConfig;
+    private final @NotNull PlayerService playerService;
+    private final @NotNull ShardFactory shardFactory;
+
+    public ShardLimitInteractListener(
+        @NotNull ConfigModel<ShardsData> shardsConfig,
+        @NotNull PlayerService playerService,
+        @NotNull ShardFactory shardFactory
+    ) {
+        this.shardsConfig = shardsConfig;
+        this.playerService = playerService;
+        this.shardFactory = shardFactory;
+    }
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        if (!event.hasItem())
+        if (!event.hasItem()) {
             return;
+        }
 
-        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK)
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
+        }
 
-        if (!event.getItem().hasReference(NBTKeys.PHYISIC_LIMIT_ID))
+        if (!NBTs.hasTag(event.getItem(), NBTKeys.PHYISIC_LIMIT_ID)) {
             return;
+        }
 
         event.setCancelled(true);
 
-        final byte shardId = event.getItem().getReferenceValue(
+        final byte shardId = NBTs.getTagValue(
+            event.getItem(),
             NBTKeys.PHYISIC_LIMIT_ID,
-            NBTTagCompound::getByte
+            NBTCompound::getByte
         );
-        final Integer amount = event.getItem().getReferenceValue(
+        final Integer amount = NBTs.getTagValue(
+            event.getItem(),
             NBTKeys.PHYISIC_LIMIT_AMOUNT,
-            NBTTagCompound::getInt
+            NBTCompound::getInteger
         );
 
         final Player player = event.getPlayer();
         final ShardsData.Shard configShard = shardsConfig.data().getById(shardId);
 
         if (configShard == null) {
-            player.respond("Limite-invalido");
+            respond(player, "Limite-invalido");
             return;
         }
 
         if (player.isSneaking()) {
-            final List<SlotItem> inventoryLimit = player.getInventory().allWithReference(NBTKeys.PHYISIC_LIMIT_ID);
+            final List<Pair<ItemStack, Integer>> inventoryLimit = Inventories.allWithReference(
+                player.getInventory(), NBTKeys.PHYISIC_LIMIT_ID
+            );
 
-            if (inventoryLimit.size() == 1 && inventoryLimit.get(0).item().getAmount() == 1) {
-                player.respond("Limite-juntar-nada");
+            if (inventoryLimit.size() == 1 && inventoryLimit.get(0).first().getAmount() == 1) {
+                respond(player, "Limite-juntar-nada");
                 return;
             }
 
             final Integer mergedAmount = inventoryLimit
                 .stream()
                 .mapToInt(item ->
-                    item.item().getReferenceValue(
-                        NBTKeys.PHYISIC_LIMIT_AMOUNT, NBTTagCompound::getInt
-                    ) * item.item().getAmount()
+                    NBTs.getTagValue(
+                        item.first(),
+                        NBTKeys.PHYISIC_LIMIT_AMOUNT,
+                        NBTCompound::getInteger
+                    ) * item.first().getAmount()
                 )
                 .sum();
 
             if (mergedAmount >= WorldRankup.MAX_COMPARATIVE_SHARD_AMOUNT) {
-                player.respond("Limite-juntar-max", message -> message.replace(
-                    "@quantia-max".to(WorldRankup.MAX_COMPARATIVE_SHARD_AMOUNT.suffixed())
+                respond(player, "Limite-juntar-max", message -> message.replace(
+                    to("@quantia-max", NumberFormats.suffixed(WorldRankup.MAX_COMPARATIVE_SHARD_AMOUNT))
                 ));
                 return;
             }
 
-            player.getInventory().removeWithReference(NBTKeys.PHYISIC_LIMIT_ID, true);
-            player.giveItems(shardFactory.createLimit(shardId, mergedAmount));
-            player.respond("Limite-junto", message -> message.replace(
-                "@fragmento".to(configShard.getDisplay()),
-                "@quantia".to(mergedAmount.suffixed())
+            Inventories.removeWithReference(player.getInventory(), NBTKeys.PHYISIC_LIMIT_ID, true);
+            Players.giveItems(player, shardFactory.createLimit(shardId, mergedAmount));
+            respond(player, "Limite-junto", message -> message.replace(
+                to("@fragmento", configShard.display()),
+                to("@quantia", NumberFormats.suffixed(mergedAmount))
             ));
             return;
         }
@@ -109,27 +118,27 @@ public class ShardLimitInteractListener implements Listener {
         if (playerModel == null)
             return;
 
-        if (playerModel.getShardLimit(shardId) == configShard.getLimit()) {
-            player.respond("Ativar-limite-maximo");
+        if (playerModel.getShardLimit(shardId) == configShard.limit()) {
+            respond(player, "Ativar-limite-maximo");
             return;
         }
 
         final int playerLimit = playerModel.getShardLimit(shardId);
         final int limitSum = playerLimit + amount;
-        final int setAmount = Math.min(limitSum, configShard.getLimit());
-        final Integer addedAmount = limitSum > configShard.getLimit()
-            ? configShard.getLimit() - playerLimit
+        final int setAmount = Math.min(limitSum, configShard.limit());
+        final Integer addedAmount = limitSum > configShard.limit()
+            ? configShard.limit() - playerLimit
             : amount;
 
-        if (limitSum > configShard.getLimit()) {
-            player.giveItems(shardFactory.createLimit(shardId, limitSum - configShard.getLimit()));
+        if (limitSum > configShard.limit()) {
+            Players.giveItems(player, shardFactory.createLimit(shardId, limitSum - configShard.limit()));
         }
 
         playerModel.setShardLimit(shardId, setAmount);
-        player.reduceHandItem();
-        player.respond("Limite-ativado", message -> message.replace(
-            "@fragmento".to(configShard.getDisplay()),
-            "@quantia".to(addedAmount.suffixed())
+        Players.reduceHandItem(player);
+        respond(player, "Limite-ativado", message -> message.replace(
+            to("@fragmento", configShard.display()),
+            to("@quantia", NumberFormats.suffixed(addedAmount))
         ));
     }
 }

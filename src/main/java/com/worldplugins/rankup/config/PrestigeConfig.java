@@ -1,42 +1,56 @@
 package com.worldplugins.rankup.config;
 
-import com.worldplugins.lib.config.cache.InjectedConfigCache;
-import com.worldplugins.lib.config.cache.annotation.ConfigSpec;
-import com.worldplugins.lib.extension.bukkit.ConfigurationExtensions;
+import com.worldplugins.lib.util.ConfigSections;
 import com.worldplugins.rankup.config.data.PrestigeData;
 import com.worldplugins.rankup.config.data.prestige.IndividualPrestiges;
 import com.worldplugins.rankup.config.data.prestige.Prestige;
-import lombok.NonNull;
-import lombok.experimental.ExtensionMethod;
+import me.post.lib.config.model.ConfigModel;
+import me.post.lib.config.wrapper.ConfigWrapper;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnknownNullability;
 
-@ExtensionMethod({
-    ConfigurationExtensions.class
-})
+public class PrestigeConfig implements ConfigModel<PrestigeData> {
+    private @UnknownNullability PrestigeData data;
+    private final @NotNull ConfigWrapper configWrapper;
 
-public class PrestigeConfig implements InjectedConfigCache<PrestigeData> {
-    @ConfigSpec(path = "prestigio")
-    public @NonNull PrestigeData transform(@NonNull FileConfiguration config) {
+    public PrestigeConfig(@NotNull ConfigWrapper configWrapper) {
+        this.configWrapper = configWrapper;
+    }
+
+    public void update() {
+        final FileConfiguration config = configWrapper.unwrap();
         final String type = config.getString("Tipo");
 
         if (type.equals("INDIVIDUAL")) {
-            return new PrestigeData(
-                config.getShort("Prestigio-padrao"),
+            data = new PrestigeData(
+                (short) config.getInt("Prestigio-padrao"),
                 new IndividualPrestiges(
-                    config.section("Prestigios").map(section ->
+                    ConfigSections.map(config.getConfigurationSection("Prestigios"), section ->
                         new Prestige(
-                            section.getShort("Id"),
+                            (short) section.getInt("Id"),
                             section.getString("Display"),
                             section.getString("Grupo"),
-                            section.notExistingOrFalse("Proximo")
+                            ConfigSections.notExistingOrFalse(section, "Proximo")
                                 ? null
-                                : section.getShort("Proximo")
+                                : (short) section.getInt("Proximo")
                         )
                     )
                 )
             );
+            return;
         }
 
         throw new Error("O tipo de prestigio '" + type + "' não existe.");
+    }
+
+    @Override
+    public @NotNull PrestigeData data() {
+        return data;
+    }
+
+    @Override
+    public @NotNull ConfigWrapper wrapper() {
+        return configWrapper;
     }
 }

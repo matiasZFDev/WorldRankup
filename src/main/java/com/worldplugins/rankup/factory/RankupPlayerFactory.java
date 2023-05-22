@@ -1,10 +1,10 @@
 package com.worldplugins.rankup.factory;
 
 import com.worldplugins.rankup.database.model.RankupPlayer;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public interface RankupPlayerFactory {
-    @NonNull RankupPlayer create(@NonNull UUID playerId);
+    @NotNull RankupPlayer create(@NotNull UUID playerId);
 }

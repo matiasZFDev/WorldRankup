@@ -1,26 +1,25 @@
 package com.worldplugins.rankup;
 
-import com.worldplugins.lib.config.cache.ConfigCache;
-import com.worldplugins.lib.extension.bukkit.ColorExtensions;
 import com.worldplugins.rankup.config.data.PrestigeData;
 import com.worldplugins.rankup.config.data.RanksData;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.ExtensionMethod;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import me.post.lib.config.model.ConfigModel;
+import me.post.lib.util.Colors;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-@ExtensionMethod({
-    ColorExtensions.class
-})
-
-@RequiredArgsConstructor
 public class RankupPlaceholders extends PlaceholderExpansion {
-    private final @NonNull PlayerService playerService;
-    private final @NonNull ConfigCache<RanksData> ranksConfig;
-    private final @NonNull ConfigCache<PrestigeData> prestigeConfig;
+    private final @NotNull PlayerService playerService;
+    private final @NotNull ConfigModel<RanksData> ranksConfig;
+    private final @NotNull ConfigModel<PrestigeData> prestigeConfig;
+
+    public RankupPlaceholders(@NotNull PlayerService playerService, @NotNull ConfigModel<RanksData> ranksConfig, @NotNull ConfigModel<PrestigeData> prestigeConfig) {
+        this.playerService = playerService;
+        this.ranksConfig = ranksConfig;
+        this.prestigeConfig = prestigeConfig;
+    }
 
     @Override
     public String getIdentifier() {
@@ -45,17 +44,17 @@ public class RankupPlaceholders extends PlaceholderExpansion {
             switch (params) {
                 case "rank":
                 case "prestigio":
-                    return "&c?".color();
+                    return Colors.color("&c?");
             }
         }
 
         else {
             switch (params) {
                 case "rank":
-                    return ranksConfig.data().getById(playerModel.getRank()).getDisplay();
+                    return ranksConfig.data().getById(playerModel.rank()).display();
 
                 case "prestigio":
-                    return prestigeConfig.data().getPrestiges().getById(playerModel.getPrestige()).getDisplay();
+                    return prestigeConfig.data().prestiges().getById(playerModel.prestige()).display();
             }
         }
 

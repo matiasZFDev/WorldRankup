@@ -1,37 +1,25 @@
 package com.worldplugins.rankup;
 
-import com.worldplugins.lib.config.cache.ConfigCache;
-import com.worldplugins.lib.config.cache.impl.EffectsConfig;
-import com.worldplugins.lib.config.cache.impl.MessagesConfig;
-import com.worldplugins.lib.config.cache.impl.SoundsConfig;
-import com.worldplugins.lib.registry.CommandRegistry;
-import com.worldplugins.lib.registry.ViewRegistry;
-import com.worldplugins.lib.util.ConversationProvider;
+import com.worldplugins.lib.config.Updatables;
 import com.worldplugins.rankup.command.*;
-import com.worldplugins.rankup.command.prestige.EvolvePrestige;
-import com.worldplugins.rankup.command.prestige.RegressPrestige;
-import com.worldplugins.rankup.command.prestige.SetPrestige;
-import com.worldplugins.rankup.command.rank.EvolveRank;
-import com.worldplugins.rankup.command.rank.RegressRank;
-import com.worldplugins.rankup.command.rank.SetRank;
+import com.worldplugins.rankup.command.prestige.EvolvePrestigeCommand;
+import com.worldplugins.rankup.command.prestige.RegressPrestigeCommand;
+import com.worldplugins.rankup.command.prestige.SetPrestigeCommand;
+import com.worldplugins.rankup.command.rank.EvolveRankCommand;
+import com.worldplugins.rankup.command.rank.RegressRankCommand;
+import com.worldplugins.rankup.command.rank.SetRankCommand;
 import com.worldplugins.rankup.command.shard.*;
 import com.worldplugins.rankup.config.*;
-import com.worldplugins.rankup.config.data.MainData;
-import com.worldplugins.rankup.config.data.ShardsData;
+import com.worldplugins.rankup.config.data.*;
+import com.worldplugins.rankup.config.menu.BagMenuModel;
+import com.worldplugins.rankup.config.menu.PrestigeMenuModel;
+import com.worldplugins.rankup.config.menu.RanksMenuModel;
+import com.worldplugins.rankup.config.menu.RankupMenuModel;
 import com.worldplugins.rankup.database.DatabaseAccessor;
 import com.worldplugins.rankup.factory.NewRankupPlayerFactory;
 import com.worldplugins.rankup.factory.RankupPlayerFactory;
 import com.worldplugins.rankup.factory.ShardFactory;
 import com.worldplugins.rankup.factory.ShardFactoryImpl;
-import com.worldplugins.rankup.init.ConfigCacheInitializer;
-import com.worldplugins.lib.manager.config.ConfigCacheManager;
-import com.worldplugins.lib.manager.config.ConfigManager;
-import com.worldplugins.lib.manager.config.YamlConfigManager;
-import com.worldplugins.lib.manager.view.MenuContainerManager;
-import com.worldplugins.lib.manager.view.MenuContainerManagerImpl;
-import com.worldplugins.lib.manager.view.ViewManager;
-import com.worldplugins.lib.manager.view.ViewManagerImpl;
-import com.worldplugins.lib.util.SchedulerBuilder;
 import com.worldplugins.rankup.init.EconomyInitializer;
 import com.worldplugins.rankup.init.PermissionManagerInitializer;
 import com.worldplugins.rankup.listener.*;
@@ -41,155 +29,159 @@ import com.worldplugins.rankup.view.BagView;
 import com.worldplugins.rankup.view.PrestigeView;
 import com.worldplugins.rankup.view.RanksView;
 import com.worldplugins.rankup.view.RankupView;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import me.post.lib.command.process.CommandRegistry;
+import me.post.lib.config.model.ConfigModel;
+import me.post.lib.config.wrapper.ConfigManager;
+import me.post.lib.config.wrapper.YamlConfigManager;
+import me.post.lib.util.ConversationProvider;
+import me.post.lib.util.Scheduler;
+import me.post.lib.view.Views;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
-@RequiredArgsConstructor
+import java.util.Arrays;
+
 public class PluginExecutor {
-    private final @NonNull JavaPlugin plugin;
-    private final @NonNull SchedulerBuilder scheduler;
-    private final @NonNull ConfigManager configManager;
-    private final @NonNull ConfigCacheManager configCacheManager;
-    private final @NonNull MenuContainerManager menuContainerManager;
-    private final @NonNull ViewManager viewManager;
+    private final @NotNull JavaPlugin plugin;
+    private final @NotNull Scheduler scheduler;
+    private final @NotNull ConfigManager configManager;
+    private final @NotNull Updatables updatables;
+    private final @NotNull ConfigModel<MainData> mainConfig;
+    private final @NotNull ConfigModel<RanksData> ranksConfig;
+    private final @NotNull ConfigModel<PrestigeData> prestigeConfig;
+    private final @NotNull ConfigModel<ShardsData> shardsConfig;
+    private final @NotNull ConfigModel<EarnData> earnConfig;
 
-    private final @NonNull DatabaseAccessor databaseAccessor;
-    private final @NonNull ShardFactory shardFactory;
-    private final Economy economy;
-    private final @NonNull EvolutionManager evolutionManager;
+    private final @NotNull DatabaseAccessor databaseAccessor;
+    private final @NotNull ShardFactory shardFactory;
+    private final @NotNull Economy economy;
+    private final @NotNull EvolutionManager evolutionManager;
 
-    public PluginExecutor(@NonNull JavaPlugin plugin) {
+    public PluginExecutor(@NotNull JavaPlugin plugin) {
         this.plugin = plugin;
-        scheduler = new SchedulerBuilder(plugin);
+        scheduler = new Scheduler(plugin);
         configManager = new YamlConfigManager(plugin);
-        configCacheManager = new ConfigCacheInitializer(configManager).init();
-        menuContainerManager = new MenuContainerManagerImpl();
-        viewManager = new ViewManagerImpl();
+        loadConfiguration();
+
+        updatables = new Updatables();
+        mainConfig = updatables.include(new MainConfig(configManager.getWrapper("config")));
+        ranksConfig = updatables.include(new RanksConfig(configManager.getWrapper("ranks")));
+        prestigeConfig = updatables.include(new PrestigeConfig(configManager.getWrapper("prestigio")));
+        shardsConfig = updatables.include(new ShardsConfig(configManager.getWrapper("fragmentos")));
+        earnConfig = updatables.include(new EarnConfig(configManager.getWrapper("recompensas")));
 
         databaseAccessor = new DatabaseAccessor(configManager, plugin, scheduler);
-        shardFactory = new ShardFactoryImpl(
-            configCacheManager.get(MainConfig.class), configCacheManager.get(ShardsConfig.class)
-        );
+        shardFactory = new ShardFactoryImpl(mainConfig, shardsConfig);
         economy = new EconomyInitializer(plugin).init();
         evolutionManager = new EvolutionManager(
-            databaseAccessor.getPlayerService(), config(RanksConfig.class), config(PrestigeConfig.class),
-            new PermissionManagerInitializer().init()
+            databaseAccessor.playerService(), ranksConfig, prestigeConfig, new PermissionManagerInitializer().init()
         );
+    }
+
+    private void loadConfiguration() {
+        Arrays.asList(
+            "config", "fragmentos", "prestigio", "ranks", "recompensas",
+            "resposta/efeitos", "resposta/mensagens", "resposta/sons",
+            "menu/mochila", "menu/prestigio", "menu/ranks", "menu/rankup"
+        ).forEach(configManager::load);
     }
 
     /**
      * @return A runnable executed when disabling
      * */
-    public @NonNull Runnable execute() {
-        prepareGlobalAccess();
+    public @NotNull Runnable execute() {
+        setupGlobalResponse();
         registerListeners();
         registerCommands();
         registerViews();
         registerPlaceholders();
         scheduleTasks();
-        return () -> {
-            databaseAccessor.getShardUpdater().update();
-        };
+        updatables.update();
+        return databaseAccessor.shardUpdater()::update;
     }
 
-    private void prepareGlobalAccess() {
-        GlobalAccess.setMessages(configCacheManager.get(MessagesConfig.class));
-        GlobalAccess.setSounds(configCacheManager.get(SoundsConfig.class));
-        GlobalAccess.setEffects(configCacheManager.get(EffectsConfig.class));
-        GlobalAccess.setViewManager(viewManager);
+    private void setupGlobalResponse() {
+        Response.setup(updatables, configManager);
     }
 
-    private void regListeners(@NonNull Listener... listeners) {
+    private void regListeners(@NotNull Listener... listeners) {
         final PluginManager pluginManager = plugin.getServer().getPluginManager();
         for (final Listener listener : listeners) {
             pluginManager.registerEvents(listener, plugin);
         }
     }
 
-    private @NonNull <T> T config(Class<? extends ConfigCache<?>> clazz) {
-        return configCacheManager.get(clazz);
-    }
-
     private void registerListeners() {
         final RankupPlayerFactory playerFactory = new NewRankupPlayerFactory(
-            config(RanksConfig.class), config(PrestigeConfig.class), config(ShardsConfig.class)
+            ranksConfig, prestigeConfig, shardsConfig
         );
         final EarnExecutor earnExecutor = new EarnExecutor(
-            config(EarnConfig.class), shardFactory, config(ShardsConfig.class),
-            databaseAccessor.getPlayerService(), config(MainConfig.class)
+            databaseAccessor.playerService(), shardFactory, ranksConfig, earnConfig, shardsConfig, mainConfig
         );
 
         regListeners(
             new LoadOnJoinListener(
-                databaseAccessor.getPlayerService(), playerFactory, databaseAccessor.getCacheUnloader(),
+                databaseAccessor.playerService(), playerFactory, databaseAccessor.cacheUnloader(),
                 evolutionManager
             ),
-            new ShardInteractListener(
-                config(ShardsConfig.class), databaseAccessor.getPlayerService(), shardFactory
-            ),
-            new ShardLimitInteractListener(
-                config(ShardsConfig.class), databaseAccessor.getPlayerService(), shardFactory
-            ),
+            new ShardInteractListener(shardsConfig, databaseAccessor.playerService(), shardFactory),
+            new ShardLimitInteractListener(shardsConfig, databaseAccessor.playerService(), shardFactory),
             new ShardEarnListener(earnExecutor),
-            new UnloadOnQuitListener(databaseAccessor.getCacheUnloader()),
-            new PlayerTagChatListener(
-                databaseAccessor.getPlayerService(), config(RanksConfig.class), config(PrestigeConfig.class)
-            )
+            new UnloadOnQuitListener(databaseAccessor.cacheUnloader()),
+            new PlayerTagChatListener(databaseAccessor.playerService(), ranksConfig, prestigeConfig)
         );
     }
 
     private void registerCommands() {
-        final CommandRegistry registry = new CommandRegistry(plugin);
-        final ConfigCache<MainData> mainConfig = configCacheManager.get(MainConfig.class);
-        final ConfigCache<ShardsData> shardsConfig = configCacheManager.get(ShardsConfig.class);
+        final CommandRegistry registry = CommandRegistry.on(plugin);
 
-        registry.command(
-            new Help(),
-            new Bag(databaseAccessor.getPlayerService()),
-            new GiveShards(shardsConfig, mainConfig, shardFactory, databaseAccessor.getPlayerService()),
-            new RemoveShards(shardsConfig, databaseAccessor.getPlayerService()),
-            new SetShards(shardsConfig, databaseAccessor.getPlayerService()),
-            new GiveShardLimit(shardsConfig, mainConfig, shardFactory, databaseAccessor.getPlayerService()),
-            new RemoveShardLimit(shardsConfig, databaseAccessor.getPlayerService()),
-            new SetShardLimit(shardsConfig, databaseAccessor.getPlayerService()),
-            new SetRank(evolutionManager, config(RanksConfig.class)),
-            new EvolveRank(databaseAccessor.getPlayerService(), evolutionManager, config(RanksConfig.class)),
-            new RegressRank(databaseAccessor.getPlayerService(), evolutionManager, config(RanksConfig.class)),
-            new SetPrestige(evolutionManager, config(PrestigeConfig.class)),
-            new EvolvePrestige(databaseAccessor.getPlayerService(), evolutionManager, config(PrestigeConfig.class)),
-            new RegressPrestige(databaseAccessor.getPlayerService(), evolutionManager, config(PrestigeConfig.class)),
-            new Rankup(databaseAccessor.getPlayerService(), config(RanksConfig.class)),
-            new Prestige(databaseAccessor.getPlayerService()),
-            new Reload(configManager, configCacheManager, menuContainerManager),
-            new Ranks()
+        registry.addModules(
+            new HelpCommand(),
+            new BagCommand(databaseAccessor.playerService()),
+            new GiveShardsCommand(shardsConfig, mainConfig, shardFactory, databaseAccessor.playerService()),
+            new RemoveShardsCommand(shardsConfig, databaseAccessor.playerService()),
+            new SetShardsCommand(shardsConfig, databaseAccessor.playerService()),
+            new GiveShardLimitCommand(shardsConfig, mainConfig, shardFactory, databaseAccessor.playerService()),
+            new RemoveShardLimit(shardsConfig, databaseAccessor.playerService()),
+            new SetShardLimitCommand(shardsConfig, databaseAccessor.playerService()),
+            new SetRankCommand(evolutionManager, ranksConfig),
+            new EvolveRankCommand(databaseAccessor.playerService(), evolutionManager, ranksConfig),
+            new RegressRankCommand(databaseAccessor.playerService(), evolutionManager, ranksConfig),
+            new SetPrestigeCommand(evolutionManager, prestigeConfig),
+            new EvolvePrestigeCommand(databaseAccessor.playerService(), evolutionManager, prestigeConfig),
+            new RegressPrestigeCommand(databaseAccessor.playerService(), evolutionManager, prestigeConfig),
+            new RankupCommand(databaseAccessor.playerService(), ranksConfig),
+            new PrestigeCommand(databaseAccessor.playerService()),
+            new ReloadCommand(configManager, updatables),
+            new RanksCommand()
         );
-        registry.autoTabCompleter("rankup");
         registry.registerAll();
     }
 
     private void registerViews() {
-        final ViewRegistry registry = new ViewRegistry(viewManager, menuContainerManager, configManager);
         final ConversationProvider conversationProvider = new ConversationProvider(plugin);
 
-        registry.register(
+        Views.get().register(
             new BagView(
-                config(ShardsConfig.class), databaseAccessor.getPlayerService(), config(MainConfig.class),
-                conversationProvider, economy, shardFactory
+                updatables.include(new BagMenuModel(configManager.getWrapper("menu/mochila"))),
+                shardsConfig, databaseAccessor.playerService(), mainConfig,conversationProvider, economy, shardFactory
             ),
             new RankupView(
-                databaseAccessor.getPlayerService(), config(RanksConfig.class), config(ShardsConfig.class),
-                economy, evolutionManager
+                updatables.include(new RankupMenuModel(configManager.getWrapper("menu/rankup"))),
+                databaseAccessor.playerService(), ranksConfig, shardsConfig, economy, evolutionManager
             ),
             new PrestigeView(
-                databaseAccessor.getPlayerService(), config(RanksConfig.class), config(PrestigeConfig.class),
-                evolutionManager
+                updatables.include(new PrestigeMenuModel(configManager.getWrapper("menu/prestigio"))),
+                databaseAccessor.playerService(), ranksConfig, prestigeConfig, evolutionManager
             ),
-            new RanksView(config(RanksConfig.class), config(ShardsConfig.class), databaseAccessor.getPlayerService())
+            new RanksView(
+                updatables.include(new RanksMenuModel(configManager.getWrapper("menu/ranks"))),
+                ranksConfig, shardsConfig, databaseAccessor.playerService()
+            )
         );
     }
 
@@ -197,23 +189,17 @@ public class PluginExecutor {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null)
             return;
 
-        new RankupPlaceholders(
-            databaseAccessor.getPlayerService(), config(RanksConfig.class), config(PrestigeConfig.class)
-        ).register();
+        new RankupPlaceholders(databaseAccessor.playerService(), ranksConfig, prestigeConfig).register();
     }
 
     private void scheduleTasks() {
         final int updateSeconds = 30;
         final int unloadSeconds = 30;
-        scheduler.newTimer(databaseAccessor.getShardUpdater()::update)
-            .async(false)
-            .delay((long) updateSeconds * 20)
-            .period((long) updateSeconds * 20)
-            .run();
-        scheduler.newTimer(databaseAccessor.getCacheUnloader()::unloadAll)
-            .async(false)
-            .delay(unloadSeconds * 20L)
-            .period(unloadSeconds * 20L)
-            .run();
+        scheduler.runTimer(
+            updateSeconds * 20, updateSeconds * 20, false, databaseAccessor.shardUpdater()::update
+        );
+        scheduler.runTimer(
+            unloadSeconds * 20, unloadSeconds * 20, false, databaseAccessor.cacheUnloader()::unloadAll
+        );
     }
 }

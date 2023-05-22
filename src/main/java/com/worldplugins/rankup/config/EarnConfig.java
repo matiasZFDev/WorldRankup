@@ -1,37 +1,38 @@
 package com.worldplugins.rankup.config;
 
-import com.worldplugins.lib.config.cache.InjectedConfigCache;
-import com.worldplugins.lib.config.cache.annotation.ConfigSpec;
-import com.worldplugins.lib.extension.GenericExtensions;
-import com.worldplugins.lib.extension.bukkit.ConfigurationExtensions;
+import com.worldplugins.lib.util.ConfigSections;
 import com.worldplugins.rankup.config.data.EarnData;
 import com.worldplugins.rankup.config.data.shard.ChanceShard;
 import com.worldplugins.rankup.config.data.shard.ShardSendType;
 import com.worldplugins.rankup.config.data.earn.*;
-import lombok.NonNull;
-import lombok.experimental.ExtensionMethod;
+import me.post.lib.config.model.ConfigModel;
+import me.post.lib.config.wrapper.ConfigWrapper;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@ExtensionMethod({
-    GenericExtensions.class,
-    ConfigurationExtensions.class
-})
+public class EarnConfig implements ConfigModel<EarnData> {
+    private @UnknownNullability EarnData data;
+    private final @NotNull ConfigWrapper configWrapper;
 
-public class EarnConfig implements InjectedConfigCache<EarnData> {
-    @ConfigSpec(path = "recompensas")
-    public @NonNull EarnData transform(@NonNull FileConfiguration config) {
-        return new EarnData(
-            config.section("Fragmentos").map(this::fetchEarn),
-            config.section("Limite").map(this::fetchEarn)
+    public EarnConfig(@NotNull ConfigWrapper configWrapper) {
+        this.configWrapper = configWrapper;
+    }
+
+    public void update() {
+        final FileConfiguration config = configWrapper.unwrap();
+        data = new EarnData(
+            ConfigSections.map(config.getConfigurationSection("Fragmentos"), this::fetchEarn),
+            ConfigSections.map(config.getConfigurationSection("Limite"), this::fetchEarn)
         );
     }
 
-    private @NonNull ShardEarn fetchEarn(@NonNull ConfigurationSection section) {
+    private @NotNull ShardEarn fetchEarn(@NotNull ConfigurationSection section) {
         final String earnType = section.getString("Tipo");
         final Collection<String> ranks = new HashSet<>(section.getStringList("Ranks"));
         final Collection<String> worlds = new HashSet<>(section.getStringList("Mundos"));
@@ -97,5 +98,15 @@ public class EarnConfig implements InjectedConfigCache<EarnData> {
             default:
                 throw new Error("O tipo de ganho '" + earnType + "' não é válido. Leja a configuração para mais informação.");
         }
+    }
+
+    @Override
+    public @NotNull EarnData data() {
+        return data;
+    }
+
+    @Override
+    public @NotNull ConfigWrapper wrapper() {
+        return configWrapper;
     }
 }

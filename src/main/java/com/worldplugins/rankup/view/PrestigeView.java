@@ -1,131 +1,143 @@
 package com.worldplugins.rankup.view;
 
-import com.worldplugins.lib.config.cache.ConfigCache;
-import com.worldplugins.lib.config.cache.menu.ItemProcessResult;
-import com.worldplugins.lib.config.cache.menu.MenuData;
-import com.worldplugins.lib.config.cache.menu.MenuItem;
-import com.worldplugins.lib.extension.GenericExtensions;
-import com.worldplugins.lib.extension.NumberFormatExtensions;
-import com.worldplugins.lib.extension.ReplaceExtensions;
-import com.worldplugins.lib.extension.bukkit.ItemExtensions;
-import com.worldplugins.lib.extension.bukkit.NBTExtensions;
-import com.worldplugins.lib.util.MenuItemsUtils;
-import com.worldplugins.lib.view.MenuDataView;
-import com.worldplugins.lib.view.ViewContext;
-import com.worldplugins.lib.view.annotation.ViewSpec;
-import com.worldplugins.rankup.NBTKeys;
+import com.worldplugins.lib.config.model.MenuModel;
+import com.worldplugins.lib.util.ItemBuilding;
+import com.worldplugins.lib.view.ConfigContextBuilder;
 import com.worldplugins.rankup.config.data.PrestigeData;
 import com.worldplugins.rankup.config.data.RanksData;
 import com.worldplugins.rankup.config.data.prestige.Prestige;
-import com.worldplugins.rankup.config.menu.PrestigeMenuContainer;
 import com.worldplugins.rankup.database.model.RankupPlayer;
 import com.worldplugins.rankup.database.service.PlayerService;
-import com.worldplugins.rankup.extension.ResponseExtensions;
 import com.worldplugins.rankup.manager.EvolutionManager;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.ExtensionMethod;
+import me.post.lib.config.model.ConfigModel;
+import me.post.lib.util.Items;
+import me.post.lib.view.View;
+import me.post.lib.view.action.ViewClick;
+import me.post.lib.view.action.ViewClose;
+import me.post.lib.view.helper.ClickHandler;
+import me.post.lib.view.helper.ViewContext;
+import me.post.lib.view.helper.impl.MapViewContext;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-@ExtensionMethod(value = {
-    ItemExtensions.class,
-    GenericExtensions.class,
-    NumberFormatExtensions.class,
-    ReplaceExtensions.class,
-    ResponseExtensions.class,
-    NBTExtensions.class
-}, suppressBaseMethods = false)
+import static com.worldplugins.rankup.Response.respond;
+import static me.post.lib.util.Pairs.to;
 
-@ViewSpec(menuContainer = PrestigeMenuContainer.class)
-@RequiredArgsConstructor
-public class PrestigeView extends MenuDataView<ViewContext> {
-    private final @NonNull PlayerService playerService;
-    private final @NonNull ConfigCache<RanksData> ranksConfig;
-    private final @NonNull ConfigCache<PrestigeData> prestigeConfig;
-    private final @NonNull EvolutionManager evolutionManager;
+public class PrestigeView implements View {
+    private final @NotNull MenuModel menuModel;
+    private final @NotNull ViewContext viewContext;
+    private final @NotNull PlayerService playerService;
+    private final @NotNull ConfigModel<RanksData> ranksConfig;
+    private final @NotNull ConfigModel<PrestigeData> prestigeConfig;
+    private final @NotNull EvolutionManager evolutionManager;
 
-    @Override
-    public @NonNull ItemProcessResult processItems(@NonNull Player player, ViewContext context, @NonNull MenuData menuData) {
-        final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-        final RanksData.Rank configRank = ranksConfig.data().getById(playerModel.getRank());
-        final Prestige configPrestige = prestigeConfig.data().getPrestiges().getById(playerModel.getPrestige());
-
-        return MenuItemsUtils.newSession(menuData.getItems(), session -> {
-            if (configPrestige.getNext() == null) {
-                session.remove("Prestigio-habilitado", "Prestigio-desabilitado");
-                session.modify("Prestigio-ultimo", item ->
-                    item.nameFormat("@prestigio".to(configPrestige.getDisplay())).colorMeta()
-                );
-            } else {
-                AtomicInteger rankOffsetDistance = new AtomicInteger(0);
-                RanksData.Rank currentConfigRank = configRank;
-
-                while (currentConfigRank.getEvolution() != null) {
-                    rankOffsetDistance.incrementAndGet();
-                    currentConfigRank = ranksConfig.data().getByName(currentConfigRank.getEvolution().getNextRankName());
-                }
-
-                if (rankOffsetDistance.get() == 0) {
-                    session.remove("Prestigio-desabilitado", "Prestigio-ultimo");
-                    session.modify("Prestigio-habilitado", item ->
-                        item
-                            .nameFormat("@prestigio".to(configPrestige.getDisplay()))
-                            .addReferenceId(NBTKeys.PRESTIGE_ENABLED)
-                            .colorMeta()
-                    );
-                } else {
-                    session.remove("Prestigio-habilitado", "Prestigio-ultimo");
-                    session.modify("Prestigio-desabilitado", item ->
-                        item
-                            .nameFormat("@prestigio".to(configPrestige.getDisplay()))
-                            .loreFormat("@ranks".to(rankOffsetDistance.toString()))
-                            .colorMeta()
-                    );
-                }
-            }
-
-        }).build();
+    public PrestigeView(
+        @NotNull MenuModel menuModel,
+        @NotNull PlayerService playerService,
+        @NotNull ConfigModel<RanksData> ranksConfig,
+        @NotNull ConfigModel<PrestigeData> prestigeConfig,
+        @NotNull EvolutionManager evolutionManager
+    ) {
+        this.menuModel = menuModel;
+        this.viewContext = new MapViewContext();
+        this.playerService = playerService;
+        this.ranksConfig = ranksConfig;
+        this.prestigeConfig = prestigeConfig;
+        this.evolutionManager = evolutionManager;
     }
 
     @Override
-    public void onClick(@NonNull Player player, @NonNull MenuItem item, @NonNull InventoryClickEvent event) {
-        if (event.getCurrentItem().hasReference(NBTKeys.PRESTIGE_ENABLED)) {
-            final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
-            final RanksData.Rank configRank = ranksConfig.data().getById(playerModel.getRank());
+    public void open(@NotNull Player player, @Nullable Object data) {
+        final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
+        final RanksData.Rank configRank = ranksConfig.data().getById(playerModel.rank());
+        final Prestige configPrestige = prestigeConfig.data().prestiges().getById(playerModel.prestige());
 
-            if (configRank.getEvolution() != null) {
-                player.closeInventory();
-                player.respond("Prestigio-rank-error"); // error de atualização
-                return;
-            }
+        ConfigContextBuilder.withModel(menuModel)
+            .apply(builder -> {
+                if (configPrestige.next() == null) {
+                    builder.removeMenuItem("Prestigio-habilitado", "Prestigio-desabilitado");
+                    builder.editMenuItem("Prestigio-ultimo", item -> {
+                        ItemBuilding.nameFormat(item, to("@prestigio", configPrestige.display()));
+                        Items.colorMeta(item);
+                    });
+                    return;
+                }
 
-            final Prestige configPrestige = prestigeConfig.data().getPrestiges().getById(playerModel.getPrestige());
+                final AtomicInteger rankOffsetDistance = new AtomicInteger(0);
+                RanksData.Rank currentConfigRank = configRank;
 
-            if (configPrestige.getNext() == null) {
-                player.closeInventory();
-                player.respond("Prestigio-ultimo-error"); // error de atualização
-                return;
-            }
+                while (currentConfigRank.evolution() != null) {
+                    rankOffsetDistance.incrementAndGet();
+                    currentConfigRank = ranksConfig.data().getByName(currentConfigRank.evolution().nextRankName());
+                }
 
-            final RanksData.Rank firstRank = ranksConfig.data().getByName(ranksConfig.data().getDefaultRank());
-            final Prestige nextPrestige = prestigeConfig.data().getPrestiges().getById(configPrestige.getNext());
+                if (rankOffsetDistance.get() == 0) {
+                    builder.removeMenuItem("Prestigio-desabilitado", "Prestigio-ultimo");
+                    builder.editMenuItem("Prestigio-habilitado", item -> {
+                        ItemBuilding.nameFormat(item, to("@prestigio", configPrestige.display()));
+                        Items.colorMeta(item);
+                    });
+                    builder.handleMenuItemClick("Prestigio-habilitado", this::handlePrestige);
+                } else {
+                    builder.removeMenuItem("Prestigio-habilitado", "Prestigio-ultimo");
+                    builder.editMenuItem("Prestigio-desabilitado", item -> {
+                        ItemBuilding.nameFormat(item, to("@prestigio", configPrestige.display()));
+                        ItemBuilding.loreFormat(item, to("@ranks", rankOffsetDistance.toString()));
+                        Items.colorMeta(item);
+                    });
+                }
+            })
+            .build(viewContext, player, data);
+    }
 
-            evolutionManager.setRank(player, firstRank.getId());
-            evolutionManager.setPrestige(player, nextPrestige.getId());
+    private void handlePrestige(@NotNull ViewClick click) {
+        final Player player = click.whoClicked();
+        final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
+        final RanksData.Rank configRank = ranksConfig.data().getById(playerModel.rank());
 
-            if (nextPrestige.getNext() != null)
-                player.respond("Prestigio-evoluido", message -> message.replace(
-                    "@jogador".to(player.getName()),
-                    "@prestigio".to(nextPrestige.getDisplay())
-                ));
-            else
-                player.respond("Prestigio-evoluido-ultimo", message -> message.replace(
-                    "@jogador".to(player.getName()),
-                    "@prestigio".to(nextPrestige.getDisplay())
-                ));
+        if (configRank.evolution() != null) {
+            player.closeInventory();
+            respond(player, "Prestigio-rank-error"); // error de atualização
+            return;
         }
+
+        final Prestige configPrestige = prestigeConfig.data().prestiges().getById(playerModel.prestige());
+
+        if (configPrestige.next() == null) {
+            player.closeInventory();
+            respond(player, "Prestigio-ultimo-error"); // error de atualização
+            return;
+        }
+
+        final RanksData.Rank firstRank = ranksConfig.data().getByName(ranksConfig.data().defaultRank());
+        final Prestige nextPrestige = prestigeConfig.data().prestiges().getById(configPrestige.next());
+
+        evolutionManager.setRank(player, firstRank.id());
+        evolutionManager.setPrestige(player, nextPrestige.id());
+
+        if (nextPrestige.next() != null) {
+            respond(player, "Prestigio-evoluido", message -> message.replace(
+                to("@jogador", player.getName()),
+                to("@prestigio", nextPrestige.display())
+            ));
+        } else {
+            respond(player, "Prestigio-evoluido-ultimo", message -> message.replace(
+                to("@jogador", player.getName()),
+                to("@prestigio", nextPrestige.display())
+            ));
+        }
+    }
+
+    @Override
+    public void onClick(@NotNull ViewClick click) {
+        ClickHandler.handleTopNonNull(viewContext, click);
+    }
+
+    @Override
+    public void onClose(@NotNull ViewClose close) {
+        viewContext.removeViewer(close.whoCloses().getUniqueId());
     }
 }

@@ -1,17 +1,17 @@
 package com.worldplugins.rankup.init;
 
-import com.worldplugins.lib.common.Initializer;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.jetbrains.annotations.NotNull;
 
-@RequiredArgsConstructor
-public class EconomyInitializer implements Initializer<Economy> {
-    private final @NonNull Plugin plugin;
+public class EconomyInitializer {
+    private final @NotNull Plugin plugin;
 
-    @Override
+    public EconomyInitializer(@NotNull Plugin plugin) {
+        this.plugin = plugin;
+    }
+
     public Economy init() {
         if (plugin.getServer().getPluginManager().getPlugin("Vault") == null) {
             return null;

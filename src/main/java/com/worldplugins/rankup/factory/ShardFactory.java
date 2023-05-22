@@ -1,9 +1,9 @@
 package com.worldplugins.rankup.factory;
 
-import lombok.NonNull;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public interface ShardFactory {
-    @NonNull ItemStack createShard(byte shardId, int amount);
-    @NonNull ItemStack createLimit(byte shardId, int amount);
+    @NotNull ItemStack createShard(byte shardId, int amount);
+    @NotNull ItemStack createLimit(byte shardId, int amount);
 }

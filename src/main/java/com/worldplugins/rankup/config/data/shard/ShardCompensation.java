@@ -1,7 +1,7 @@
 package com.worldplugins.rankup.config.data.shard;
 
-import lombok.Getter;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
@@ -12,16 +12,19 @@ public enum ShardCompensation {
     MOB_KILL("Matando-mobs"),
     FISHING("Pescando");
 
-    @Getter
-    private final @NonNull String configName;
+    private final @NotNull String configName;
 
-    ShardCompensation(@NonNull String configName) {
+    ShardCompensation(@NotNull String configName) {
         this.configName = configName;
     }
 
-    public static ShardCompensation fromConfigName(@NonNull String configName) {
+    public @NotNull String configName() {
+        return configName;
+    }
+
+    public static @Nullable ShardCompensation fromConfigName(@NotNull String configName) {
         return Arrays.stream(values())
-            .filter(compensation -> compensation.getConfigName().equals(configName))
+            .filter(compensation -> compensation.configName().equals(configName))
             .findFirst()
             .orElse(null);
     }
