@@ -91,7 +91,7 @@ public class PluginExecutor {
     }
 
     /**
-     * @return A runnable executed when disabling
+     * @return A runnable executed when disabling.
      * */
     public @NotNull Runnable execute() {
         setupGlobalResponse();
