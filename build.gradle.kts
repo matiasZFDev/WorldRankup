@@ -22,7 +22,7 @@ val projectFullName = "${project.name}-LATEST.jar";
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")
-    compileOnly(files("/home/post/dev/bukkit-libs/WorldLib-LATEST.jar"))
+    compileOnly("com.worldplugins:WorldLib:LATEST")
     compileOnly(files("/home/post/dev/bukkit-libs/LegendChat.jar"))
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude(group = "org.bukkit", module = "bukkit")
