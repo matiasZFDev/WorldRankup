@@ -1,6 +1,6 @@
 name: WorldRankup
 main: com.worldplugins.rankup.WorldRankup
-version: 1.0
+version: 1.0.1
 authors: [PostDev]
 api-version: 1.8
 depend: [Vault, LuckPerms]

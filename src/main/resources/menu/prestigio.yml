@@ -2,7 +2,8 @@ Nome: 'Prestigio!'
 Linhas: 3
 Data: {}
 Conteudo:
-  Prestigio-habilitado: # Iten mostrado quando o jogador pode dar prestigio
+  # Iten mostrado quando o jogador pode dar prestigio.
+  Prestigio-habilitado:
     Slot: 13
     Id: 266
     Nome: '&6Prestigio @prestigio'
@@ -13,7 +14,8 @@ Conteudo:
       - '&7beneficios.'
       - ''
       - '&aClique para confirmar!'
-  Prestigio-desabilitado: # Iten mostrado quando o jogador *não* pode dar prestigio
+  # Iten mostrado quando o jogador *não* pode dar prestigio.
+  Prestigio-desabilitado:
     Slot: 13
     Id: 266
     Nome: '&6Prestigio @prestigio'
@@ -25,7 +27,8 @@ Conteudo:
       - ''
       - '&eVocê se encontra a &e&n@ranks'
       - '&eranks do último rank!'
-  Prestigio-ultimo: # Iten mostrado quando o jogador se encontra no último prestigio
+  # Iten mostrado quando o jogador se encontra no último prestigio.
+  Prestigio-ultimo:
     Slot: 13
     Id: 266
     Nome: '&6Prestigio @prestigio'

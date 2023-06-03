@@ -1,7 +1,9 @@
 Nome: 'Mochila'
 Linhas: 6
 Data:
+  # Slots dos fragmentos.
   Slots: [11,13,15,30,32]
+  # Display mostrado no iten do fragmento.
   Display-fragmento:
     Nome: '@nome'
     Lore:

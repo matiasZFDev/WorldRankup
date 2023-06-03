@@ -19,6 +19,7 @@ Database:
   Tipo: SQLite
   Path: database.sql
 
+# Display do iten do fragmento.
 Display-fragmento-fisico:
   Nome: '@nome &7(@quantiax)'
   Lore:
@@ -29,6 +30,7 @@ Display-fragmento-fisico:
     - '&fB. direito: &7Adicionar'
     - '&fB. direito + SHIFT: &7Juntar'
 
+# Display do iten do limite.
 Display-limite-fisico:
   Nome: '&fLimite de @nome &7(@quantiax)'
   Lore:
@@ -44,16 +46,18 @@ Display-limite-fisico:
 # tem a capacidade suficiente para armazenar todos, o sistema pode
 # compensar o jogador com um iten que contem os fragmentos ou limite que
 # que se perder. Use true ou false para ativar ou desativar.
-# Retirar a opção será aceito como um false
+#
+# Retirar a opção será aceito como um false.
+# OBS: A opção 'Comando' apenas funciona para o comando /rankup darfragmentos ou /rankup darlimite.
 Compensacao-fragmentos:
-  Comando: true # Apenas /rankup darfragmentos
+  Comando: true
   Quebrando-blocos: true
   Hitando-mobs: true
   Matando-mobs: true
   Pescando: true
 
 Compensacao-limite:
-  Comando: true # Apenas /rankup darlimite
+  Comando: true
   Quebrando-blocos: true
   Hitando-mobs: true
   Matando-mobs: true
@@ -77,10 +81,16 @@ Venda-fragmentos:
   # uma porcentagem de dinheiro adicional na venda de fragmentos.
   # Precisa ter a opção 'Venda-fragmentos' habilitada
   Bonus:
+    # Cada grupo segue a seguinte estrutura:
+    # Meu-grupo:
+    #   Grupo: <grupo_permissao> - O grupo que o jogador deve ter para obter o bonus
+    #   Prioridade: <prioridade_de_bonus> - O ordem de leitura dos bonus. Maior o numero, um dos primeiros a ser escolhido
+    #   Bonus: <bonus_porcentagem> - O bonus aplicado *em porcentagem*
+    #   Tag: <tag_mostrada> - Tag mostrada na venda caso a opção 'Usar-tag' estiver ativada
     Rank-1:
-      Grupo: 'rank_1' # A permissão que o jogador precisa ter
-      Prioridade: 1 # O ordem de leitura dos bonus. Maior o numero, um dos primeiros a ser escolhido
-      Bonus: 0.5 # O bonus aplicado *em porcentagem* (+0.5%)
+      Grupo: 'rank_1'
+      Prioridade: 1
+      Bonus: 0.5
       Tag: '&b&lA&bprendiz'
     Rank-2:
       Grupo: 'rank_2'

@@ -109,20 +109,21 @@ public class RankupView implements View {
         final Player player = click.whoClicked();
         final RankupPlayer playerModel = playerService.getById(player.getUniqueId());
         final RanksData.Rank configRank = ranksConfig.data().getById(playerModel.rank());
+        final RanksData.Rank.Evolution evolution = configRank.evolution();
 
         player.closeInventory();
 
-        if (configRank.evolution() == null) {
+        if (evolution == null) {
             respond(player, "Rank-ultimo-error");
             return;
         }
 
-        if (!economy.has(player, configRank.evolution().coinsPrice())) {
+        if (!economy.has(player, evolution.coinsPrice())) {
             respond(player, "Rank-evoluir-dinheiro-insuficiente");
             return;
         }
 
-        final boolean hasShardRequirements = configRank.evolution().requiredShards().stream()
+        final boolean hasShardRequirements = evolution.requiredShards().stream()
             .allMatch(shard -> {
                 final byte shardId = shardsConfig.data().getByName(shard.name()).id();
                 return playerModel.getShards(shardId) >= shard.amount();
@@ -133,20 +134,20 @@ public class RankupView implements View {
             return;
         }
 
-        final RanksData.Rank nextRank = ranksConfig.data().getByName(configRank.evolution().nextRankName());
+        final RanksData.Rank nextRank = ranksConfig.data().getByName(evolution.nextRankName());
 
         evolutionManager.setRank(player, nextRank.id());
-        economy.withdrawPlayer(player, configRank.evolution().coinsPrice());
-        configRank.evolution().requiredShards().forEach(shard -> {
+        economy.withdrawPlayer(player, evolution.coinsPrice());
+        evolution.requiredShards().forEach(shard -> {
             final byte shardId = shardsConfig.data().getByName(shard.name()).id();
             playerModel.setShards(shardId, playerModel.getShards(shardId) - shard.amount());
         });
-
-        if (configRank.evolution().consoleCommand() != null)
+        evolution.consoleCommands().forEach(command ->
             Bukkit.dispatchCommand(
                 Bukkit.getConsoleSender(),
-                configRank.evolution().consoleCommand().replace("@jogador", player.getName())
-            );
+                command.replace("@jogador", player.getName())
+            )
+        );
 
         if (nextRank.evolution() != null) {
             respond(player, "Rank-evoluido", message -> message.replace(

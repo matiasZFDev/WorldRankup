@@ -1,6 +1,19 @@
-Tipo: INDIVIDUAL
+# [ṔRESTIGIOS]
+# Os prestigios são advantagens adquiridas depois de atingir o
+# máximo rank. Porem tem um limite, não é um sistema infinito
+# ou immenso de prestigios, você decide as vantagens de cada um!
+
+# O id do prestigio padrão do jogador.
 Prestigio-padrao: 0
+
+# A lista de prestigios.
 Prestigios:
+  # Estrutura:
+  # Meu-prestigio:
+  #   Id: <id_numerico_unico> - Valor utilizado internamente.
+  #   Display: <valor_motrado> - O valor mostrado em tags, placeholders e mais.
+  #   Grupo: <grupo_permissão> - O grupo setado pro jogador ao atingir este prestigio. É removido ao sair deste.
+  #   Proximo: <id_proximo_prestigio> - O próximo prestigio a ser alcançado. Deixar em 'false' para definir como ultimo.
   Prestigio-0:
     Id: 0
     Display: '&6&l0'

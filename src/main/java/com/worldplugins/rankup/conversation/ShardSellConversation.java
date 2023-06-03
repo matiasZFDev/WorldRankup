@@ -54,6 +54,7 @@ public class ShardSellConversation extends StringPrompt {
     @Override
     public Prompt acceptInput(ConversationContext context, String value) {
         final Player player = (Player) context.getForWhom();
+        final MainData.ShardSellOptions sellOptions = mainConfig.data().shardSellOptions();
 
         if (value.equalsIgnoreCase("cancelar")) {
             respond(player, "Venda-cancelada");
@@ -61,7 +62,7 @@ public class ShardSellConversation extends StringPrompt {
             return null;
         }
 
-        if (mainConfig.data().shardSellOptions() == null) {
+        if (sellOptions == null) {
             respond(player, "Venda-desabilitada");
             return null;
         }
@@ -92,21 +93,23 @@ public class ShardSellConversation extends StringPrompt {
             return null;
         }
 
-        final MainData.ShardSellOptions.SellBonus sellBonus = mainConfig.data()
-            .shardSellOptions()
-            .getBonus(player);
-        final Double shardsValue = amount * configShard.price();
-        final Double shardsMoney = Numbers.applyPercentage(
+        final MainData.ShardSellOptions.SellBonus sellBonus = sellOptions.getBonus(player);
+        final double shardsValue = amount * configShard.price();
+        final double shardsMoney = Numbers.applyPercentage(
             shardsValue,
             sellBonus == null ? 0d : sellBonus.bonus(), Numbers.ApplyType.INCREMENT
         );
+        final String bonusTag = sellBonus == null || !sellOptions.useTag()
+            ? sellOptions.noGroupTag()
+            : sellBonus.tag();
 
         playerModel.setShards(shardId, playerModel.getShards(shardId) - amount);
         economy.depositPlayer(player, shardsMoney);
         respond(player, "Fragmentos-vendidos", message -> message.replace(
             to("@quantia", NumberFormats.suffixed(amount)),
             to("@dinheiro", NumberFormats.suffixed(shardsMoney)),
-            to("@fragmento", configShard.display())
+            to("@fragmento", configShard.display()),
+            to("@tag-bonus", bonusTag)
         ));
         return null;
     }

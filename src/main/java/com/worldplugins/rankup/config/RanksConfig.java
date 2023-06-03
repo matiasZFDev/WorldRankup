@@ -42,9 +42,7 @@ public class RanksConfig implements ConfigModel<RanksData> {
                             })
                             .collect(Collectors.toList()),
                         section.getString("Evolucao.Seguinte"),
-                        ConfigSections.notExistingOrFalse(section, "Evolucao.Comando-console")
-                            ? null
-                            : section.getString("Evolucao.Comando-console")
+                        section.getStringList("Evolucao.Comandos")
                     )
             ))
         );

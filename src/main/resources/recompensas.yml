@@ -18,13 +18,13 @@
 # > Os mundos indicam os mundo onde o jogador poderá hitar os mobs indicados e ganhar fragmentos
 #
 #   Tipo: HITAR_MOB
-#   Blocos: ['ZOMBIE', 'CREEPER']
+#   Mobs: ['ZOMBIE', 'CREEPER']
 #
 # [Matar mob] - Indicar os mobs que poderão matar e ganhar fragmentos
 # > Os mundos indicam os mundo onde o jogador poderá matar mobs indicados e ganhar fragmentos
 #
 #   Tipo: MATAR_MOB
-#   Blocos: ['ZOMBIE', 'CREEPER']
+#   Mobs: ['ZOMBIE', 'CREEPER']
 #
 # [Pesca] - Nada
 # > Os mundos indicam os mundo onde o jogador poderá pescar e ganhar fragmentos

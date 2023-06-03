@@ -32,18 +32,18 @@ public class RanksData {
             private final double coinsPrice;
             private final @NotNull Collection<ShardRequirement> requiredShards;
             private final @NotNull String nextRankName;
-            private final @Nullable String consoleCommand;
+            private final @NotNull List<String> consoleCommands;
 
             public Evolution(
                 double coinsPrice,
                 @NotNull Collection<ShardRequirement> requiredShards,
                 @NotNull String nextRankName,
-                @Nullable String consoleCommand
+                @NotNull List<String> consoleCommands
             ) {
                 this.coinsPrice = coinsPrice;
                 this.requiredShards = requiredShards;
                 this.nextRankName = nextRankName;
-                this.consoleCommand = consoleCommand;
+                this.consoleCommands = consoleCommands;
             }
 
             public double coinsPrice() {
@@ -58,8 +58,8 @@ public class RanksData {
                 return nextRankName;
             }
 
-            public @Nullable  String consoleCommand() {
-                return consoleCommand;
+            public @NotNull List<String> consoleCommands() {
+                return consoleCommands;
             }
         }
 

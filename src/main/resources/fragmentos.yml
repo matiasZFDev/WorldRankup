@@ -1,3 +1,14 @@
+# [FRAGMENTOS]
+# Meu-fragmento:
+#   Id: <id_numerico_unico> - Um valor de uso interno.
+#   Nome: <id_nome> - Nome de identificação nas configurações.
+#   Display: <valor_display> - Valor mostrado em tags, placeholders e mais.
+#   Preco: <preço_do_fragmento> - Preço do fragmento caso a venda estiver habilitada.
+#   Limite: <limite_maximo> - O máximo de limite que um jogador pode atingir.
+#   Limite-padrao: <limite_padrão> - O limite de fragmentos padrão ao entrar no servidor.
+#   Iten: <iten_do_fragmento> - O iten (apenas id, material ou data) que representa o fragmento fisico.
+#   Iten-limite: <iten_do_limite> - O iten (apenas id, material ou data) que representa o limite fisico.
+
 Gelo-1:
   Id: 0
   Nome: 'gelo'

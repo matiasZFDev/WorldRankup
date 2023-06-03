@@ -20,28 +20,22 @@ public class PrestigeConfig implements ConfigModel<PrestigeData> {
 
     public void update() {
         final FileConfiguration config = configWrapper.unwrap();
-        final String type = config.getString("Tipo");
-
-        if (type.equals("INDIVIDUAL")) {
-            data = new PrestigeData(
-                (short) config.getInt("Prestigio-padrao"),
-                new IndividualPrestiges(
-                    ConfigSections.map(config.getConfigurationSection("Prestigios"), section ->
-                        new Prestige(
-                            (short) section.getInt("Id"),
-                            section.getString("Display"),
-                            section.getString("Grupo"),
-                            ConfigSections.notExistingOrFalse(section, "Proximo")
-                                ? null
-                                : (short) section.getInt("Proximo")
-                        )
+        data = new PrestigeData(
+            (short) config.getInt("Prestigio-padrao"),
+            new IndividualPrestiges(
+                ConfigSections.map(config.getConfigurationSection("Prestigios"), section ->
+                    new Prestige(
+                        (short) section.getInt("Id"),
+                        section.getString("Display"),
+                        section.getString("Grupo"),
+                        ConfigSections.notExistingOrFalse(section, "Proximo")
+                            ? null
+                            : (short) section.getInt("Proximo")
                     )
                 )
-            );
-            return;
-        }
-
-        throw new Error("O tipo de prestigio '" + type + "' não existe.");
+            )
+        );
+        return;
     }
 
     @Override
